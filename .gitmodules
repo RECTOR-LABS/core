@@ -1,3 +1,6 @@
 [submodule "projects/homepage"]
 	path = projects/homepage
 	url = git@github.com:RECTOR-LABS/homepage.git
+[submodule "projects/portfolio"]
+	path = projects/portfolio
+	url = https://github.com/RECTOR-LABS/portfolio.git
