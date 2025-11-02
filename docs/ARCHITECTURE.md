@@ -313,18 +313,18 @@ WantedBy=multi-user.target
 
 | Subdomain | Framework | Styling | Deployment |
 |-----------|-----------|---------|------------|
-| Homepage | Astro | Tailwind CSS | Static/SSG |
-| Portfolio | Next.js | Tailwind CSS | SSR/ISR |
-| Labs | Astro | Tailwind CSS | Static/SSG |
+| Homepage | Next.js 15 | Tailwind CSS v4 | SSG/ISR |
+| Portfolio | Next.js 15 | Tailwind CSS v4 | SSR/ISR |
+| Labs | Next.js 15 | Tailwind CSS v4 | SSG/ISR |
 | Journal | Ghost CMS | Ghost Themes | Self-hosted |
-| Cheatsheet | Astro | Tailwind CSS | Static/SSG |
-| Dakwa | Next.js | Tailwind CSS | SSR/ISR |
-| Quran | Next.js | Tailwind CSS | SSR/ISR |
+| Cheatsheet | Next.js 15 | Tailwind CSS v4 | SSG/ISR |
+| Dakwa | Next.js 15 | Tailwind CSS v4 | SSR/ISR |
+| Quran | Next.js 15 | Tailwind CSS v4 | SSR/ISR |
 
 **Framework Choice Rationale:**
-- **Astro:** Static sites, excellent performance, markdown support
-- **Next.js:** Dynamic content, API routes, ISR for fresh data
-- **Ghost:** Mature CMS, excellent blogging experience
+- **Next.js 15:** Unified stack leveraging developer expertise, App Router with Server Components for optimal performance, ISR for fresh data, excellent DX
+- **Tailwind CSS v4:** Utility-first styling with CSS-based configuration, consistent design system
+- **Ghost:** Mature CMS, excellent blogging experience for journal
 
 ### 4.2 Backend & APIs
 

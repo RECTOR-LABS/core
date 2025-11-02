@@ -157,8 +157,8 @@ This document tracks the progress of implementing the RECTOR LABS ecosystem as d
   - Sections: Hero, About, Subdomains, Featured Work, Contact
   - Tool: Figma or code prototype
 
-- 📋 **Task 2.1.3:** Setup Astro project
-  - Tech: Astro + Tailwind CSS
+- 📋 **Task 2.1.3:** Setup Next.js 15 project
+  - Tech: Next.js 15 (App Router) + Tailwind CSS v4
   - Components: Header, Footer, Hero, SubdomainGrid
 
 - 📋 **Task 2.1.4:** Implement homepage content
@@ -225,7 +225,7 @@ This document tracks the progress of implementing the RECTOR LABS ecosystem as d
 **Tasks:**
 - 📋 **Task 2.3.1:** Create labs repository
 - 📋 **Task 2.3.2:** Design labs page layout
-- 📋 **Task 2.3.3:** Setup Astro/Next.js project
+- 📋 **Task 2.3.3:** Setup Next.js 15 project
 - 📋 **Task 2.3.4:** Implement labs content (mission, projects, updates)
 - 📋 **Task 2.3.5:** Add labs to core as submodule
 - 📋 **Task 2.3.6:** Deploy and setup CI/CD
@@ -238,7 +238,7 @@ This document tracks the progress of implementing the RECTOR LABS ecosystem as d
 **Tasks:**
 - 📋 **Task 2.4.1:** Create cheatsheet repository
 - 📋 **Task 2.4.2:** Design cheatsheet layout (search, categories, snippets)
-- 📋 **Task 2.4.3:** Setup Astro + Markdown
+- 📋 **Task 2.4.3:** Setup Next.js 15 + Markdown (MDX)
 - 📋 **Task 2.4.4:** Implement search functionality (Fuse.js or Algolia)
 - 📋 **Task 2.4.5:** Create initial cheatsheet content (10+ references)
 - 📋 **Task 2.4.6:** Add syntax highlighting (Prism/Shiki)
@@ -458,10 +458,10 @@ This document tracks the progress of implementing the RECTOR LABS ecosystem as d
 ## 11. Decision Log
 
 ### 2025-11-02:
-- **Decision:** Use Astro for static sites (homepage, labs, cheatsheet)
-  - Rationale: Performance, simplicity, markdown support
-- **Decision:** Use Next.js for dynamic sites (portfolio, dakwa, quran)
-  - Rationale: ISR, API routes, React ecosystem
+- **Decision:** Use Next.js 15 for ALL platforms (homepage, portfolio, labs, cheatsheet, dakwa, quran)
+  - Rationale: Developer expertise and comfort, unified stack, excellent performance with RSC and App Router, consistent tooling
+- **Decision:** Use Ghost CMS for journal only
+  - Rationale: Mature blogging platform, standalone CMS
 - **Decision:** Use git submodules for projects
   - Rationale: Independent repos, centralized organization
 - **Decision:** One user account per project on VPS

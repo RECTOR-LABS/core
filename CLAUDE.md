@@ -40,13 +40,13 @@ Each platform will be a separate repository under RECTOR-LABS organization, link
 
 | Platform | Domain | Purpose | Tech |
 |----------|--------|---------|------|
-| Homepage | rectorspace.com | Identity hub | Astro + Tailwind |
-| Portfolio | portfolio.rectorspace.com | GitHub-powered showcase | Next.js + GitHub API |
-| Labs | labs.rectorspace.com | Project showcase | Astro + Tailwind |
+| Homepage | rectorspace.com | Identity hub | Next.js 15 + Tailwind v4 |
+| Portfolio | portfolio.rectorspace.com | GitHub-powered showcase | Next.js 15 + GitHub API |
+| Labs | labs.rectorspace.com | Project showcase | Next.js 15 + Tailwind v4 |
 | Journal | journal.rectorspace.com | Blog | Ghost CMS |
-| Cheatsheet | cheatsheet.rectorspace.com | Dev reference | Astro + Markdown |
-| Dakwa | dakwa.rectorspace.com | Islamic da'wah | Next.js + CMS |
-| Quran | quran.rectorspace.com | Quranic resources | Next.js + API |
+| Cheatsheet | cheatsheet.rectorspace.com | Dev reference | Next.js 15 + MDX |
+| Dakwa | dakwa.rectorspace.com | Islamic da'wah | Next.js 15 + CMS |
+| Quran | quran.rectorspace.com | Quranic resources | Next.js 15 + API |
 
 ---
 
@@ -199,10 +199,9 @@ When making significant changes:
 - Git submodules for orchestration
 
 **Future platforms:**
-- Static sites: Astro + Tailwind CSS
-- Dynamic sites: Next.js + Tailwind CSS
-- CMS: Ghost (self-hosted)
-- APIs: GitHub API, Quran API
+- **All platforms:** Next.js 15 (App Router) + Tailwind CSS v4
+- **CMS:** Ghost (self-hosted for journal only)
+- **APIs:** GitHub API (portfolio), Quran API (quran subdomain)
 
 ---
 
@@ -238,7 +237,7 @@ See global `~/.claude/CLAUDE.md` for complete list.
 2. **Add homepage as first submodule** - Link homepage repo to CORE
 3. **Build design system components** - Button, Card, Header, Footer (shared across all platforms)
 4. **Document VPS infrastructure setup** - Complete infrastructure/ folder configs
-5. **Begin homepage implementation** - Setup Astro + Tailwind, implement hero section
+5. **Begin homepage implementation** - Setup Next.js 15 + Tailwind v4, implement hero section
 
 **Week 1 Complete Status:**
 - ✅ All planning documentation finalized

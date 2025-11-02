@@ -70,7 +70,7 @@ Build a comprehensive digital ecosystem that represents RECTOR's identity as an 
 - Islamic community
 - AI agents and bots seeking information
 
-**Tech Stack:** Static site (HTML/CSS/JS or Astro)
+**Tech Stack:** Next.js + Tailwind CSS
 
 ---
 
@@ -95,7 +95,7 @@ Build a comprehensive digital ecosystem that represents RECTOR's identity as an 
 - GitHub API: RECTOR-LABS (organization)
 - Manual enrichment: awards, impact, reflections
 
-**Tech Stack:** Next.js/Astro + GitHub API + Tailwind CSS
+**Tech Stack:** Next.js + GitHub API + Tailwind CSS
 
 ---
 
@@ -109,7 +109,7 @@ Build a comprehensive digital ecosystem that represents RECTOR's identity as an 
 - Team/collaborators (if applicable)
 - Blog/updates section
 
-**Tech Stack:** Static site or Next.js
+**Tech Stack:** Next.js + Tailwind CSS
 
 ---
 
@@ -137,7 +137,7 @@ Build a comprehensive digital ecosystem that represents RECTOR's identity as an 
 - Personal notes and annotations
 - Bookmarking/favorites
 
-**Tech Stack:** Astro + Markdown + Search (Algolia/Fuse.js)
+**Tech Stack:** Next.js + Markdown + Search (Algolia/Fuse.js) + Tailwind CSS
 
 ---
 
@@ -151,7 +151,7 @@ Build a comprehensive digital ecosystem that represents RECTOR's identity as an 
 - Integration of faith and technology
 - Multilingual support (Arabic, English, Indonesian)
 
-**Tech Stack:** Astro/Next.js + CMS (Sanity/Contentful)
+**Tech Stack:** Next.js + CMS (Sanity/Contentful) + Tailwind CSS
 
 ---
 
@@ -166,7 +166,7 @@ Build a comprehensive digital ecosystem that represents RECTOR's identity as an 
 - Thematic exploration
 - Arabic with multiple translations
 
-**Tech Stack:** Next.js + Quran API + Custom DB
+**Tech Stack:** Next.js + Quran API + Tailwind CSS
 
 ---
 
@@ -221,9 +221,9 @@ core/
 ### 4.3 Technology Preferences
 
 **Frontend Framework:**
-- Primary: Astro (static performance)
-- Dynamic: Next.js (when interactivity needed)
-- Styling: Tailwind CSS
+- **Primary:** Next.js 15 (App Router, Server Components, RSC)
+- **Styling:** Tailwind CSS v4
+- **Rationale:** Developer expertise, unified stack, excellent performance with RSC
 
 **CMS:**
 - Ghost (journal.rectorspace.com)
