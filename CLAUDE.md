@@ -18,7 +18,7 @@ Single domain `rectorspace.com` with route-based sections:
 
 | Section | Route | Purpose | Status |
 |---------|-------|---------|--------|
-| Homepage | / | Identity hub & landing | 📋 Planned |
+| Homepage | / | Identity hub & landing | ✅ Live |
 | Portfolio | /portfolio | Professional work showcase | 📋 Planned |
 | Labs | /labs | Experiments & learning projects | 📋 Planned |
 | Journal | /journal | Blog & writings (Ghost CMS integration) | 📋 Planned |
@@ -39,27 +39,34 @@ Single domain `rectorspace.com` with route-based sections:
 ```
 core/
 ├── .github/workflows/       # GitHub Actions (Claude Code integration)
-├── app/                     # Rails application (controllers, models, views)
+├── app/
 │   ├── controllers/
-│   │   ├── pages_controller.rb       # Homepage
-│   │   ├── portfolio_controller.rb
-│   │   ├── labs_controller.rb
-│   │   ├── journal_controller.rb
-│   │   ├── cheatsheet_controller.rb
-│   │   ├── dakwa_controller.rb
-│   │   └── quran_controller.rb
+│   │   └── pages_controller.rb       # Homepage (✅ implemented)
 │   ├── models/
-│   │   ├── project.rb               # Portfolio projects
-│   │   ├── experiment.rb            # Labs experiments
-│   │   ├── snippet.rb               # Cheatsheet entries
-│   │   ├── dakwa_content.rb
-│   │   └── quran_resource.rb
-│   └── views/
-├── config/                  # Rails configuration
-├── db/                      # Database migrations & schema
-├── public/                  # Static assets
-├── assets/images/           # Brand assets (3 logo variants + profile)
-└── docs/                    # Documentation
+│   │   └── github_repo.rb            # GitHub repository cache (✅ implemented)
+│   ├── views/
+│   │   ├── layouts/application.html.erb
+│   │   └── pages/home.html.erb       # Homepage view (✅ implemented)
+│   ├── jobs/
+│   │   └── sync_github_repos_job.rb  # Hourly GitHub sync (✅ implemented)
+│   └── services/
+│       ├── github_api_service.rb     # GitHub API client (✅ implemented)
+│       └── tech_stack_parser.rb      # Language parser (✅ implemented)
+├── config/
+│   ├── routes.rb                     # Root route configured
+│   └── recurring.yml                 # Solid Queue job schedule
+├── db/
+│   ├── migrate/                      # Database migrations
+│   └── schema.rb                     # Current schema
+├── lib/tasks/
+│   └── github.rake                   # Manual sync tasks (✅ implemented)
+├── assets/images/                    # Brand assets (3 logo variants + profile)
+├── docs/                             # Documentation
+│   ├── DESIGN_SYSTEM.md
+│   ├── PIXEL_ART_RESOURCES.md
+│   └── RAILS_INITIALIZATION_PLAN.md
+├── .env                              # Environment variables (gitignored)
+└── .env.example                      # Template for setup
 ```
 
 **Branches:** `main` (protected) | `dev` (default) | `feature/*`
@@ -106,6 +113,8 @@ core/
 ```bash
 # Start development server
 bin/rails server
+# or use foreman (runs web + css watcher)
+bin/dev
 
 # Run console
 bin/rails console
@@ -113,11 +122,12 @@ bin/rails console
 # Database setup
 bin/rails db:create db:migrate db:seed
 
+# GitHub integration
+bin/rails github:sync           # Manually sync repos from GitHub
+bin/rails github:tech_stack     # Show tech stack summary
+
 # Run tests
 bin/rails test
-
-# Asset compilation
-bin/rails assets:precompile
 
 # Generate scaffolds
 bin/rails generate controller Portfolio index show
@@ -126,8 +136,13 @@ bin/rails generate model Project title:string description:text
 
 **Running the App:**
 ```bash
+# First time setup
 bundle install
+cp .env.example .env          # Then add your GitHub token
 bin/rails db:setup
+bin/rails github:sync         # Initial sync of repos
+
+# Start server
 bin/rails server
 # Visit http://localhost:3000
 ```
@@ -216,6 +231,55 @@ bin/rails test            # Run test suite
 # Clear cache: bin/rails tmp:clear
 # Bundle issues: bundle install --full-index
 # Asset issues: bin/rails assets:clobber && bin/rails assets:precompile
+```
+
+---
+
+## GitHub Integration
+
+**Implemented Features (Homepage):**
+- Dynamic project showcase from GitHub API
+- Automatic caching with PostgreSQL database
+- Hourly background sync via Solid Queue
+- Tech stack parser with language categorization
+- Manual sync via rake tasks
+
+**Architecture:**
+```
+GitHub API → GithubApiService → GithubRepo (model/cache) → PagesController → Homepage View
+                ↓
+           SyncGithubReposJob (hourly)
+                ↓
+           TechStackParser (categorizes languages)
+```
+
+**Data Flow:**
+1. `SyncGithubReposJob` runs every hour (configured in `config/recurring.yml`)
+2. Fetches repos from `rz1989s` (personal) and `RECTOR-LABS` (organization)
+3. Stores in `github_repos` table with metadata (name, description, language, pushed_at, etc.)
+4. `TechStackParser` analyzes all non-fork repos and categorizes by language
+5. Homepage displays 6 latest repos + tech stack summary
+
+**Current Stats:**
+- 35 total repositories cached (24 personal + 11 organization)
+- 18 non-fork repositories
+- Primary stack: TypeScript (44.4%), Shell (16.7%), JavaScript, Rust, Python
+- Categories: blockchain, web, backend, infra, data, systems
+
+**Environment Variables:**
+```bash
+# .env (gitignored)
+GITHUB_TOKEN=ghp_xxx...   # Personal access token
+```
+
+**Benefits:**
+- Rate limit: 5,000 requests/hour (vs 60 without token)
+- Scope: `public_repo` (read-only public repositories)
+
+**Manual Commands:**
+```bash
+bin/rails github:sync          # Sync repos now
+bin/rails github:tech_stack    # Show tech stack summary
 ```
 
 ---

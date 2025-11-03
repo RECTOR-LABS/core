@@ -26,7 +26,7 @@ All sections served under `rectorspace.com`:
 
 | Section | Route | Purpose | Status |
 |---------|-------|---------|--------|
-| Homepage | / | Identity hub & landing | 📋 Planned |
+| Homepage | / | Identity hub & landing | ✅ Live |
 | Portfolio | /portfolio | Professional work showcase | 📋 Planned |
 | Labs | /labs | Experiments & learning projects | 📋 Planned |
 | Journal | /journal | Blog & writings (Ghost CMS) | 📋 Planned |
@@ -62,10 +62,14 @@ cd core
 
 # Install dependencies
 bundle install
-npm install  # or yarn install
+
+# Setup environment
+cp .env.example .env
+# Edit .env and add your GITHUB_TOKEN
 
 # Setup database
-bin/rails db:create db:migrate db:seed
+bin/rails db:create db:migrate
+bin/rails github:sync  # Sync repos from GitHub
 
 # Start development server
 bin/rails server
@@ -100,9 +104,10 @@ core/
 
 ### Backend
 - **Framework:** Ruby on Rails 8 (fullstack, hybrid architecture)
-- **Database:** PostgreSQL (production), SQLite (development)
-- **Authentication:** Devise or Rails built-in authentication
-- **Background Jobs:** Sidekiq (for API syncing, caching)
+- **Database:** PostgreSQL
+- **Authentication:** TBD (Devise or Rails built-in)
+- **Background Jobs:** Solid Queue (Rails 8 built-in) for hourly GitHub sync
+- **Caching:** Solid Cache (Rails 8 built-in)
 
 ### Frontend
 - **Styling:** Tailwind CSS v4 (utility-first, modern design)
@@ -214,6 +219,40 @@ bin/rails generate model Project title:string description:text url:string featur
 # Generate migration
 bin/rails generate migration AddCategoryToProjects category:string
 ```
+
+---
+
+## Implemented Features
+
+### Homepage (✅ Live)
+
+The homepage is fully implemented with dynamic GitHub integration:
+
+**Features:**
+- NFT-inspired warm design with JetBrains Mono typography
+- Vision/Mission/Passion statements
+- Dynamic project showcase (6 latest repos from GitHub)
+- Tech stack summary (parsed from all repositories)
+- Contact links (GitHub, X @RZ1989sol, Email rheza10@gmail.com)
+
+**GitHub Integration:**
+- Automatic hourly sync via Solid Queue background jobs
+- Caches 35 repositories (personal + RECTOR-LABS organization)
+- Filters out forks, shows only original projects
+- Tech stack parser categorizes by language
+- Current stats: 18 non-fork repos, TypeScript 44.4%, Shell 16.7%
+
+**Manual Commands:**
+```bash
+bin/rails github:sync          # Sync repos immediately
+bin/rails github:tech_stack    # View tech stack summary
+```
+
+**Environment Setup:**
+1. Copy `.env.example` to `.env`
+2. Add your `GITHUB_TOKEN` (get from https://github.com/settings/tokens)
+3. Token scope: `public_repo` (read-only)
+4. Rate limit: 5,000 requests/hour (vs 60 without token)
 
 ---
 
