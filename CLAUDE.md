@@ -4,31 +4,33 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Repository Overview
 
-**RECTOR LABS CORE** orchestrates a 7-platform digital ecosystem via git submodules. This is a **documentation and design system repository**, not application code.
+**RECTOR LABS CORE** is a Rails 8 monolithic application serving the complete rectorspace.com ecosystem. This is the single source of truth for all platform sections.
 
-**Current Status:** Reset to clean slate (commit 34fbc5e). Historical planning docs (PRD, Architecture, Brand Guidelines) available in git history (commit d716ebd). Retrieve with: `git show d716ebd:docs/<filename>.md`
+**Current Status:** Architecture pivot from Next.js microservices to Rails monolith (2025-11-03). Clean slate for Rails implementation.
 
-**Submodule:** `projects/homepage` → [RECTOR-LABS/homepage](https://github.com/RECTOR-LABS/homepage)
+**Tech Stack:** Ruby on Rails 8 (fullstack, hybrid) + Tailwind CSS v4
 
 ---
 
-## The 7-Platform Ecosystem
+## The 7-Section Architecture
 
-All platforms use **Next.js 15 + Tailwind v4** under `rectorspace.com` domain:
+Single domain `rectorspace.com` with route-based sections:
 
-| Platform | Domain | Purpose | Status |
-|----------|--------|---------|--------|
-| Homepage | rectorspace.com | Identity hub | 📋 Planned |
-| Portfolio | portfolio.rectorspace.com | GitHub-powered showcase | 📋 Planned |
-| Labs | labs.rectorspace.com | Projects showcase | 📋 Planned |
-| Journal | journal.rectorspace.com | Blog (Ghost CMS) | 📋 Planned |
-| Cheatsheet | cheatsheet.rectorspace.com | Dev reference | 📋 Planned |
-| Dakwa | dakwa.rectorspace.com | Islamic da'wah | 📋 Planned |
-| Quran | quran.rectorspace.com | Quranic resources | 📋 Planned |
+| Section | Route | Purpose | Status |
+|---------|-------|---------|--------|
+| Homepage | / | Identity hub & landing | 📋 Planned |
+| Portfolio | /portfolio | Professional work showcase | 📋 Planned |
+| Labs | /labs | Experiments & learning projects | 📋 Planned |
+| Journal | /journal | Blog & writings (Ghost CMS integration) | 📋 Planned |
+| Cheatsheet | /cheatsheet | Dev reference & notes | 📋 Planned |
+| Dakwa | /dakwa | Islamic da'wah content | 📋 Planned |
+| Quran | /quran | Quranic resources & tools | 📋 Planned |
 
-**Tech Stack Decision (2025-11-03, commit ac64d5a):**
-- Standardized on Next.js 15 for developer expertise and unified tooling
-- Homepage initially Astro (v1 on `frontend-v1` branch), switched to Next.js for consistency
+**Architecture Decision:**
+- Rails monolith for unified codebase, shared authentication, single deployment
+- Route-based sections instead of separate apps/subdomains
+- Portfolio (polished professional work) separate from Labs (experiments/learning)
+- Ghost CMS as external service, integrated via API for Journal section
 
 ---
 
@@ -36,42 +38,31 @@ All platforms use **Next.js 15 + Tailwind v4** under `rectorspace.com` domain:
 
 ```
 core/
-├── .github/workflows/claude.yml  # Claude Code GitHub Action (@claude triggers)
-├── projects/homepage/            # Submodule → RECTOR-LABS/homepage
-├── assets/images/                # 3 logo variants + profile image
-└── docs/                         # Empty (historical docs in git history)
+├── .github/workflows/       # GitHub Actions (Claude Code integration)
+├── app/                     # Rails application (controllers, models, views)
+│   ├── controllers/
+│   │   ├── pages_controller.rb       # Homepage
+│   │   ├── portfolio_controller.rb
+│   │   ├── labs_controller.rb
+│   │   ├── journal_controller.rb
+│   │   ├── cheatsheet_controller.rb
+│   │   ├── dakwa_controller.rb
+│   │   └── quran_controller.rb
+│   ├── models/
+│   │   ├── project.rb               # Portfolio projects
+│   │   ├── experiment.rb            # Labs experiments
+│   │   ├── snippet.rb               # Cheatsheet entries
+│   │   ├── dakwa_content.rb
+│   │   └── quran_resource.rb
+│   └── views/
+├── config/                  # Rails configuration
+├── db/                      # Database migrations & schema
+├── public/                  # Static assets
+├── assets/images/           # Brand assets (3 logo variants + profile)
+└── docs/                    # Documentation
 ```
 
 **Branches:** `main` (protected) | `dev` (default) | `feature/*`
-
----
-
-## Git Submodules Quick Reference
-
-**Why:** Independent repos, flexible visibility (CORE private, platforms public/private), separate deployments, centralized tracking.
-
-**Common Commands:**
-```bash
-# Initialize after clone
-git submodule update --init --recursive
-
-# Update all platforms
-git submodule update --remote --merge
-
-# Add new platform
-git submodule add git@github.com:RECTOR-LABS/<name>.git projects/<name>
-
-# Work on platform
-cd projects/homepage
-git checkout -b feature/xyz
-# ... commit changes ...
-git push origin feature/xyz
-
-# Update CORE reference
-cd /Users/rz/local-dev/core
-git submodule update --remote --merge projects/homepage
-git add projects/homepage && git commit -m "Update homepage"
-```
 
 ---
 
@@ -85,26 +76,80 @@ git add projects/homepage && git commit -m "Update homepage"
 
 ---
 
-## Workflows
+## Rails Development Workflow
 
-**Create New Platform:**
+**Prerequisites:**
+- Ruby 3.3+ (use rbenv or asdf)
+- Rails 8
+- PostgreSQL (recommended) or SQLite (development)
+- Node.js 18+ (for asset pipeline)
+
+**Common Commands:**
 ```bash
-# Use slash command (creates repo + branches)
-/init:repo-rector-labs <name> "description"
+# Start development server
+bin/rails server
 
-# Add as submodule
-cd /Users/rz/local-dev/core
-git submodule add git@github.com:RECTOR-LABS/<name>.git projects/<name>
-git commit -m "Add <name> as submodule" && git push origin dev
+# Run console
+bin/rails console
+
+# Database setup
+bin/rails db:create db:migrate db:seed
+
+# Run tests
+bin/rails test
+
+# Asset compilation
+bin/rails assets:precompile
+
+# Generate scaffolds
+bin/rails generate controller Portfolio index show
+bin/rails generate model Project title:string description:text
 ```
 
-**VPS Deployment (Future):**
-- Strategy: 1 user per platform, Nginx reverse proxy, Let's Encrypt SSL, PM2/systemd
-- SSH via `~/.ssh/config`, unique ports per platform, GitHub Actions CI/CD
+**Running the App:**
+```bash
+bundle install
+bin/rails db:setup
+bin/rails server
+# Visit http://localhost:3000
+```
 
-**Prerequisites:** Node.js 18+, Git, RECTOR-LABS access
+---
 
-**Security:** Never commit `.env`, use GitHub Secrets for CI/CD
+## Deployment Strategy
+
+**VPS Deployment:**
+- Single Rails app deployment (Nginx + Puma/Passenger)
+- 1 user account per deployment environment (staging/production)
+- PostgreSQL database
+- Let's Encrypt SSL for rectorspace.com
+- GitHub Actions CI/CD
+- SSH via `~/.ssh/config`
+
+**Environment Variables:**
+- Ghost CMS API credentials
+- Database connection strings
+- External API keys (GitHub API, Quran API)
+
+**Security:** Never commit `.env`, use Rails credentials (encrypted)
+
+---
+
+## External Integrations
+
+**Journal Section:**
+- Ghost CMS hosted separately (journal subdomain or external)
+- Integrate via Ghost Content API
+- Fetch posts and display in `/journal` route
+- Consider caching strategy for performance
+
+**Portfolio Section:**
+- GitHub API integration for repository showcase
+- Display pinned repos, contribution stats
+
+**Quran Section:**
+- Integrate Quran API (quran.com API or similar)
+- Tafsir, translations, recitations
 
 ---
 
@@ -124,43 +169,46 @@ git commit -m "Add <name> as submodule" && git push origin dev
 ## Best Practices
 
 **For Claude Code:**
-1. Read this CLAUDE.md first, check branch (`git branch`), understand platform context
-2. Navigate to submodule for platform work (`cd projects/<name>`)
+1. Read this CLAUDE.md first, check branch (`git branch`), understand Rails conventions
+2. Follow Rails MVC patterns and conventions
 3. Survey docs before creating new `.md` files - propose organization first
 4. Work in `dev` branch, never commit directly to `main`
 5. Update this CLAUDE.md if architecture changes
+6. Use Rails generators when appropriate
+7. Write tests for new features (RSpec or Minitest)
 
-**Commit Format:** `<type>: <description>` (feat/fix/docs/refactor/chore/submodule)
+**Commit Format:** `<type>: <description>` (feat/fix/docs/refactor/chore/test)
 
 ---
 
 ## Quick Commands
 
-**Platform Development:**
+**Development:**
 ```bash
-cd projects/homepage
-npm run dev          # Start dev server
-npm run build        # Production build
-npm run type-check   # Type checking
-npm run lint         # Linting
+bin/rails server          # Start dev server (port 3000)
+bin/rails console         # Interactive console
+bin/rails routes          # Show all routes
+bin/rails db:migrate      # Run migrations
+bin/rails test            # Run test suite
 ```
 
 **Troubleshooting:**
 ```bash
-# Submodule empty: git submodule update --init --recursive
-# Modified content: cd projects/<name> && git status
-# Next.js issues: rm -rf .next node_modules && npm install && npm run dev
+# Reset database: bin/rails db:reset
+# Clear cache: bin/rails tmp:clear
+# Bundle issues: bundle install --full-index
+# Asset issues: bin/rails assets:clobber && bin/rails assets:precompile
 ```
 
 ---
 
 ## Resources
 
-**Docs:** [Next.js](https://nextjs.org/docs) | [Tailwind v4](https://tailwindcss.com/docs) | [Git Submodules](https://git-scm.com/book/en/v2/Git-Tools-Submodules)
+**Docs:** [Rails Guides](https://guides.rubyonrails.org) | [Tailwind CSS](https://tailwindcss.com/docs) | [Ghost API](https://ghost.org/docs/content-api/)
 
 **Links:** [@rz1989s](https://github.com/rz1989s) | [RECTOR-LABS](https://github.com/RECTOR-LABS) | rectorspace.com _(coming soon)_
 
-**Maintainer:** RECTOR | **Updated:** 2025-11-03 | **Version:** 2.1 (Compact)
+**Maintainer:** RECTOR | **Updated:** 2025-11-03 | **Version:** 3.0 (Rails Monolith)
 
 ---
 
