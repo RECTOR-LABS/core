@@ -10,22 +10,22 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2025_11_03_070257) do
+ActiveRecord::Schema[8.1].define(version: 2025_11_03_073015) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
   create_table "github_repos", force: :cascade do |t|
-    t.string "account"
+    t.string "account", null: false
     t.datetime "created_at", null: false
     t.datetime "created_at_github"
     t.text "description"
     t.integer "forks_count"
-    t.string "full_name"
-    t.string "html_url"
+    t.string "full_name", null: false
+    t.string "html_url", null: false
     t.boolean "is_fork"
     t.string "language"
-    t.string "name"
-    t.datetime "pushed_at"
+    t.string "name", null: false
+    t.datetime "pushed_at", null: false
     t.integer "stargazers_count"
     t.text "topics"
     t.datetime "updated_at", null: false

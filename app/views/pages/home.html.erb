@@ -53,7 +53,7 @@
               <span class="text-xs"> • Updated <%= project.time_ago %></span>
             </p>
             <% if project.description.present? %>
-              <p><%= project.description %></p>
+              <p><%= sanitize project.description, tags: [] %></p>
             <% end %>
           </div>
         <% end %>
@@ -62,11 +62,13 @@
       <p class="mt-4">No projects found. Check back later!</p>
     <% end %>
 
-    <p class="mt-6">
-      Working across <%= @tech_stack[:total_repos] %> repositories.
-      Primary stack:
-      <%= @tech_stack[:primary].map { |l| l[:name] }.join(", ") %>.
-    </p>
+    <% if @tech_stack && @tech_stack[:primary].present? %>
+      <p class="mt-6">
+        Working across <%= @tech_stack[:total_repos] %> repositories.
+        Primary stack:
+        <%= @tech_stack[:primary].map { |l| l[:name] }.join(", ") %>.
+      </p>
+    <% end %>
   </section>
 
   <!-- Divider -->

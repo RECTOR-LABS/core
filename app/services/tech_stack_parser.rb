@@ -33,16 +33,13 @@ class TechStackParser
   private
 
   def count_languages
-    language_counts = Hash.new(0)
-
-    @repos.each do |repo|
-      next if repo.language.blank?
-
-      language_counts[repo.language] += 1
-    end
-
-    # Sort by count descending
-    language_counts.sort_by { |_lang, count| -count }.to_h
+    # Use database aggregation for better performance with large datasets
+    GithubRepo.not_forks
+      .where.not(language: nil)
+      .group(:language)
+      .count
+      .sort_by { |_lang, count| -count }
+      .to_h
   end
 
   def categorize_languages(language_counts)

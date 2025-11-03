@@ -46,13 +46,24 @@ class GithubApiService
     begin
       http = Net::HTTP.new(uri.host, uri.port)
       http.use_ssl = true
-      # Skip SSL verification for development (fix certificate issues)
-      http.verify_mode = OpenSSL::SSL::VERIFY_NONE if Rails.env.development?
 
       request = Net::HTTP::Get.new(uri)
       @http_options.each { |key, value| request[key] = value }
 
       response = http.request(request)
+
+      # Check rate limit headers
+      rate_limit_remaining = response["X-RateLimit-Remaining"].to_i
+      rate_limit_reset = Time.at(response["X-RateLimit-Reset"].to_i) if response["X-RateLimit-Reset"]
+
+      if rate_limit_remaining < 10
+        Rails.logger.warn "GitHub API rate limit low: #{rate_limit_remaining} requests remaining until #{rate_limit_reset}"
+      end
+
+      if response.code == "403" && rate_limit_remaining == 0
+        Rails.logger.error "GitHub API rate limit exceeded. Resets at #{rate_limit_reset}"
+        return []
+      end
 
       if response.code == "200"
         repos = JSON.parse(response.body, symbolize_names: true)
