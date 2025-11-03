@@ -117,23 +117,54 @@ core/
 
 ## Design System
 
-### Brand Colors
+**Complete Specification:** [`docs/DESIGN_SYSTEM.md`](docs/DESIGN_SYSTEM.md)
 
-- **Primary Gradient:** Turquoise (#5EDDC6) → Cyan (#4DD0E1) → Blue (#42A5F5)
-- **Backgrounds:** Dark Navy (#1A252F), Navy (#2C3E50)
-- **Accents:** Emerald, Teal, Sky Blue
+### Design Philosophy
+
+**"Warm, Personal, Technical"** - Inspired by RECTOR's MonkeDAO NFT profile picture
+
+- **Warm:** Soft cream backgrounds, yellow accents, inviting palette
+- **Personal:** Letter-style narrative (DHH.dk inspired), first-person tone, no navbar/footer
+- **Technical:** JetBrains Mono throughout, pixel art graphics, developer aesthetic
+- **Anonymous but Present:** NFT as visual identity
+
+### Brand Colors (NFT-Inspired)
+
+| Color | Hex | Usage |
+|-------|-----|-------|
+| **Soft Cream** | `#FFF7E1` | Background |
+| **Deep Brown** | `#3B2C22` | Text, headings, code blocks |
+| **Sky Blue** | `#41CFFF` | Links, interactive |
+| **Warm Yellow** | `#F9C846` | Accents, hover |
+| **Clay Orange** | `#E58C2E` | Subheadings |
+| **Leaf Green** | `#A8E063` | Success, CTAs |
+| **Muted Red** | `#C75A44` | Shadows, depth |
 
 ### Typography
 
-- **Headings:** Space Grotesk (500, 600, 700)
-- **Body Text:** Inter (300, 400, 500, 600, 700)
-- **Code/Monospace:** JetBrains Mono (400, 500, 700)
+**Single Font:** JetBrains Mono (monospace) for everything
+- **Body:** 18px, weight 400, line-height 1.75
+- **Headings:** 24-40px, weight 600-700
+- **Code:** 15px, weight 400
+
+**Why JetBrains Mono:**
+- Developer/hacker aesthetic
+- Perfect for code blocks
+- Distinctive personality
+- Aligns with pixel art NFT
+
+### Layout Inspiration
+
+- **DHH.dk:** Minimal nav, letter-style bio, embedded links, generous whitespace
+- **Basecamp.com:** Conversational tone, calm spacing, confident simplicity
+- **Profile Picture:** 150px rounded circle (medium size), centered at top
 
 ### Brand Assets
 
 Located in `assets/images/`:
-- RECTOR LABS logo variants (3 versions)
-- RECTOR profile image
+- RECTOR NFT profile (pixel art)
+- Pixel art icons (from Kenney.nl/itch.io - see `docs/PIXEL_ART_RESOURCES.md`)
+- Custom section icons (portfolio, labs, journal, etc.)
 
 ---
 

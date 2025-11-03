@@ -68,11 +68,29 @@ core/
 
 ## Design System
 
-**Colors:** Gradient (Turquoise `#5EDDC6` → Cyan `#4DD0E1` → Blue `#42A5F5`) | Backgrounds (Dark Navy `#1A252F`, Navy `#2C3E50`)
+**Complete specification:** See `docs/DESIGN_SYSTEM.md`
 
-**Typography:** Headings (Space Grotesk 500/600/700) | Body (Inter 300-700) | Code (JetBrains Mono 400/500/700)
+**Color Palette (NFT-inspired warm theme):**
+- Primary: Sky Blue `#41CFFF` (links), Warm Yellow `#F9C846` (accents)
+- Base: Soft Cream `#FFF7E1` (background), Deep Brown `#3B2C22` (text)
+- Supporting: Clay Orange `#E58C2E`, Leaf Green `#A8E063`, Muted Red `#C75A44`
 
-**Assets:** `assets/images/` - 3 logo variants + profile image
+**Typography:** JetBrains Mono (full stack - headings, body, code)
+- Weights: 400 (body), 500 (emphasis), 600 (subheadings), 700 (headings)
+- Size: 18px body (monospace needs larger size for readability)
+- Line height: 1.75-1.875 (generous for comfort)
+
+**Layout Philosophy:**
+- DHH.dk inspired: Minimal navigation, letter-style narrative, embedded links
+- Basecamp inspired: Generous whitespace, conversational tone, calm spacing
+- No navbar/footer/sidebar - links integrated naturally in text
+- Profile picture (NFT): 150px rounded circle, centered, subtle shadow
+
+**Visual Style:**
+- Light/warm theme only (no dark mode)
+- Pixel art graphics from Kenney.nl/itch.io (see `docs/PIXEL_ART_RESOURCES.md`)
+- Clean, minimal, content-focused
+- Anonymous identity via NFT profile picture
 
 ---
 
