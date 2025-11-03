@@ -10,13 +10,21 @@
     </p>
 
     <p>
-      I build things for the web using Rails and Tailwind.
-      I chase hackathons, write about code, and share beneficial knowledge.
-      Muslim builder working on projects that matter for dunya and akhirah.
+      Full-stack builder shipping products across web, blockchain, and beyond.
+      I chase hackathons, contribute to open source, and share beneficial knowledge.
+      Muslim developer working on projects that matter for dunya and akhirah.
     </p>
 
     <p>
-      Right now I'm working on building this space.
+      <strong>Vision:</strong> Build technology that serves humanity and pleases Allah SWT.<br>
+      <strong>Mission:</strong> Ship excellent products, mentor communities, and preserve knowledge.<br>
+      <strong>Passion:</strong> Decentralized systems, Islamic education tech, developer tools.
+    </p>
+
+    <p>
+      Right now I'm working on building this space and
+      <%= link_to "RZMetaversity", "https://github.com/rz1989s/RZMetaversity", target: "_blank", rel: "noopener" %> —
+      a decentralized learning platform for Web3 builders.
       You can explore my <%= link_to "portfolio", "#" %>,
       peek at <%= link_to "labs", "#" %> experiments,
       read my <%= link_to "journal", "#" %>,
@@ -30,14 +38,34 @@
   <!-- Building in Public Section -->
   <section>
     <h2>Building in Public</h2>
-    <p class="mt-4 mb-2">
-      <strong>Latest from Labs:</strong>
-      <%= link_to "RECTOR LABS CORE - Rails Monolith", "#" %>
-    </p>
-    <p>
-      Pivoting from Next.js microservices to Rails 8 monolith.
-      One domain, one codebase, 7 sections. Warm design inspired by my NFT profile.
-      Building with Ihsan (excellence), Amanah (trust), and avoiding Israf (waste).
+
+    <% if @syncing %>
+      <p class="mt-4">Loading latest projects from GitHub...</p>
+    <% elsif @latest_projects.any? %>
+      <div class="mt-4 space-y-6">
+        <% @latest_projects.each do |project| %>
+          <div>
+            <p class="mb-2">
+              <strong><%= link_to project.name, project.html_url, target: "_blank", rel: "noopener" %></strong>
+              <% if project.language.present? %>
+                <span class="text-xs"> • <%= project.language %></span>
+              <% end %>
+              <span class="text-xs"> • Updated <%= project.time_ago %></span>
+            </p>
+            <% if project.description.present? %>
+              <p><%= project.description %></p>
+            <% end %>
+          </div>
+        <% end %>
+      </div>
+    <% else %>
+      <p class="mt-4">No projects found. Check back later!</p>
+    <% end %>
+
+    <p class="mt-6">
+      Working across <%= @tech_stack[:total_repos] %> repositories.
+      Primary stack:
+      <%= @tech_stack[:primary].map { |l| l[:name] }.join(", ") %>.
     </p>
   </section>
 
@@ -65,8 +93,8 @@
     <h2>Get in Touch</h2>
     <p class="mt-4">
       <%= link_to "GitHub", "https://github.com/rz1989s", target: "_blank", rel: "noopener" %> •
-      <%= link_to "X", "https://x.com/yourusername", target: "_blank", rel: "noopener" %> •
-      <%= link_to "Email", "mailto:your@email.com" %>
+      <%= link_to "X", "https://x.com/RZ1989sol", target: "_blank", rel: "noopener" %> •
+      <%= link_to "Email", "mailto:contact@rectorspace.com" %>
     </p>
   </section>
 
