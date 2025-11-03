@@ -28,7 +28,7 @@
 
 /* Paragraphs - generous spacing for readability */
 .story-content p {
-  margin-bottom: 3rem !important;
+  margin-bottom: 1.5rem !important;
   margin-top: 0 !important;
   line-height: 1.625 !important;
   font-size: 1.125rem !important;
