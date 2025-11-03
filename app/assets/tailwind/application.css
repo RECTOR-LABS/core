@@ -47,6 +47,11 @@
     @apply max-w-2xl mx-auto px-6 py-12;
   }
 
+  .container-homepage p {
+    text-align: justify;
+    text-align-last: left;
+  }
+
   .profile-picture {
     @apply w-[150px] h-[150px] rounded-full mx-auto mb-8;
     box-shadow: 0 4px 12px rgba(199, 90, 68, 0.2);
