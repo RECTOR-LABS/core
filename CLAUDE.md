@@ -6,7 +6,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 **RECTOR LABS CORE** is a Rails 8 monolithic application serving the complete rectorspace.com ecosystem. This is the single source of truth for all platform sections.
 
-**Current Status:** Architecture pivot from Next.js microservices to Rails monolith (2025-11-03). Clean slate for Rails implementation.
+**Current Status:** Live in production with Homepage and Work sections. Built in one weekend (Nov 2-3, 2025), deployed with CI/CD.
 
 **Tech Stack:** Ruby on Rails 8 (fullstack, hybrid) + Tailwind CSS v4
 
@@ -19,7 +19,7 @@ Single domain `rectorspace.com` with route-based sections:
 | Section | Route | Purpose | Status |
 |---------|-------|---------|--------|
 | Homepage | / | Identity hub & landing | ✅ Live |
-| Portfolio | /portfolio | Professional work showcase | 📋 Planned |
+| Work | /work | Story-driven project showcase | ✅ Live |
 | Labs | /labs | Experiments & learning projects | 📋 Planned |
 | Journal | /journal | Blog & writings (Ghost CMS integration) | 📋 Planned |
 | Cheatsheet | /cheatsheet | Dev reference & notes | 📋 Planned |
@@ -29,7 +29,7 @@ Single domain `rectorspace.com` with route-based sections:
 **Architecture Decision:**
 - Rails monolith for unified codebase, shared authentication, single deployment
 - Route-based sections instead of separate apps/subdomains
-- Portfolio (polished professional work) separate from Labs (experiments/learning)
+- Work (story-driven narratives) separate from Labs (experiments/learning)
 - Ghost CMS as external service, integrated via API for Journal section
 
 ---
@@ -41,23 +41,31 @@ core/
 ├── .github/workflows/       # GitHub Actions (Claude Code integration)
 ├── app/
 │   ├── controllers/
-│   │   └── pages_controller.rb       # Homepage (✅ implemented)
+│   │   ├── pages_controller.rb       # Homepage (✅ implemented)
+│   │   └── works_controller.rb       # Work section (✅ implemented)
 │   ├── models/
-│   │   └── github_repo.rb            # GitHub repository cache (✅ implemented)
+│   │   ├── github_repo.rb            # GitHub repository cache (✅ implemented)
+│   │   └── work.rb                   # Work/project stories (✅ implemented)
 │   ├── views/
 │   │   ├── layouts/application.html.erb
-│   │   └── pages/home.html.erb       # Homepage view (✅ implemented)
+│   │   ├── pages/home.html.erb       # Homepage view (✅ implemented)
+│   │   └── works/
+│   │       ├── index.html.erb        # Work listing (✅ implemented)
+│   │       └── show.html.erb         # Story page with custom CSS (✅ implemented)
+│   ├── helpers/
+│   │   └── works_helper.rb           # Markdown rendering (✅ implemented)
 │   ├── jobs/
 │   │   └── sync_github_repos_job.rb  # Hourly GitHub sync (✅ implemented)
 │   └── services/
 │       ├── github_api_service.rb     # GitHub API client (✅ implemented)
 │       └── tech_stack_parser.rb      # Language parser (✅ implemented)
 ├── config/
-│   ├── routes.rb                     # Root route configured
+│   ├── routes.rb                     # Routes for /, /work (✅ configured)
 │   └── recurring.yml                 # Solid Queue job schedule
 ├── db/
 │   ├── migrate/                      # Database migrations
-│   └── schema.rb                     # Current schema
+│   ├── schema.rb                     # Current schema
+│   └── seeds.rb                      # Database seeds with CORE story (✅ implemented)
 ├── lib/tasks/
 │   └── github.rake                   # Manual sync tasks (✅ implemented)
 ├── assets/images/                    # Brand assets (3 logo variants + profile)
@@ -176,9 +184,12 @@ bin/rails server
 - Fetch posts and display in `/journal` route
 - Consider caching strategy for performance
 
-**Portfolio Section:**
-- GitHub API integration for repository showcase
-- Display pinned repos, contribution stats
+**Work Section:**
+- Story-driven project pages (narrative format, not traditional portfolio)
+- GitHub repository metadata integration
+- Custom `/work:story` slash command for generating stories
+- Markdown rendering via Redcarpet gem
+- Custom CSS for readability (justified text, generous spacing)
 
 **Quran Section:**
 - Integrate Quran API (quran.com API or similar)
@@ -284,13 +295,85 @@ bin/rails github:tech_stack    # Show tech stack summary
 
 ---
 
+## Work Section (Story-Driven Projects)
+
+**Implemented Features:**
+- Story-driven project narratives (not traditional portfolio format)
+- Individual project pages at `/work/:slug`
+- Markdown content with Redcarpet rendering
+- Custom CSS for optimal readability (justified text, 2rem paragraph spacing)
+- GitHub repository metadata integration
+
+**Database Schema:**
+```ruby
+create_table "works" do |t|
+  t.string :title          # Project title
+  t.string :slug           # URL-friendly identifier
+  t.string :github_url     # GitHub repository URL
+  t.string :live_url       # Live deployment URL
+  t.string :repo_name      # "owner/repo" format
+  t.text :story            # Full markdown narrative
+  t.text :summary          # One-liner for listing
+  t.string :category       # Project category
+  t.string :status         # "Live", "In Progress", "Archived"
+  t.date :started_at       # Project start date
+  t.date :launched_at      # Launch date
+  t.boolean :featured      # Highlight on homepage
+  t.integer :github_stars  # GitHub stars count
+  t.integer :github_forks  # GitHub forks count
+  t.json :technologies     # Tech stack array
+  t.timestamps
+end
+```
+
+**Custom Slash Command: `/work:story`**
+- Location: `~/.claude/commands/work/story.md`
+- Purpose: Generate story-driven narratives from GitHub repos
+- Features:
+  - Duplicate detection (checks existing stories)
+  - GitHub repo metadata fetching
+  - AI-generated narrative in conversational tone
+  - Proper markdown formatting with blank lines
+  - Automatic database update (local + production)
+- Usage: `/work:story <github-url>`
+- Example: `/work:story https://github.com/RECTOR-LABS/core`
+
+**Story Formatting Guidelines:**
+- Blank lines between ALL paragraphs (critical for Redcarpet)
+- Bold text (`**Section**`) for section headers
+- Conversational, narrative tone (not corporate)
+- Technical details woven into story
+- Focus on "why" and "what I learned"
+- 800-1200 words typical length
+
+**Markdown Rendering:**
+- Gem: Redcarpet
+- Config: `hard_wrap: false` (respects markdown paragraph rules)
+- Features: autolink, tables, fenced code blocks, strikethrough
+- Output: `html_safe` rendered content
+
+**Current Stories:**
+1. **CORE** - Rails 8 monolith story (1,185 words)
+   - URL: https://rectorspace.com/work/core
+   - Slug: `core`
+   - Status: Live
+
+**Work Section Routes:**
+```ruby
+resources :works, only: [:index, :show]
+# GET /work          - List all work projects
+# GET /work/:slug    - Individual project story
+```
+
+---
+
 ## Resources
 
 **Docs:** [Rails Guides](https://guides.rubyonrails.org) | [Tailwind CSS](https://tailwindcss.com/docs) | [Ghost API](https://ghost.org/docs/content-api/)
 
-**Links:** [@rz1989s](https://github.com/rz1989s) | [RECTOR-LABS](https://github.com/RECTOR-LABS) | rectorspace.com _(coming soon)_
+**Links:** [@rz1989s](https://github.com/rz1989s) | [RECTOR-LABS](https://github.com/RECTOR-LABS) | [rectorspace.com](https://rectorspace.com)
 
-**Maintainer:** RECTOR | **Updated:** 2025-11-03 | **Version:** 3.0 (Rails Monolith)
+**Maintainer:** RECTOR | **Updated:** 2025-11-03 | **Version:** 3.1 (Work Section Live)
 
 ---
 
