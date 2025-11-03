@@ -28,9 +28,6 @@
 threads_count = ENV.fetch("RAILS_MAX_THREADS", 3)
 threads threads_count, threads_count
 
-# Specifies the `port` that Puma will listen on to receive requests; default is 3000.
-port ENV.fetch("PORT", 3000)
-
 # Allow puma to be restarted by `bin/rails restart` command.
 plugin :tmp_restart
 
@@ -41,8 +38,11 @@ plugin :solid_queue if ENV["SOLID_QUEUE_IN_PUMA"]
 # In other environments, only set the PID file if requested.
 pidfile ENV["PIDFILE"] if ENV["PIDFILE"]
 
-# Production-specific configuration
+# Environment-specific configuration
 if ENV["RAILS_ENV"] == "production"
+  # Production: Use Unix socket for Nginx reverse proxy
+  bind "unix://#{ENV.fetch('PUMA_SOCKET', 'tmp/sockets/puma.sock')}"
+
   # Run 2 worker processes for production
   workers ENV.fetch("WEB_CONCURRENCY", 2)
 
@@ -61,4 +61,7 @@ if ENV["RAILS_ENV"] == "production"
   on_worker_boot do
     ActiveRecord::Base.establish_connection if defined?(ActiveRecord)
   end
+else
+  # Development/Test: Use TCP port
+  port ENV.fetch("PORT", 3000)
 end
