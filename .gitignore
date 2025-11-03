@@ -56,3 +56,14 @@ Thumbs.db
 
 /app/assets/builds/*
 !/app/assets/builds/.keep
+
+# Playwright MCP screenshots
+.playwright-mcp/
+
+# Rails logs (keep directory structure)
+log/*.log
+
+# Rails temporary files and cache
+tmp/cache/
+tmp/pids/*.pid
+tmp/sockets/
