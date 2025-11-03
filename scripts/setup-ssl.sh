@@ -7,7 +7,7 @@ set -e
 echo "🔒 Setting up SSL with Let's Encrypt..."
 
 # Obtain SSL certificate
-certbot --nginx -d rectorspace.com -d www.rectorspace.com --non-interactive --agree-tos --email rheza10@gmail.com --redirect
+certbot --nginx -d rectorspace.com -d www.rectorspace.com --non-interactive --agree-tos --email ${ADMIN_EMAIL:-admin@rectorspace.com} --redirect
 
 echo ""
 echo "✅ SSL certificate installed!"
