@@ -63,6 +63,9 @@ jobs:
             echo "📦 Installing dependencies..."
             bundle install --deployment --without development test
 
+            # Load environment variables
+            export $(cat .env | grep -v '^#' | xargs)
+
             # Precompile assets
             echo "🎨 Precompiling assets..."
             RAILS_ENV=production bundle exec rails assets:precompile
