@@ -1,0 +1,40 @@
+[Unit]
+Description=Puma HTTP Server for RECTOR LABS CORE
+After=network.target postgresql.service
+
+[Service]
+Type=notify
+User=core
+WorkingDirectory=/home/core/core
+
+# Environment variables
+Environment=RAILS_ENV=production
+Environment=RACK_ENV=production
+EnvironmentFile=/home/core/core/.env
+
+# Puma with phased restart support
+ExecStart=/home/core/.rbenv/shims/bundle exec puma -C config/puma.rb
+
+# Zero-downtime reload: systemctl reload core-puma
+ExecReload=/bin/kill -SIGUSR1 $MAINPID
+
+# Graceful shutdown
+KillMode=mixed
+KillSignal=SIGTERM
+TimeoutStopSec=30
+
+# Restart policy
+Restart=always
+RestartSec=10
+
+# Logging
+StandardOutput=append:/home/core/core/log/puma.stdout.log
+StandardError=append:/home/core/core/log/puma.stderr.log
+SyslogIdentifier=core-puma
+
+# Security and resource limits
+LimitNOFILE=65536
+LimitNPROC=4096
+
+[Install]
+WantedBy=multi-user.target

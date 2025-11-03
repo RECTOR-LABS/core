@@ -1,0 +1,31 @@
+[Unit]
+Description=Solid Queue Worker for RECTOR LABS CORE
+After=network.target postgresql.service core-puma.service
+
+[Service]
+Type=simple
+User=core
+WorkingDirectory=/home/core/core
+
+# Environment variables
+Environment=RAILS_ENV=production
+EnvironmentFile=/home/core/core/.env
+
+# Start Solid Queue worker
+ExecStart=/home/core/.rbenv/shims/bundle exec rake solid_queue:start
+
+# Restart policy
+Restart=always
+RestartSec=10
+
+# Logging
+StandardOutput=append:/home/core/core/log/solid_queue.stdout.log
+StandardError=append:/home/core/core/log/solid_queue.stderr.log
+SyslogIdentifier=core-solidqueue
+
+# Security
+LimitNOFILE=4096
+LimitNPROC=2048
+
+[Install]
+WantedBy=multi-user.target

@@ -40,3 +40,25 @@ plugin :solid_queue if ENV["SOLID_QUEUE_IN_PUMA"]
 # Specify the PID file. Defaults to tmp/pids/server.pid in development.
 # In other environments, only set the PID file if requested.
 pidfile ENV["PIDFILE"] if ENV["PIDFILE"]
+
+# Production-specific configuration
+if ENV["RAILS_ENV"] == "production"
+  # Run 2 worker processes for production
+  workers ENV.fetch("WEB_CONCURRENCY", 2)
+
+  # Preload application for memory efficiency
+  preload_app!
+
+  # Allow phased restarts for zero-downtime deployments
+  # When you run `systemctl reload core-puma`, Puma will:
+  # 1. Start new workers with updated code
+  # 2. Gradually kill old workers after requests complete
+  # 3. No requests are dropped during deployment
+  worker_timeout 30
+  worker_boot_timeout 30
+
+  # Worker-specific setup (e.g., reconnect to database)
+  on_worker_boot do
+    ActiveRecord::Base.establish_connection if defined?(ActiveRecord)
+  end
+end

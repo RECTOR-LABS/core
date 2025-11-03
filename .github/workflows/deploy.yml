@@ -1,0 +1,103 @@
+name: Deploy to Production
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch: # Allow manual trigger
+
+jobs:
+  deploy:
+    name: Deploy to VPS
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '3.3'
+          bundler-cache: true
+
+      - name: Install SSH key
+        uses: shimataro/ssh-key-action@v2
+        with:
+          key: ${{ secrets.VPS_SSH_KEY }}
+          known_hosts: unnecessary
+          if_key_exists: replace
+
+      - name: Add VPS to known hosts
+        run: ssh-keyscan -H ${{ secrets.VPS_HOST }} >> ~/.ssh/known_hosts
+
+      - name: Deploy to VPS
+        env:
+          VPS_HOST: ${{ secrets.VPS_HOST }}
+          VPS_USER: ${{ secrets.VPS_USER }}
+        run: |
+          ssh $VPS_USER@$VPS_HOST << 'ENDSSH'
+            set -e
+
+            echo "🚀 Starting deployment..."
+
+            cd ~/core
+
+            # Pull latest changes
+            echo "📥 Pulling latest code from main..."
+            git fetch origin
+            git reset --hard origin/main
+
+            # Install dependencies
+            echo "📦 Installing dependencies..."
+            bundle install --deployment --without development test
+
+            # Precompile assets
+            echo "🎨 Precompiling assets..."
+            RAILS_ENV=production bundle exec rails assets:precompile
+
+            # Run database migrations
+            echo "🗄️  Running database migrations..."
+            RAILS_ENV=production bundle exec rails db:migrate
+
+            # Restart services (zero-downtime)
+            echo "🔄 Restarting Puma (zero-downtime)..."
+            sudo systemctl reload core-puma
+
+            echo "🔄 Restarting Solid Queue..."
+            sudo systemctl restart core-solidqueue
+
+            # Verify deployment
+            echo "✅ Deployment complete!"
+            echo "📊 App status:"
+            sudo systemctl status core-puma --no-pager -l
+
+          ENDSSH
+
+      - name: Verify deployment
+        env:
+          VPS_HOST: ${{ secrets.VPS_HOST }}
+          VPS_USER: ${{ secrets.VPS_USER }}
+        run: |
+          # Wait for app to be ready
+          sleep 5
+
+          # Check if site is responding
+          if curl -f -s -o /dev/null https://rectorspace.com/up; then
+            echo "✅ Production site is healthy!"
+          else
+            echo "❌ Production site health check failed!"
+            exit 1
+          fi
+
+      - name: Notify deployment success
+        if: success()
+        run: |
+          echo "✅ Deployment successful!"
+          echo "🌐 Visit: https://rectorspace.com"
+
+      - name: Notify deployment failure
+        if: failure()
+        run: |
+          echo "❌ Deployment failed!"
+          echo "Check logs: https://github.com/${{ github.repository }}/actions"
