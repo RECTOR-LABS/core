@@ -22,10 +22,10 @@
     </p>
 
     <p>
-      Right now I'm working on building this space and
-      <%= link_to "RZMetaversity", "https://github.com/rz1989s/RZMetaversity", target: "_blank", rel: "noopener" %> —
-      a decentralized learning platform for Web3 builders.
-      You can explore my <%= link_to "work", works_path %>,
+      Right now I'm building <%= link_to "CORE", works_path %> —
+      this Rails 8 monolith that powers everything you see here.
+      One codebase, seven sections, zero microservices headache.
+      You can explore my <%= link_to "work", works_path %> stories,
       peek at <%= link_to "labs", "#" %> experiments,
       read my <%= link_to "journal", "#" %>,
       or browse my <%= link_to "cheatsheet", "#" %>.
@@ -63,11 +63,14 @@
     <% end %>
 
     <% if @tech_stack && @tech_stack[:primary].present? %>
-      <p class="mt-6">
-        Working across <%= @tech_stack[:total_repos] %> repositories.
-        Primary stack:
-        <%= @tech_stack[:primary].map { |l| l[:name] }.join(", ") %>.
-      </p>
+      <div class="mt-8 p-6 bg-[#3B2C22]/5 border-l-4 border-[#41CFFF] rounded">
+        <p class="text-sm font-medium text-[#3B2C22]/60 mb-2">
+          BUILDING ACROSS <%= @tech_stack[:total_repos] %> REPOSITORIES
+        </p>
+        <p class="font-mono text-lg font-semibold text-[#3B2C22]">
+          <%= @tech_stack[:primary].map { |l| l[:name] }.join(" • ") %>
+        </p>
+      </div>
     <% end %>
   </section>
 
