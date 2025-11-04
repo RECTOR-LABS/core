@@ -52,16 +52,22 @@ module VersionHelper
     time_ago_in_words(timestamp)
   end
 
+  # Returns total number of commits in repository
+  def total_commits_count
+    version_info = read_version_file
+    version_info[:commit_count]
+  end
+
   private
 
   # Reads and parses the REVISION file
-  # Format: SHA|BRANCH (e.g., "abc123def456|main")
+  # Format: SHA|BRANCH|COMMIT_COUNT (e.g., "abc123def456|main|57")
   def read_version_file
     return @version_info if defined?(@version_info)
 
     revision_file = Rails.root.join("REVISION")
     unless revision_file.exist?
-      @version_info = { sha: nil, branch: nil }
+      @version_info = { sha: nil, branch: nil, commit_count: nil }
       return @version_info
     end
 
@@ -70,7 +76,8 @@ module VersionHelper
 
     @version_info = {
       sha: parts[0]&.strip,
-      branch: parts[1]&.strip || "unknown"
+      branch: parts[1]&.strip || "unknown",
+      commit_count: parts[2]&.strip&.to_i
     }
   end
 end

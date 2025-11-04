@@ -52,12 +52,13 @@ jobs:
             git fetch origin
             git reset --hard origin/main
 
-            # Generate REVISION file with commit SHA and branch
+            # Generate REVISION file with commit SHA, branch, and commit count
             echo "📝 Generating REVISION file..."
             COMMIT_SHA=$(git rev-parse HEAD)
             BRANCH=$(git rev-parse --abbrev-ref HEAD)
-            echo "${COMMIT_SHA}|${BRANCH}" > REVISION
-            echo "✅ REVISION: ${BRANCH}@${COMMIT_SHA:0:7}"
+            COMMIT_COUNT=$(git rev-list --count HEAD)
+            echo "${COMMIT_SHA}|${BRANCH}|${COMMIT_COUNT}" > REVISION
+            echo "✅ REVISION: ${BRANCH}@${COMMIT_SHA:0:7} (${COMMIT_COUNT} commits)"
 
             # Install dependencies
             echo "📦 Installing dependencies..."

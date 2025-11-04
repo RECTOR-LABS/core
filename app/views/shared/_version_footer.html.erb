@@ -1,8 +1,6 @@
 <% if Rails.env.production? && short_commit_sha.present? %>
   <footer class="version-footer">
     <div class="version-info">
-      <span class="version-label">Production:</span>
-
       <!-- Branch -->
       <% if current_branch.present? %>
         <%= link_to branch_github_url,
@@ -28,6 +26,12 @@
           <path fill="currentColor" d="M11.93 8.5a4.002 4.002 0 01-7.86 0H.75a.75.75 0 010-1.5h3.32a4.002 4.002 0 017.86 0h3.32a.75.75 0 010 1.5h-3.32zM8 6a2 2 0 100 4 2 2 0 000-4z"></path>
         </svg>
         <code class="version-sha"><%= short_commit_sha %></code>
+      <% end %>
+
+      <!-- Commit Count -->
+      <% if total_commits_count.present? %>
+        <span class="version-separator">•</span>
+        <span class="version-commits"><%= total_commits_count %> Commits</span>
       <% end %>
     </div>
   </footer>
