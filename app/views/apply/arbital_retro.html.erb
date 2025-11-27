@@ -1,0 +1,158 @@
+<% content_for :title do %>RECTOR × Arbital | Application<% end %>
+
+<% content_for :body_class do %>retro-terminal<% end %>
+
+<% content_for :styles do %>
+  <%= stylesheet_link_tag "apply_retro", "data-turbo-track": "reload" %>
+<% end %>
+
+<div class="crt-monitor" data-controller="boot-sequence">
+  <div class="crt-screen">
+
+    <%# Boot Sequence Header %>
+    <div class="boot-header">
+      <div class="bios-line" data-boot-sequence-target="line">RECTOR SYSTEMS BIOS v2.0</div>
+      <div class="bios-line" data-boot-sequence-target="line">Initializing candidate profile...</div>
+      <div class="bios-line" data-boot-sequence-target="line">Loading <%= @stats[:total_repos] %> repositories... OK</div>
+      <div class="bios-line" data-boot-sequence-target="line">MEV subsystem... READY</div>
+    </div>
+
+    <%# Main Content (revealed after boot) %>
+    <div data-boot-sequence-target="content">
+
+      <%# Identity Section %>
+      <div class="identity-section">
+        <div class="avatar-container">
+          <div class="avatar-frame">
+            <%= image_tag @identity[:avatar], alt: @identity[:name] %>
+          </div>
+        </div>
+        <div class="identity-info">
+          <h1 class="identity-name"><%= @identity[:name] %></h1>
+          <div class="identity-tagline">"<%= @identity[:tagline] %>"</div>
+          <div class="identity-role"><%= @identity[:role] %></div>
+        </div>
+      </div>
+
+      <%# Stats Section %>
+      <div class="section-header">PROOF OF WORK</div>
+      <div class="stats-grid">
+        <div class="stat-box">
+          <div class="stat-value"><%= @stats[:total_stars] %></div>
+          <div class="stat-label">GitHub Stars</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-value"><%= @stats[:vulnerabilities_found] %></div>
+          <div class="stat-label">Vulns Found</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-value"><%= @stats[:bounty_earned] %></div>
+          <div class="stat-label">Bounty Won</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-value"><%= @stats[:hackathons_2025] %></div>
+          <div class="stat-label">Hackathons '25</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-value"><%= @stats[:total_repos] %></div>
+          <div class="stat-label">Repositories</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-value"><%= @stats[:solana_projects] %></div>
+          <div class="stat-label">Solana Projects</div>
+        </div>
+      </div>
+
+      <%# Why Arbital %>
+      <div class="section-header">WHY ARBITAL</div>
+      <div class="why-section">
+        <% @why_arbital.split("\n\n").each do |paragraph| %>
+          <p><%= paragraph %></p>
+        <% end %>
+      </div>
+
+      <%# Featured Projects %>
+      <div class="section-header">FEATURED PROJECTS</div>
+      <div class="project-list">
+        <% @featured_projects.each do |project| %>
+          <div class="project-item glitch-hover">
+            <div class="project-header">
+              <span class="project-name"><%= project[:name] %></span>
+              <span class="project-lang <%= project[:language].downcase.split('/').first %>"><%= project[:language] %></span>
+            </div>
+            <div class="project-org">@<%= project[:org] %></div>
+            <div class="project-desc"><%= project[:description] %></div>
+            <div class="project-tags">
+              <% project[:tags].each do |tag| %>
+                <span class="project-tag"><%= tag %></span>
+              <% end %>
+            </div>
+            <div class="project-relevance"><%= project[:relevance] %></div>
+          </div>
+        <% end %>
+      </div>
+
+      <%# Tech Stack with animated progress bars %>
+      <div class="section-header">TECHNICAL STACK</div>
+      <div class="tech-stack-list" data-controller="progress-bar">
+        <% @tech_stack[:primary].each do |tech| %>
+          <div class="tech-item">
+            <span class="tech-name <%= 'highlight' if tech[:highlight] %>"><%= tech[:name] %></span>
+            <div class="tech-bar-container">
+              <div class="tech-bar <%= 'highlight' if tech[:highlight] %>" data-progress-bar-target="bar" style="width: <%= tech[:level] %>%"></div>
+            </div>
+            <span class="tech-level"><%= tech[:level] %>%</span>
+          </div>
+        <% end %>
+        <% @tech_stack[:secondary].each do |tech| %>
+          <div class="tech-item">
+            <span class="tech-name"><%= tech[:name] %></span>
+            <div class="tech-bar-container">
+              <div class="tech-bar" data-progress-bar-target="bar" style="width: <%= tech[:level] %>%"></div>
+            </div>
+            <span class="tech-level"><%= tech[:level] %>%</span>
+          </div>
+        <% end %>
+      </div>
+
+      <div class="section-header">DOMAIN EXPERTISE</div>
+      <div class="domains-list">
+        <% @tech_stack[:domains].each do |domain| %>
+          <span class="domain-tag"><%= domain %></span>
+        <% end %>
+      </div>
+
+      <%# GitHub Organizations %>
+      <div class="section-header">GITHUB PRESENCE</div>
+      <div class="orgs-grid">
+        <% @orgs.each do |org| %>
+          <a href="<%= org[:url] %>" target="_blank" rel="noopener" class="org-item">
+            <div>
+              <div class="org-name">@<%= org[:name] %></div>
+              <div class="org-type"><%= org[:type] %></div>
+            </div>
+            <div class="org-repos"><%= org[:repos] %> repos</div>
+          </a>
+        <% end %>
+      </div>
+
+      <%# Contact %>
+      <div class="contact-section">
+        <div class="prompt" data-controller="typing" data-typing-speed-value="40">
+          <span data-typing-target="text">Ready to build what the Old Guard won't?</span><span class="cursor"></span>
+        </div>
+        <div class="contact-links">
+          <a href="<%= @contact[:github] %>" target="_blank" rel="noopener" class="contact-link">[GitHub]</a>
+          <a href="<%= @contact[:twitter] %>" target="_blank" rel="noopener" class="contact-link">[Twitter/X]</a>
+        </div>
+      </div>
+
+      <%# Footer %>
+      <div class="terminal-footer">
+        <div>rectorspace.com/apply/arbital/retro</div>
+        <div>Generated: <%= Time.current.strftime('%Y-%m-%d %H:%M UTC') %></div>
+      </div>
+
+    </div>
+  </div>
+</div>

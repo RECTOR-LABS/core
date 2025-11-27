@@ -1,0 +1,555 @@
+<% content_for :title do %>RECTOR × Arbital | Application<% end %>
+
+<% content_for :body_class do %>retro-terminal<% end %>
+
+<% content_for :styles do %>
+  <%= stylesheet_link_tag "apply_retro", "data-turbo-track": "reload" %>
+  <%= stylesheet_link_tag "apply_modern", "data-turbo-track": "reload" %>
+  <style>
+    /* ==========================================
+       THEME SWITCHER BUTTON - Under Profile
+       ========================================== */
+    .theme-switcher-wrapper {
+      text-align: center;
+      margin: 2rem 0;
+      padding: 1.5rem;
+    }
+
+    .theme-cta {
+      font-family: 'VT323', monospace;
+      font-size: 1.1rem;
+      margin-bottom: 1rem;
+      animation: bounce-arrow 1s ease-in-out infinite;
+    }
+
+    @keyframes bounce-arrow {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(4px); }
+    }
+
+    .retro-terminal .theme-cta {
+      color: #ffb000;
+    }
+
+    .modern-dark .theme-cta {
+      color: #F9C846;
+    }
+
+    .theme-switch-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      padding: 12px 24px;
+      border-radius: 8px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.9rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      border: 2px solid;
+    }
+
+    .theme-switch-btn:hover {
+      transform: translateY(-2px);
+    }
+
+    .switch-icon {
+      font-size: 1.2rem;
+    }
+
+    /* Retro theme button */
+    .retro-terminal .theme-switch-btn {
+      background: rgba(51, 255, 51, 0.1);
+      border-color: #33ff33;
+      color: #33ff33;
+    }
+
+    .retro-terminal .theme-switch-btn:hover {
+      background: rgba(51, 255, 51, 0.2);
+      box-shadow: 0 0 20px rgba(51, 255, 51, 0.4);
+    }
+
+    /* Modern theme button */
+    .modern-dark .theme-switch-btn {
+      background: rgba(65, 207, 255, 0.1);
+      border-color: #41CFFF;
+      color: #41CFFF;
+    }
+
+    .modern-dark .theme-switch-btn:hover {
+      background: rgba(65, 207, 255, 0.2);
+      box-shadow: 0 4px 20px rgba(65, 207, 255, 0.3);
+    }
+
+    .theme-hint {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.8rem;
+      margin-top: 0.75rem;
+      opacity: 0.6;
+    }
+
+    .retro-terminal .theme-hint {
+      color: #33ff33;
+    }
+
+    .modern-dark .theme-hint {
+      color: #9ca3af;
+    }
+
+    /* Requirements Match Section */
+    .requirements-match {
+      margin: 1rem 0 2rem;
+    }
+
+    .match-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.75rem;
+      padding: 0.75rem;
+      margin-bottom: 0.5rem;
+      border-radius: 6px;
+      transition: all 0.2s ease;
+    }
+
+    .retro-terminal .match-item {
+      background: rgba(51, 255, 51, 0.03);
+      border: 1px solid rgba(51, 255, 51, 0.2);
+    }
+
+    .retro-terminal .match-item:hover {
+      background: rgba(51, 255, 51, 0.08);
+      border-color: #33ff33;
+    }
+
+    .modern-dark .match-item {
+      background: rgba(65, 207, 255, 0.03);
+      border: 1px solid rgba(65, 207, 255, 0.2);
+    }
+
+    .modern-dark .match-item:hover {
+      background: rgba(65, 207, 255, 0.08);
+      border-color: #41CFFF;
+    }
+
+    .match-area {
+      font-weight: 600;
+      min-width: 140px;
+      flex-shrink: 0;
+    }
+
+    .retro-terminal .match-area {
+      color: #ffb000;
+    }
+
+    .modern-dark .match-area {
+      color: #F9C846;
+    }
+
+    .match-arrow {
+      opacity: 0.5;
+      flex-shrink: 0;
+    }
+
+    .retro-terminal .match-arrow {
+      color: #33ff33;
+    }
+
+    .modern-dark .match-arrow {
+      color: #41CFFF;
+    }
+
+    .match-desc {
+      flex: 1;
+      font-size: 0.95rem;
+      line-height: 1.4;
+    }
+
+    .retro-terminal .match-desc {
+      color: #33ff33;
+      opacity: 0.9;
+    }
+
+    .modern-dark .match-desc {
+      color: #9ca3af;
+    }
+
+    @media (max-width: 768px) {
+      .match-item {
+        flex-direction: column;
+        gap: 0.25rem;
+      }
+      .match-area {
+        min-width: auto;
+      }
+      .match-arrow {
+        display: none;
+      }
+    }
+
+    /* Smooth theme transition */
+    body {
+      transition: background-color 0.3s ease;
+    }
+
+    [data-theme] {
+      transition: opacity 0.3s ease;
+    }
+  </style>
+<% end %>
+
+<div data-controller="theme-switcher" data-theme-switcher-theme-value="retro">
+
+  <%# ==================== RETRO TERMINAL VERSION ==================== %>
+  <div data-theme="retro">
+    <div class="crt-monitor" data-controller="boot-sequence">
+      <div class="crt-screen">
+
+        <%# Boot Sequence Header %>
+        <div class="boot-header">
+          <div class="bios-line" data-boot-sequence-target="line">RECTOR SYSTEMS BIOS v2.0</div>
+          <div class="bios-line" data-boot-sequence-target="line">Initializing candidate profile...</div>
+          <div class="bios-line" data-boot-sequence-target="line">Loading <%= @stats[:total_repos] %> repositories... OK</div>
+          <div class="bios-line" data-boot-sequence-target="line">MEV subsystem... READY</div>
+        </div>
+
+        <%# Main Content (revealed after boot) %>
+        <div data-boot-sequence-target="content">
+
+          <%# Identity Section %>
+          <div class="identity-section">
+            <div class="avatar-container">
+              <div class="avatar-frame">
+                <%= image_tag @identity[:avatar], alt: @identity[:name] %>
+              </div>
+            </div>
+            <div class="identity-info">
+              <h1 class="identity-name"><%= @identity[:name] %></h1>
+              <div class="identity-tagline">"<%= @identity[:tagline] %>"</div>
+              <div class="identity-role"><%= @identity[:role] %></div>
+            </div>
+          </div>
+
+          <%# Theme Switcher - Below Profile %>
+          <div class="theme-switcher-wrapper">
+            <div class="theme-cta">▼ Bored of this view? Switch it up! ▼</div>
+            <button type="button" class="theme-switch-btn" data-action="click->theme-switcher#toggle">
+              <span class="switch-icon">◐</span>
+              <span class="switch-label" data-theme-switcher-target="label">SWITCH TO MODERN</span>
+            </button>
+            <div class="theme-hint">// senior devs appreciate options</div>
+          </div>
+
+          <%# Stats Section %>
+          <div class="section-header">PROOF OF WORK</div>
+          <div class="stats-grid">
+            <div class="stat-box">
+              <div class="stat-value"><%= @stats[:total_stars] %></div>
+              <div class="stat-label">GitHub Stars</div>
+            </div>
+            <div class="stat-box">
+              <div class="stat-value"><%= @stats[:vulnerabilities_found] %></div>
+              <div class="stat-label">Vulns Found</div>
+            </div>
+            <div class="stat-box">
+              <div class="stat-value"><%= @stats[:bounty_earned] %></div>
+              <div class="stat-label">Bounty Won</div>
+            </div>
+            <div class="stat-box">
+              <div class="stat-value"><%= @stats[:hackathons_2025] %></div>
+              <div class="stat-label">Hackathons '25</div>
+            </div>
+            <div class="stat-box">
+              <div class="stat-value"><%= @stats[:total_repos] %></div>
+              <div class="stat-label">Repositories</div>
+            </div>
+            <div class="stat-box">
+              <div class="stat-value"><%= @stats[:trading_projects] %></div>
+              <div class="stat-label">Trading Projects</div>
+            </div>
+          </div>
+
+          <%# Requirements Match - NEW SECTION %>
+          <div class="section-header">YOUR REQUIREMENTS → MY EXPERIENCE</div>
+          <div class="requirements-match">
+            <% @what_i_bring.each do |item| %>
+              <div class="match-item">
+                <div class="match-area"><%= item[:area] %></div>
+                <div class="match-arrow">→</div>
+                <div class="match-desc"><%= item[:match] %></div>
+              </div>
+            <% end %>
+          </div>
+
+          <%# Why Arbital %>
+          <div class="section-header">WHY ARBITAL</div>
+          <div class="why-section">
+            <% @why_arbital.split("\n\n").each do |paragraph| %>
+              <p><%= paragraph %></p>
+            <% end %>
+          </div>
+
+          <%# Featured Projects %>
+          <div class="section-header">FEATURED PROJECTS</div>
+          <div class="project-list">
+            <% @featured_projects.each do |project| %>
+              <div class="project-item glitch-hover">
+                <div class="project-header">
+                  <span class="project-name"><%= project[:name] %></span>
+                  <span class="project-lang <%= project[:language].downcase.split('/').first %>"><%= project[:language] %></span>
+                </div>
+                <div class="project-org">@<%= project[:org] %></div>
+                <div class="project-desc"><%= project[:description] %></div>
+                <div class="project-tags">
+                  <% project[:tags].each do |tag| %>
+                    <span class="project-tag"><%= tag %></span>
+                  <% end %>
+                </div>
+                <div class="project-relevance"><%= project[:relevance] %></div>
+              </div>
+            <% end %>
+          </div>
+
+          <%# Tech Stack %>
+          <div class="section-header">TECHNICAL STACK</div>
+          <div class="tech-stack-list" data-controller="progress-bar">
+            <% @tech_stack[:primary].each do |tech| %>
+              <div class="tech-item">
+                <span class="tech-name <%= 'highlight' if tech[:highlight] %>"><%= tech[:name] %></span>
+                <div class="tech-bar-container">
+                  <div class="tech-bar <%= 'highlight' if tech[:highlight] %>" data-progress-bar-target="bar" style="width: <%= tech[:level] %>%"></div>
+                </div>
+                <span class="tech-level"><%= tech[:level] %>%</span>
+              </div>
+            <% end %>
+            <% @tech_stack[:secondary].each do |tech| %>
+              <div class="tech-item">
+                <span class="tech-name"><%= tech[:name] %></span>
+                <div class="tech-bar-container">
+                  <div class="tech-bar" data-progress-bar-target="bar" style="width: <%= tech[:level] %>%"></div>
+                </div>
+                <span class="tech-level"><%= tech[:level] %>%</span>
+              </div>
+            <% end %>
+          </div>
+
+          <div class="section-header">DOMAIN EXPERTISE</div>
+          <div class="domains-list">
+            <% @tech_stack[:domains].each do |domain| %>
+              <span class="domain-tag"><%= domain %></span>
+            <% end %>
+          </div>
+
+          <%# GitHub Organizations %>
+          <div class="section-header">GITHUB PRESENCE</div>
+          <div class="orgs-grid">
+            <% @orgs.each do |org| %>
+              <a href="<%= org[:url] %>" target="_blank" rel="noopener" class="org-item">
+                <div>
+                  <div class="org-name">@<%= org[:name] %></div>
+                  <div class="org-type"><%= org[:type] %></div>
+                </div>
+                <div class="org-repos"><%= org[:repos] %> repos</div>
+              </a>
+            <% end %>
+          </div>
+
+          <%# Contact %>
+          <div class="contact-section">
+            <div class="prompt" data-controller="typing" data-typing-speed-value="40">
+              <span data-typing-target="text">Ready to build what the Old Guard won't?</span><span class="cursor"></span>
+            </div>
+            <div class="contact-links">
+              <a href="<%= @contact[:github] %>" target="_blank" rel="noopener" class="contact-link">[GitHub]</a>
+              <a href="<%= @contact[:twitter] %>" target="_blank" rel="noopener" class="contact-link">[Twitter/X]</a>
+            </div>
+          </div>
+
+          <%# Footer %>
+          <div class="terminal-footer">
+            <div>rectorspace.com/apply/arbital</div>
+            <div>Generated: <%= Time.current.strftime('%Y-%m-%d %H:%M UTC') %></div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <%# ==================== MODERN DARK VERSION ==================== %>
+  <div data-theme="modern" style="display: none;">
+    <div class="modern-container">
+
+      <%# Hero Section %>
+      <section class="hero-section">
+        <div class="avatar-wrapper">
+          <%= image_tag @identity[:avatar], class: "avatar-img", alt: @identity[:name] %>
+        </div>
+        <h1 class="hero-name"><%= @identity[:name] %></h1>
+        <p class="hero-tagline"><%= @identity[:tagline] %></p>
+        <p class="hero-role"><%= @identity[:role] %></p>
+
+        <div class="badge-row">
+          <span class="badge rust">Rust</span>
+          <span class="badge python">Python</span>
+          <span class="badge solana">Solana</span>
+        </div>
+
+        <%# Theme Switcher - Below Profile %>
+        <div class="theme-switcher-wrapper">
+          <div class="theme-cta">▼ Bored of this view? Switch it up! ▼</div>
+          <button type="button" class="theme-switch-btn" data-action="click->theme-switcher#toggle">
+            <span class="switch-icon">◑</span>
+            <span class="switch-label" data-theme-switcher-target="label">SWITCH TO RETRO</span>
+          </button>
+          <div class="theme-hint">senior devs appreciate options</div>
+        </div>
+      </section>
+
+      <%# Stats Section %>
+      <section class="stats-section" data-controller="scroll-reveal">
+        <h2 class="section-title">Proof of Work</h2>
+        <div class="stats-grid">
+          <div class="stat-card" data-scroll-reveal-target="item">
+            <div class="stat-value"><%= @stats[:total_stars] %></div>
+            <div class="stat-label">GitHub Stars</div>
+          </div>
+          <div class="stat-card" data-scroll-reveal-target="item">
+            <div class="stat-value"><%= @stats[:vulnerabilities_found] %></div>
+            <div class="stat-label">Vulnerabilities Found</div>
+          </div>
+          <div class="stat-card" data-scroll-reveal-target="item">
+            <div class="stat-value"><%= @stats[:bounty_earned] %></div>
+            <div class="stat-label">Bounty Earned</div>
+          </div>
+          <div class="stat-card" data-scroll-reveal-target="item">
+            <div class="stat-value"><%= @stats[:hackathons_2025] %></div>
+            <div class="stat-label">Hackathons 2025</div>
+          </div>
+          <div class="stat-card" data-scroll-reveal-target="item">
+            <div class="stat-value"><%= @stats[:total_repos] %></div>
+            <div class="stat-label">Repositories</div>
+          </div>
+          <div class="stat-card" data-scroll-reveal-target="item">
+            <div class="stat-value"><%= @stats[:trading_projects] %></div>
+            <div class="stat-label">Trading Projects</div>
+          </div>
+        </div>
+      </section>
+
+      <%# Requirements Match - NEW SECTION %>
+      <section class="requirements-section">
+        <h2 class="section-title">Your Requirements → My Experience</h2>
+        <div class="requirements-match">
+          <% @what_i_bring.each do |item| %>
+            <div class="match-item">
+              <div class="match-area"><%= item[:area] %></div>
+              <div class="match-arrow">→</div>
+              <div class="match-desc"><%= item[:match] %></div>
+            </div>
+          <% end %>
+        </div>
+      </section>
+
+      <%# Why Arbital %>
+      <section class="why-section-wrapper">
+        <h2 class="section-title">Why Arbital</h2>
+        <div class="why-section">
+          <% @why_arbital.split("\n\n").each do |paragraph| %>
+            <p><%= paragraph %></p>
+          <% end %>
+        </div>
+      </section>
+
+      <%# Featured Projects %>
+      <section class="projects-section" data-controller="scroll-reveal" data-scroll-reveal-delay-value="80">
+        <h2 class="section-title">Featured Projects</h2>
+        <div class="projects-grid">
+          <% @featured_projects.each do |project| %>
+            <div class="project-card" data-scroll-reveal-target="item">
+              <div class="project-header">
+                <span class="project-name"><%= project[:name] %></span>
+                <span class="project-lang <%= project[:language].downcase.split('/').first %>"><%= project[:language] %></span>
+              </div>
+              <div class="project-org">@<%= project[:org] %></div>
+              <p class="project-desc"><%= project[:description] %></p>
+              <div class="project-tags">
+                <% project[:tags].each do |tag| %>
+                  <span class="tag"><%= tag %></span>
+                <% end %>
+              </div>
+              <div class="project-relevance"><%= project[:relevance] %></div>
+            </div>
+          <% end %>
+        </div>
+      </section>
+
+      <%# Tech Stack %>
+      <section class="tech-section" data-controller="progress-bar">
+        <h2 class="section-title">Technical Stack</h2>
+        <div class="tech-grid">
+          <% @tech_stack[:primary].each do |tech| %>
+            <div class="tech-item">
+              <span class="tech-name <%= 'highlight' if tech[:highlight] %>"><%= tech[:name] %></span>
+              <div class="tech-bar-wrapper">
+                <div class="tech-bar <%= 'highlight' if tech[:highlight] %>" data-progress-bar-target="bar" style="width: <%= tech[:level] %>%"></div>
+              </div>
+              <span class="tech-percent"><%= tech[:level] %>%</span>
+            </div>
+          <% end %>
+          <% @tech_stack[:secondary].each do |tech| %>
+            <div class="tech-item">
+              <span class="tech-name"><%= tech[:name] %></span>
+              <div class="tech-bar-wrapper">
+                <div class="tech-bar" data-progress-bar-target="bar" style="width: <%= tech[:level] %>%"></div>
+              </div>
+              <span class="tech-percent"><%= tech[:level] %>%</span>
+            </div>
+          <% end %>
+        </div>
+
+        <div class="domains-wrap">
+          <% @tech_stack[:domains].each do |domain| %>
+            <span class="domain-pill"><%= domain %></span>
+          <% end %>
+        </div>
+      </section>
+
+      <%# GitHub Presence %>
+      <section class="github-section" data-controller="scroll-reveal">
+        <h2 class="section-title">GitHub Presence</h2>
+        <div class="orgs-grid">
+          <% @orgs.each do |org| %>
+            <a href="<%= org[:url] %>" target="_blank" rel="noopener" class="org-card" data-scroll-reveal-target="item">
+              <div class="org-info">
+                <span class="org-name">@<%= org[:name] %></span>
+                <span class="org-type"><%= org[:type] %></span>
+              </div>
+              <div class="org-count">
+                <%= org[:repos] %>
+                <span>repos</span>
+              </div>
+            </a>
+          <% end %>
+        </div>
+      </section>
+
+      <%# Contact %>
+      <section class="contact-section">
+        <p class="contact-prompt">Ready to build what the Old Guard won't?</p>
+        <div class="contact-links">
+          <a href="<%= @contact[:github] %>" target="_blank" rel="noopener" class="contact-btn">GitHub</a>
+          <a href="<%= @contact[:twitter] %>" target="_blank" rel="noopener" class="contact-btn primary">Twitter / X</a>
+        </div>
+      </section>
+
+      <%# Footer %>
+      <footer class="page-footer">
+        <p>rectorspace.com/apply/arbital</p>
+        <p>Last updated: <%= Time.current.strftime('%Y-%m-%d') %></p>
+      </footer>
+
+    </div>
+  </div>
+
+</div>
+

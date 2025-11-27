@@ -1,0 +1,517 @@
+/* ===========================================
+   RETRO TERMINAL CV - CRT Monitor Aesthetic
+   Arbital Application Page
+   =========================================== */
+
+/* Base Reset for Retro Page */
+.retro-terminal {
+  --phosphor-green: #33ff33;
+  --phosphor-green-dim: #1a8c1a;
+  --phosphor-amber: #ffb000;
+  --phosphor-amber-dim: #996600;
+  --crt-black: #0a0a0a;
+  --crt-dark: #111111;
+  --scanline-opacity: 0.08;
+
+  background: var(--crt-black);
+  color: var(--phosphor-green);
+  font-family: 'VT323', 'Courier New', monospace;
+  font-size: 18px;
+  line-height: 1.4;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* CRT Monitor Container */
+.crt-monitor {
+  position: relative;
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 2rem;
+}
+
+/* Scanline Effect Overlay */
+.crt-monitor::before {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: repeating-linear-gradient(
+    0deg,
+    rgba(0, 0, 0, var(--scanline-opacity)),
+    rgba(0, 0, 0, var(--scanline-opacity)) 1px,
+    transparent 1px,
+    transparent 2px
+  );
+  pointer-events: none;
+  z-index: 1000;
+}
+
+/* Screen Flicker Animation */
+@keyframes flicker {
+  0%, 100% { opacity: 1; }
+  92% { opacity: 1; }
+  93% { opacity: 0.9; }
+  94% { opacity: 1; }
+}
+
+.crt-monitor {
+  animation: flicker 8s infinite;
+}
+
+/* CRT Screen Glow */
+.crt-screen {
+  background: var(--crt-dark);
+  border: 3px solid var(--phosphor-green-dim);
+  border-radius: 8px;
+  padding: 2rem;
+  box-shadow:
+    0 0 20px rgba(51, 255, 51, 0.1),
+    inset 0 0 60px rgba(0, 0, 0, 0.5);
+  position: relative;
+}
+
+/* Boot Sequence Header */
+.boot-header {
+  border-bottom: 1px solid var(--phosphor-green-dim);
+  padding-bottom: 1rem;
+  margin-bottom: 2rem;
+  font-size: 14px;
+  opacity: 0.7;
+}
+
+.boot-header .bios-line {
+  margin-bottom: 0.25rem;
+}
+
+/* Identity Section */
+.identity-section {
+  display: flex;
+  align-items: flex-start;
+  gap: 2rem;
+  margin-bottom: 2rem;
+  padding-bottom: 2rem;
+  border-bottom: 1px dashed var(--phosphor-green-dim);
+}
+
+.avatar-container {
+  flex-shrink: 0;
+}
+
+.avatar-frame {
+  width: 120px;
+  height: 120px;
+  border: 2px solid var(--phosphor-green);
+  padding: 4px;
+  background: var(--crt-black);
+}
+
+.avatar-frame img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  filter: grayscale(100%) brightness(1.2) contrast(1.1);
+}
+
+.identity-info {
+  flex-grow: 1;
+}
+
+.identity-name {
+  font-size: 2.5rem;
+  font-weight: normal;
+  margin: 0 0 0.5rem 0;
+  text-shadow: 0 0 10px var(--phosphor-green);
+}
+
+.identity-tagline {
+  font-size: 1.2rem;
+  color: var(--phosphor-amber);
+  margin-bottom: 0.5rem;
+}
+
+.identity-role {
+  opacity: 0.7;
+  font-size: 1rem;
+}
+
+/* Command Prompt Style */
+.prompt {
+  color: var(--phosphor-green-dim);
+}
+
+.prompt::before {
+  content: 'C:\\ARBITAL> ';
+  color: var(--phosphor-green);
+}
+
+/* Section Headers */
+.section-header {
+  font-size: 1.1rem;
+  color: var(--phosphor-amber);
+  margin: 2rem 0 1rem;
+  padding: 0.5rem;
+  background: rgba(255, 176, 0, 0.1);
+  border-left: 3px solid var(--phosphor-amber);
+}
+
+.section-header::before {
+  content: '[ ';
+}
+
+.section-header::after {
+  content: ' ]';
+}
+
+/* Stats Grid */
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem;
+  margin: 1.5rem 0;
+}
+
+.stat-box {
+  background: rgba(51, 255, 51, 0.05);
+  border: 1px solid var(--phosphor-green-dim);
+  padding: 1rem;
+  text-align: center;
+}
+
+.stat-value {
+  font-size: 2rem;
+  color: var(--phosphor-green);
+  text-shadow: 0 0 8px var(--phosphor-green);
+}
+
+.stat-label {
+  font-size: 0.85rem;
+  opacity: 0.7;
+  margin-top: 0.25rem;
+}
+
+/* Project Cards */
+.project-list {
+  margin: 1rem 0;
+}
+
+.project-item {
+  border: 1px solid var(--phosphor-green-dim);
+  margin-bottom: 1rem;
+  padding: 1rem;
+  background: rgba(51, 255, 51, 0.02);
+  transition: all 0.2s ease;
+}
+
+.project-item:hover {
+  background: rgba(51, 255, 51, 0.08);
+  border-color: var(--phosphor-green);
+  box-shadow: 0 0 15px rgba(51, 255, 51, 0.2);
+}
+
+.project-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 0.5rem;
+}
+
+.project-name {
+  font-size: 1.2rem;
+  color: var(--phosphor-green);
+}
+
+.project-name::before {
+  content: '> ';
+  opacity: 0.5;
+}
+
+.project-lang {
+  background: var(--phosphor-green);
+  color: var(--crt-black);
+  padding: 0.15rem 0.5rem;
+  font-size: 0.8rem;
+}
+
+.project-lang.rust {
+  background: var(--phosphor-amber);
+}
+
+.project-lang.python {
+  background: #3776ab;
+  color: #fff;
+}
+
+.project-org {
+  font-size: 0.85rem;
+  opacity: 0.6;
+  margin-bottom: 0.5rem;
+}
+
+.project-desc {
+  font-size: 0.95rem;
+  line-height: 1.5;
+  margin-bottom: 0.5rem;
+}
+
+.project-tags {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  margin-top: 0.5rem;
+}
+
+.project-tag {
+  font-size: 0.75rem;
+  border: 1px solid var(--phosphor-green-dim);
+  padding: 0.15rem 0.4rem;
+  opacity: 0.7;
+}
+
+.project-relevance {
+  font-size: 0.85rem;
+  color: var(--phosphor-amber);
+  margin-top: 0.75rem;
+  font-style: italic;
+}
+
+.project-relevance::before {
+  content: '// ';
+}
+
+/* Tech Stack */
+.tech-stack-list {
+  margin: 1rem 0;
+}
+
+.tech-item {
+  display: flex;
+  align-items: center;
+  margin-bottom: 0.75rem;
+  gap: 1rem;
+}
+
+.tech-name {
+  width: 100px;
+  text-align: right;
+}
+
+.tech-name.highlight {
+  color: var(--phosphor-amber);
+}
+
+.tech-bar-container {
+  flex-grow: 1;
+  height: 16px;
+  background: rgba(51, 255, 51, 0.1);
+  border: 1px solid var(--phosphor-green-dim);
+}
+
+.tech-bar {
+  height: 100%;
+  background: var(--phosphor-green);
+  box-shadow: 0 0 8px var(--phosphor-green);
+  transition: width 1s ease;
+}
+
+.tech-bar.highlight {
+  background: var(--phosphor-amber);
+  box-shadow: 0 0 8px var(--phosphor-amber);
+}
+
+.tech-level {
+  width: 50px;
+  text-align: left;
+  font-size: 0.9rem;
+}
+
+/* Domains List */
+.domains-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin: 1rem 0;
+}
+
+.domain-tag {
+  border: 1px solid var(--phosphor-amber-dim);
+  color: var(--phosphor-amber);
+  padding: 0.25rem 0.75rem;
+  font-size: 0.9rem;
+}
+
+/* Why Arbital Section */
+.why-section {
+  margin: 2rem 0;
+  padding: 1.5rem;
+  background: rgba(255, 176, 0, 0.05);
+  border: 1px solid var(--phosphor-amber-dim);
+}
+
+.why-section p {
+  margin-bottom: 1rem;
+  line-height: 1.6;
+}
+
+.why-section p:last-child {
+  margin-bottom: 0;
+  color: var(--phosphor-amber);
+}
+
+/* GitHub Orgs */
+.orgs-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1rem;
+  margin: 1rem 0;
+}
+
+.org-item {
+  border: 1px solid var(--phosphor-green-dim);
+  padding: 1rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.org-item:hover {
+  border-color: var(--phosphor-green);
+}
+
+.org-name {
+  color: var(--phosphor-green);
+}
+
+.org-type {
+  font-size: 0.8rem;
+  opacity: 0.6;
+}
+
+.org-repos {
+  color: var(--phosphor-amber);
+}
+
+/* Contact Section */
+.contact-section {
+  margin-top: 2rem;
+  padding-top: 2rem;
+  border-top: 1px dashed var(--phosphor-green-dim);
+  text-align: center;
+}
+
+.contact-links {
+  display: flex;
+  justify-content: center;
+  gap: 2rem;
+  margin-top: 1rem;
+}
+
+.contact-link {
+  color: var(--phosphor-green);
+  text-decoration: none;
+  padding: 0.5rem 1rem;
+  border: 1px solid var(--phosphor-green);
+  transition: all 0.2s ease;
+}
+
+.contact-link:hover {
+  background: var(--phosphor-green);
+  color: var(--crt-black);
+  text-shadow: none;
+}
+
+/* Blinking Cursor */
+.cursor {
+  display: inline-block;
+  width: 0.6em;
+  height: 1em;
+  background: var(--phosphor-green);
+  animation: blink 1s step-end infinite;
+  vertical-align: text-bottom;
+}
+
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
+}
+
+/* Footer */
+.terminal-footer {
+  margin-top: 2rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--phosphor-green-dim);
+  font-size: 0.85rem;
+  opacity: 0.6;
+  text-align: center;
+}
+
+/* Mobile Responsive */
+@media (max-width: 768px) {
+  .retro-terminal {
+    font-size: 14px;
+  }
+
+  .crt-monitor {
+    padding: 1rem;
+  }
+
+  .crt-screen {
+    padding: 1rem;
+  }
+
+  .identity-section {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+
+  .identity-name {
+    font-size: 1.8rem;
+  }
+
+  .stats-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .orgs-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .contact-links {
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .tech-name {
+    width: 80px;
+    font-size: 0.85rem;
+  }
+}
+
+/* Typing Animation Support */
+.typing-text {
+  overflow: hidden;
+  white-space: nowrap;
+  animation: typing 2s steps(40, end);
+}
+
+@keyframes typing {
+  from { width: 0; }
+  to { width: 100%; }
+}
+
+/* Glitch Effect (optional, on hover) */
+.glitch-hover:hover {
+  animation: glitch 0.3s linear;
+}
+
+@keyframes glitch {
+  0% { transform: translate(0); }
+  20% { transform: translate(-2px, 2px); }
+  40% { transform: translate(-2px, -2px); }
+  60% { transform: translate(2px, 2px); }
+  80% { transform: translate(2px, -2px); }
+  100% { transform: translate(0); }
+}
