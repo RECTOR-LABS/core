@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title><%= content_for(:title) || "RECTOR × Arbital" %></title>
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <meta name="robots" content="noindex, nofollow">
+    <meta charset="UTF-8">
+    <%= csrf_meta_tags %>
+    <%= csp_meta_tag %>
+
+    <%= yield :head %>
+
+    <%# Fonts - JetBrains Mono + VT323 for retro %>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=VT323&display=swap" rel="stylesheet">
+
+    <%= favicon_link_tag "favicon-32x32.png", rel: "icon", type: "image/png", sizes: "32x32" %>
+
+    <%# Base styles for apply pages %>
+    <%= stylesheet_link_tag :app, "data-turbo-track": "reload" %>
+
+    <%# Page-specific styles %>
+    <%= yield :styles %>
+
+    <%= javascript_importmap_tags %>
+  </head>
+
+  <body class="<%= yield :body_class %>">
+    <%= yield %>
+  </body>
+</html>

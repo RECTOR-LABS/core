@@ -1,0 +1,156 @@
+<% content_for :title do %>RECTOR × Arbital | Application<% end %>
+
+<% content_for :body_class do %>modern-dark<% end %>
+
+<% content_for :styles do %>
+  <%= stylesheet_link_tag "apply_modern", "data-turbo-track": "reload" %>
+<% end %>
+
+<div class="modern-container">
+
+  <%# Hero Section %>
+  <section class="hero-section">
+    <div class="avatar-wrapper">
+      <%= image_tag @identity[:avatar], class: "avatar-img", alt: @identity[:name] %>
+    </div>
+    <h1 class="hero-name"><%= @identity[:name] %></h1>
+    <p class="hero-tagline"><%= @identity[:tagline] %></p>
+    <p class="hero-role"><%= @identity[:role] %></p>
+
+    <div class="badge-row">
+      <span class="badge rust">Rust</span>
+      <span class="badge python">Python</span>
+      <span class="badge solana">Solana</span>
+    </div>
+  </section>
+
+  <%# Stats Section %>
+  <section class="stats-section" data-controller="scroll-reveal">
+    <h2 class="section-title">Proof of Work</h2>
+    <div class="stats-grid">
+      <div class="stat-card" data-scroll-reveal-target="item">
+        <div class="stat-value"><%= @stats[:total_stars] %></div>
+        <div class="stat-label">GitHub Stars</div>
+      </div>
+      <div class="stat-card" data-scroll-reveal-target="item">
+        <div class="stat-value"><%= @stats[:vulnerabilities_found] %></div>
+        <div class="stat-label">Vulnerabilities Found</div>
+      </div>
+      <div class="stat-card" data-scroll-reveal-target="item">
+        <div class="stat-value"><%= @stats[:bounty_earned] %></div>
+        <div class="stat-label">Bounty Earned</div>
+      </div>
+      <div class="stat-card" data-scroll-reveal-target="item">
+        <div class="stat-value"><%= @stats[:hackathons_2025] %></div>
+        <div class="stat-label">Hackathons 2025</div>
+      </div>
+      <div class="stat-card" data-scroll-reveal-target="item">
+        <div class="stat-value"><%= @stats[:total_repos] %></div>
+        <div class="stat-label">Repositories</div>
+      </div>
+      <div class="stat-card" data-scroll-reveal-target="item">
+        <div class="stat-value"><%= @stats[:solana_projects] %></div>
+        <div class="stat-label">Solana Projects</div>
+      </div>
+    </div>
+  </section>
+
+  <%# Why Arbital %>
+  <section class="why-section-wrapper">
+    <h2 class="section-title">Why Arbital</h2>
+    <div class="why-section">
+      <% @why_arbital.split("\n\n").each do |paragraph| %>
+        <p><%= paragraph %></p>
+      <% end %>
+    </div>
+  </section>
+
+  <%# Featured Projects %>
+  <section class="projects-section" data-controller="scroll-reveal" data-scroll-reveal-delay-value="80">
+    <h2 class="section-title">Featured Projects</h2>
+    <div class="projects-grid">
+      <% @featured_projects.each do |project| %>
+        <div class="project-card" data-scroll-reveal-target="item">
+          <div class="project-header">
+            <span class="project-name"><%= project[:name] %></span>
+            <span class="project-lang <%= project[:language].downcase.split('/').first %>"><%= project[:language] %></span>
+          </div>
+          <div class="project-org">@<%= project[:org] %></div>
+          <p class="project-desc"><%= project[:description] %></p>
+          <div class="project-tags">
+            <% project[:tags].each do |tag| %>
+              <span class="tag"><%= tag %></span>
+            <% end %>
+          </div>
+          <div class="project-relevance"><%= project[:relevance] %></div>
+        </div>
+      <% end %>
+    </div>
+  </section>
+
+  <%# Tech Stack %>
+  <section class="tech-section" data-controller="progress-bar">
+    <h2 class="section-title">Technical Stack</h2>
+    <div class="tech-grid">
+      <% @tech_stack[:primary].each do |tech| %>
+        <div class="tech-item">
+          <span class="tech-name <%= 'highlight' if tech[:highlight] %>"><%= tech[:name] %></span>
+          <div class="tech-bar-wrapper">
+            <div class="tech-bar <%= 'highlight' if tech[:highlight] %>" data-progress-bar-target="bar" style="width: <%= tech[:level] %>%"></div>
+          </div>
+          <span class="tech-percent"><%= tech[:level] %>%</span>
+        </div>
+      <% end %>
+      <% @tech_stack[:secondary].each do |tech| %>
+        <div class="tech-item">
+          <span class="tech-name"><%= tech[:name] %></span>
+          <div class="tech-bar-wrapper">
+            <div class="tech-bar" data-progress-bar-target="bar" style="width: <%= tech[:level] %>%"></div>
+          </div>
+          <span class="tech-percent"><%= tech[:level] %>%</span>
+        </div>
+      <% end %>
+    </div>
+
+    <div class="domains-wrap">
+      <% @tech_stack[:domains].each do |domain| %>
+        <span class="domain-pill"><%= domain %></span>
+      <% end %>
+    </div>
+  </section>
+
+  <%# GitHub Presence %>
+  <section class="github-section" data-controller="scroll-reveal">
+    <h2 class="section-title">GitHub Presence</h2>
+    <div class="orgs-grid">
+      <% @orgs.each do |org| %>
+        <a href="<%= org[:url] %>" target="_blank" rel="noopener" class="org-card" data-scroll-reveal-target="item">
+          <div class="org-info">
+            <span class="org-name">@<%= org[:name] %></span>
+            <span class="org-type"><%= org[:type] %></span>
+          </div>
+          <div class="org-count">
+            <%= org[:repos] %>
+            <span>repos</span>
+          </div>
+        </a>
+      <% end %>
+    </div>
+  </section>
+
+  <%# Contact %>
+  <section class="contact-section">
+    <p class="contact-prompt">Ready to build what the Old Guard won't?</p>
+    <div class="contact-links">
+      <a href="<%= @contact[:github] %>" target="_blank" rel="noopener" class="contact-btn">GitHub</a>
+      <a href="<%= @contact[:twitter] %>" target="_blank" rel="noopener" class="contact-btn primary">Twitter / X</a>
+    </div>
+  </section>
+
+  <%# Footer %>
+  <footer class="page-footer">
+    <p>rectorspace.com/apply/arbital/modern</p>
+    <p>Last updated: <%= Time.current.strftime('%Y-%m-%d') %></p>
+  </footer>
+
+</div>
