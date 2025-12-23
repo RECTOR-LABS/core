@@ -42,7 +42,7 @@ class GithubApiService
 
   # Get all accounts (personal + all orgs)
   def all_accounts
-    [PERSONAL_ACCOUNT] + discover_organizations
+    [ PERSONAL_ACCOUNT ] + discover_organizations
   end
 
   # Fetch latest projects from personal and ALL discovered org accounts
