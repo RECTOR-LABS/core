@@ -43,8 +43,8 @@ jobs:
 
             cd /home/core/apps/core
 
-            # Initialize rbenv
-            export PATH="/home/core/.rbenv/bin:$PATH"
+            # Initialize rbenv (add shims to PATH for bundle/rails commands)
+            export PATH="/home/core/.rbenv/shims:/home/core/.rbenv/bin:$PATH"
             eval "$(/home/core/.rbenv/bin/rbenv init - bash)"
 
             # Pull latest changes
