@@ -12,6 +12,41 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ---
 
+## RECTOR's Achievements (2024-2025)
+
+**Total Earnings:** ~$10,800 USDC + Gen3 Monke NFT
+
+| # | Project | Type | Place | Prize | Event |
+|---|---------|------|-------|-------|-------|
+| 1 | **Web3 Deal Discovery** | Hackathon | 🥇 1st | $5,000 + NFT | MonkeDAO Cypherpunk (Superteam Earn, Dec 2025) |
+| 2 | **SIP Protocol** | Hackathon | 🏆 Winner | $4,000 | Zypherpunk NEAR Track |
+| 3 | **OpenBudget.ID** | Hackathon | 🥈 2nd | $1,500 | Garuda Spark (Superteam Indonesia, Oct 2025) |
+| 4 | **Saros SDK Docs** | Bounty | 🥇 1st | $300 | Saros SDK Guide Challenge (Dec 2024) |
+
+**Project Details:**
+
+1. **Web3 Deal Discovery** (`RECTOR-LABS/web3-deal-discovery-nft-coupons`)
+   - NFT coupons on Solana — "Groupon meets DeFi"
+   - Escrow-based resale marketplace (industry-first)
+   - Stack: Solana Anchor + Next.js 15 + Supabase + Tailwind v4
+
+2. **SIP Protocol** (`sip-protocol/sip-protocol`)
+   - Privacy layer for cross-chain transactions via NEAR Intents + Zcash
+   - Stealth addresses, Pedersen commitments, ZK proofs
+   - Stack: Next.js 14 + pnpm monorepo + noble/curves
+
+3. **OpenBudget.ID** (`openbudget-garuda-spark`)
+   - Government spending transparency on Solana for Indonesia
+   - Ministries publish on-chain, citizens verify immutably
+   - Stack: Solana Anchor + Next.js 14 + PostgreSQL
+
+4. **Saros SDK Docs** (`rz1989s/saros-docs`)
+   - Comprehensive Docusaurus documentation for Saros Finance SDKs
+   - Interactive API Explorer, 15+ tutorials, production examples
+   - Live: https://saros-docs.rectorspace.com
+
+---
+
 ## The 7-Section Architecture
 
 Single domain `rectorspace.com` with route-based sections:

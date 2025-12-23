@@ -122,4 +122,65 @@
       @apply hidden;
     }
   }
+
+  /* Achievement Cards */
+  .achievement-card {
+    @apply p-4 rounded-lg border-2 border-brown/10 bg-cream;
+    @apply transition-all duration-200;
+  }
+
+  .achievement-card:hover {
+    @apply border-sky-blue/50 shadow-md;
+    transform: translateX(4px);
+  }
+
+  .achievement-badge {
+    @apply inline-block text-xs font-semibold px-2 py-0.5 rounded-full mb-1;
+  }
+
+  .achievement-gold {
+    @apply bg-yellow/20 text-orange;
+  }
+
+  .achievement-silver {
+    @apply bg-brown/10 text-brown/80;
+  }
+
+  .achievement-bounty {
+    @apply bg-sky-blue/20 text-sky-blue;
+  }
+
+  .achievement-title {
+    @apply text-lg font-bold text-brown mb-0 leading-tight;
+  }
+
+  .achievement-title a {
+    @apply text-brown no-underline;
+  }
+
+  .achievement-title a:hover {
+    @apply text-sky-blue underline;
+  }
+
+  .achievement-event {
+    @apply text-sm text-brown/60 mt-0.5;
+  }
+
+  .achievement-prize {
+    @apply text-sm font-bold text-green whitespace-nowrap;
+  }
+
+  .achievement-desc {
+    @apply text-sm text-brown/70 mt-2 mb-0;
+  }
+
+  @media (max-width: 640px) {
+    .achievement-card .flex {
+      @apply flex-col gap-2;
+    }
+
+    .achievement-prize {
+      @apply self-start;
+    }
+  }
 }
