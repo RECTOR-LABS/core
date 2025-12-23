@@ -41,11 +41,11 @@ jobs:
 
             echo "🚀 Starting deployment..."
 
-            cd ~/apps/core
+            cd /home/core/apps/core
 
             # Initialize rbenv
-            export PATH="$HOME/.rbenv/bin:$PATH"
-            eval "$(rbenv init - bash)"
+            export PATH="/home/core/.rbenv/bin:$PATH"
+            eval "$(/home/core/.rbenv/bin/rbenv init - bash)"
 
             # Pull latest changes
             echo "📥 Pulling latest code from main..."
