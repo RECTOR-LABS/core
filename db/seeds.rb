@@ -30,7 +30,7 @@ core_story = <<~MARKDOWN
 
   With my previous setup I had seven different repos to juggle. Seven package.json files. Separate deployment pipelines. Database connections between services. API versioning headaches. Those "wait which port is this service running on again?" moments at 2am.
 
-  Rails? One repo. One deployment. Database migrations that actually work. Background jobs built-in with [Solid Queue](https://github.com/rails/solid_queue). It just... works. And after spending months in blockchain dev where nothing works the first time, that's refreshing as hell.
+  Rails? One repo. One deployment. Database migrations that actually work. Background jobs built-in with [Solid Queue](https://github.com/rails/solid_queue). It just... works. And after spending months in blockchain dev where nothing works the first time — though I eventually [won a few hackathons](/work/web3-deal-discovery) — that's refreshing as hell.
 
   Plus Rails 8 dropped with all these new toys. Solid Queue for background jobs. [Solid Cache](https://github.com/rails/solid_cache). Authentication generators. DHH basically looked at what everyone was doing with external services and said "nah, let's just include it in the box."
 
@@ -179,7 +179,7 @@ web3_deal_story = <<~MARKDOWN
 
   No crypto jargon. "NFT" becomes "Coupon." "Mint" becomes "Claim." "Burn" becomes "Redeem." Wallet connection happens once, then gets out of the way. Users browse deals, click claim, sign one transaction, done. Their coupon shows up in "My Coupons" like it's any normal app.
 
-  The blockchain is infrastructure, not interface. Just like you don't think about TCP/IP when browsing the web.
+  The blockchain is infrastructure, not interface. Just like you don't think about TCP/IP when browsing the web. (I used this same philosophy in [OpenBudget.ID](/work/openbudget-id) for government transparency.)
 
   **The Demo Video Grind**
 
@@ -380,6 +380,8 @@ sip_story = <<~MARKDOWN
   **Philosophy:** "Privacy is not a feature. It's a right."
 
   **Links:** [GitHub](https://github.com/sip-protocol/sip-protocol)
+
+  **See also:** [Web3 Deal Discovery](/work/web3-deal-discovery) (1st place, Solana) • [OpenBudget.ID](/work/openbudget-id) (2nd place, civic tech)
 MARKDOWN
 
 work = Work.find_or_initialize_by(slug: "sip-protocol")
@@ -440,7 +442,7 @@ openbudget_story = <<~MARKDOWN
 
   Citizens browse projects without logging in. They see progress bars, milestone timelines, budget breakdowns. If they want to verify, they click "View on Solana Explorer" and see the raw blockchain data. But they don't have to.
 
-  The blockchain is infrastructure. Like how you don't think about DNS when visiting a website.
+  The blockchain is infrastructure. Like how you don't think about DNS when visiting a website. This same philosophy powered my [Web3 Deal Discovery](/work/web3-deal-discovery) win.
 
   **The 4-Day Sprint**
 
@@ -510,7 +512,7 @@ openbudget_story = <<~MARKDOWN
 
   But that constraint makes you build better products. If a ministry staff member can use it, anyone can.
 
-  Also: civic tech is underrated. There's so much opportunity to use these tools for actual public good, not just DeFi derivatives.
+  Also: civic tech is underrated. There's so much opportunity to use these tools for actual public good, not just DeFi derivatives. (Though I also explored privacy tech in [SIP Protocol](/work/sip-protocol).)
 
   ---
 
@@ -644,7 +646,7 @@ saros_story = <<~MARKDOWN
 
   **The Irony**
 
-  I'm now building documentation sections for all my projects. CORE has a CLAUDE.md (for AI assistants). My hackathon projects have comprehensive READMEs.
+  I'm now building documentation sections for all my projects. [CORE](/work/core) has a CLAUDE.md (for AI assistants). My hackathon projects — [Web3 Deal Discovery](/work/web3-deal-discovery), [SIP Protocol](/work/sip-protocol), [OpenBudget.ID](/work/openbudget-id) — have comprehensive READMEs.
 
   Because if I learned anything from this bounty, it's that good docs are a competitive advantage. In a world of half-explained GitHub repos, clear documentation stands out.
 
