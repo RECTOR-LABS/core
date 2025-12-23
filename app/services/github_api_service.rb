@@ -5,7 +5,6 @@ require "json"
 
 class GithubApiService
   PERSONAL_ACCOUNT = "rz1989s"
-  ORG_ACCOUNT = "RECTOR-LABS"
   API_BASE_URL = "https://api.github.com"
 
   def initialize
@@ -15,30 +14,82 @@ class GithubApiService
     }
     # Add GitHub token if available for higher rate limits
     @http_options["Authorization"] = "token #{ENV['GITHUB_TOKEN']}" if ENV["GITHUB_TOKEN"]
+    @discovered_orgs = nil
   end
 
-  # Fetch latest projects from both personal and org accounts
+  # Dynamically discover all organizations the user belongs to
+  # Uses authenticated /user/orgs endpoint to get ALL orgs (including private memberships)
+  def discover_organizations
+    return @discovered_orgs if @discovered_orgs
+
+    # Use authenticated endpoint for all orgs (public + private memberships)
+    # Falls back to public endpoint if no token
+    uri = if ENV["GITHUB_TOKEN"].present?
+      URI("#{API_BASE_URL}/user/orgs")
+    else
+      URI("#{API_BASE_URL}/users/#{PERSONAL_ACCOUNT}/orgs")
+    end
+
+    orgs = fetch_json(uri)
+
+    @discovered_orgs = orgs.map { |org| org[:login] }
+    Rails.logger.info "Discovered #{@discovered_orgs.size} organizations: #{@discovered_orgs.join(', ')}"
+    @discovered_orgs
+  rescue StandardError => e
+    Rails.logger.error "Failed to discover organizations: #{e.message}"
+    @discovered_orgs = []
+  end
+
+  # Get all accounts (personal + all orgs)
+  def all_accounts
+    [PERSONAL_ACCOUNT] + discover_organizations
+  end
+
+  # Fetch latest projects from personal and ALL discovered org accounts
   # Returns array of repo hashes sorted by latest commit
   def fetch_latest_projects(limit: 6)
-    personal_repos = fetch_repos_for_account(PERSONAL_ACCOUNT)
-    org_repos = fetch_repos_for_account(ORG_ACCOUNT)
+    all_repos = []
 
-    all_repos = (personal_repos + org_repos)
+    all_accounts.each do |account|
+      all_repos.concat(fetch_repos_for_account(account))
+    end
+
+    all_repos
       .sort_by { |repo| repo[:pushed_at] }
       .reverse
       .take(limit)
-
-    all_repos
   end
 
   # Fetch all repositories for tech stack parsing
   def fetch_all_repos
-    personal_repos = fetch_repos_for_account(PERSONAL_ACCOUNT)
-    org_repos = fetch_repos_for_account(ORG_ACCOUNT)
-    personal_repos + org_repos
+    all_repos = []
+
+    all_accounts.each do |account|
+      all_repos.concat(fetch_repos_for_account(account))
+    end
+
+    all_repos
   end
 
   private
+
+  # Generic JSON fetcher for GitHub API
+  def fetch_json(uri)
+    http = Net::HTTP.new(uri.host, uri.port)
+    http.use_ssl = true
+
+    request = Net::HTTP::Get.new(uri)
+    @http_options.each { |key, value| request[key] = value }
+
+    response = http.request(request)
+
+    if response.code == "200"
+      JSON.parse(response.body, symbolize_names: true)
+    else
+      Rails.logger.error "GitHub API error: #{response.code} - #{uri}"
+      []
+    end
+  end
 
   def fetch_repos_for_account(account)
     uri = URI("#{API_BASE_URL}/users/#{account}/repos?per_page=100&sort=pushed")
