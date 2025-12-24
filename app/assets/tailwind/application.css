@@ -671,6 +671,14 @@
     @apply flex items-center gap-1;
   }
 
+  .work-card-commits {
+    @apply flex items-center gap-1;
+  }
+
+  .work-card-sha {
+    @apply ml-auto;
+  }
+
   @media (max-width: 640px) {
     .work-card {
       @apply p-4;
@@ -686,6 +694,10 @@
 
     .work-card-meta {
       @apply flex-wrap gap-2;
+    }
+
+    .work-card-sha {
+      @apply hidden;
     }
   }
 }
