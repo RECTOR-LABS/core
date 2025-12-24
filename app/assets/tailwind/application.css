@@ -506,4 +506,186 @@
       @apply text-xs;
     }
   }
+
+  /* Work Listing Page */
+  .container-work {
+    @apply max-w-4xl mx-auto px-4 sm:px-6 py-8 sm:py-12;
+  }
+
+  .back-link {
+    @apply text-sky-blue no-underline transition-colors duration-200;
+  }
+
+  .back-link:hover {
+    @apply text-yellow;
+  }
+
+  .work-header {
+    @apply mb-6 sm:mb-8;
+  }
+
+  .work-header h1 {
+    @apply text-3xl sm:text-4xl font-bold mb-3 text-brown;
+  }
+
+  .work-tagline {
+    @apply text-base sm:text-lg leading-relaxed text-brown/70 mb-0;
+  }
+
+  /* Stats Banner */
+  .work-stats-banner {
+    @apply flex items-center justify-center gap-4 sm:gap-6;
+    @apply py-4 px-6 mb-10 rounded-lg;
+    @apply bg-yellow/10 border-2 border-yellow/30;
+  }
+
+  .work-stat {
+    @apply flex items-baseline gap-1.5;
+  }
+
+  .work-stat-value {
+    @apply text-lg sm:text-xl font-bold text-brown;
+  }
+
+  .work-stat-label {
+    @apply text-sm text-brown/60;
+  }
+
+  .work-stat-divider {
+    @apply text-brown/30;
+  }
+
+  @media (max-width: 640px) {
+    .work-stats-banner {
+      @apply gap-3 px-4;
+    }
+
+    .work-stat-value {
+      @apply text-base;
+    }
+
+    .work-stat-label {
+      @apply text-xs;
+    }
+  }
+
+  /* Work Section */
+  .work-section {
+    @apply mb-12;
+  }
+
+  .work-section-title {
+    @apply flex items-center gap-2 text-xl sm:text-2xl font-semibold mb-6 text-brown;
+  }
+
+  .work-section-icon {
+    @apply text-2xl;
+  }
+
+  .work-grid {
+    @apply space-y-4;
+  }
+
+  /* Work Cards */
+  .work-card {
+    @apply block p-4 sm:p-5 rounded-lg border-2 no-underline;
+    @apply transition-all duration-200;
+  }
+
+  .work-card:hover {
+    transform: translateX(4px);
+  }
+
+  .work-card-winner {
+    @apply bg-cream border-yellow/40;
+  }
+
+  .work-card-winner:hover {
+    @apply border-yellow shadow-md;
+  }
+
+  .work-card-active {
+    @apply bg-cream border-brown/10;
+  }
+
+  .work-card-active:hover {
+    @apply border-sky-blue/50 shadow-md;
+  }
+
+  .work-card-header {
+    @apply flex items-center justify-between gap-2 mb-2;
+  }
+
+  .work-card-badge {
+    @apply inline-flex items-center gap-1 text-xs font-semibold px-2 py-1 rounded-full;
+  }
+
+  .badge-winner {
+    @apply bg-yellow/20 text-orange;
+  }
+
+  .badge-live {
+    @apply bg-green/20 text-green font-semibold;
+    @apply flex items-center gap-1.5;
+  }
+
+  .badge-live .live-pulse {
+    @apply w-2 h-2 rounded-full bg-green;
+    animation: pulse-live 1.5s ease-in-out infinite;
+  }
+
+  .badge-status {
+    @apply bg-brown/10 text-brown/70;
+  }
+
+  .work-card-prize {
+    @apply text-sm font-bold text-green;
+  }
+
+  .work-card-title {
+    @apply text-lg sm:text-xl font-bold text-brown mb-1;
+    @apply transition-colors duration-200;
+  }
+
+  .work-card:hover .work-card-title {
+    @apply text-sky-blue;
+  }
+
+  .work-card-event {
+    @apply text-sm text-brown/50 mb-2;
+  }
+
+  .work-card-summary {
+    @apply text-sm sm:text-base text-brown/70 leading-relaxed mb-3;
+  }
+
+  .work-card-meta {
+    @apply flex items-center gap-3 text-xs text-brown/50;
+  }
+
+  .work-card-tech {
+    @apply font-medium;
+  }
+
+  .work-card-stars {
+    @apply flex items-center gap-1;
+  }
+
+  @media (max-width: 640px) {
+    .work-card {
+      @apply p-4;
+    }
+
+    .work-card-header {
+      @apply flex-col items-start gap-1;
+    }
+
+    .work-card-prize {
+      @apply text-xs;
+    }
+
+    .work-card-meta {
+      @apply flex-wrap gap-2;
+    }
+  }
 }
