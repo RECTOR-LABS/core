@@ -58,4 +58,42 @@ class GithubRepo < ApplicationRecord
       "#{(days / 365).to_i} years ago"
     end
   end
+
+  # Detailed time ago for "currently building" section
+  def detailed_time_ago
+    time_diff = Time.current - pushed_at
+    hours = (time_diff / 1.hour).to_i
+    minutes = (time_diff / 1.minute).to_i
+
+    if minutes < 60
+      "#{minutes}m ago"
+    elsif hours < 24
+      "#{hours}h ago"
+    else
+      time_ago
+    end
+  end
+
+  # Check if repo was pushed to recently (within 24 hours)
+  def recently_active?
+    pushed_at > 24.hours.ago
+  end
+
+  # Class methods for aggregate stats
+  class << self
+    def aggregate_stats
+      non_forks = not_forks
+      {
+        total_stars: non_forks.sum(:stargazers_count),
+        total_forks: non_forks.sum(:forks_count),
+        total_commits: non_forks.sum(:commit_count),
+        total_repos: non_forks.count
+      }
+    end
+
+    def currently_building
+      # Get the most recently pushed non-fork repo
+      not_forks.latest_first.first
+    end
+  end
 end

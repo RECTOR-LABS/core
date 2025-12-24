@@ -6,8 +6,14 @@ class PagesController < ApplicationController
     # Parse tech stack from all repos
     @tech_stack = TechStackParser.current_stack
 
-    # Fetch GitHub contributions for graph
+    # Fetch GitHub contributions for graph (includes streaks)
     @contributions = GithubContributionsService.new.fetch_contributions
+
+    # Aggregate stats across all repos
+    @aggregate_stats = GithubRepo.aggregate_stats
+
+    # Currently building (most recently pushed repo)
+    @currently_building = GithubRepo.currently_building
 
     # If cache is empty, trigger sync job and show placeholder
     if @latest_projects.empty?

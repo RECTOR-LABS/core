@@ -145,6 +145,77 @@
             <span>More</span>
           </div>
         </div>
+
+        <!-- Coding Streak -->
+        <% if @contributions[:current_streak].to_i > 0 || @contributions[:longest_streak].to_i > 0 %>
+          <div class="streak-container">
+            <% if @contributions[:current_streak].to_i > 0 %>
+              <span class="streak-current">
+                🔥 <%= @contributions[:current_streak] %> day streak
+              </span>
+            <% end %>
+            <% if @contributions[:longest_streak].to_i > 0 %>
+              <span class="streak-longest">
+                Best: <%= @contributions[:longest_streak] %> days
+              </span>
+            <% end %>
+          </div>
+        <% end %>
+      </div>
+    <% end %>
+
+    <!-- Aggregate Impact Stats -->
+    <% if @aggregate_stats %>
+      <div class="aggregate-stats">
+        <div class="aggregate-stat">
+          <span class="aggregate-icon">⭐</span>
+          <span class="aggregate-value"><%= number_with_delimiter(@aggregate_stats[:total_stars]) %></span>
+          <span class="aggregate-label">stars</span>
+        </div>
+        <div class="aggregate-stat">
+          <span class="aggregate-icon">🔀</span>
+          <span class="aggregate-value"><%= number_with_delimiter(@aggregate_stats[:total_forks]) %></span>
+          <span class="aggregate-label">forks</span>
+        </div>
+        <div class="aggregate-stat">
+          <span class="aggregate-icon">⊙</span>
+          <span class="aggregate-value"><%= number_with_delimiter(@aggregate_stats[:total_commits]) %></span>
+          <span class="aggregate-label">commits</span>
+        </div>
+        <div class="aggregate-stat">
+          <span class="aggregate-icon">📦</span>
+          <span class="aggregate-value"><%= @aggregate_stats[:total_repos] %></span>
+          <span class="aggregate-label">repos</span>
+        </div>
+      </div>
+    <% end %>
+
+    <!-- Currently Building Live Indicator -->
+    <% if @currently_building %>
+      <div class="currently-building">
+        <div class="currently-building-header">
+          <% if @currently_building.recently_active? %>
+            <span class="live-dot"></span>
+            <span class="live-label">LIVE NOW</span>
+          <% else %>
+            <span class="idle-dot"></span>
+            <span class="idle-label">LAST ACTIVE</span>
+          <% end %>
+        </div>
+        <div class="currently-building-content">
+          <span class="currently-building-name">
+            <%= link_to @currently_building.name, @currently_building.html_url, target: "_blank", rel: "noopener" %>
+          </span>
+          <span class="currently-building-meta">
+            <% if @currently_building.language.present? %>
+              • <%= @currently_building.language %>
+            <% end %>
+            <% if @currently_building.commit_count.to_i > 0 %>
+              • <%= @currently_building.commit_count %> commits
+            <% end %>
+            • <%= @currently_building.detailed_time_ago %>
+          </span>
+        </div>
       </div>
     <% end %>
 

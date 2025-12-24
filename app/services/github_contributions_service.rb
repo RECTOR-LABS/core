@@ -55,11 +55,16 @@ class GithubContributionsService
     # Organize into weeks (for grid layout)
     weeks = organize_into_weeks(sorted_contributions)
 
+    # Calculate streaks
+    streaks = calculate_streaks(sorted_contributions)
+
     {
       total: total_last_year,
       yearly_totals: data[:total] || {},
       weeks: weeks,
-      contributions: sorted_contributions
+      contributions: sorted_contributions,
+      current_streak: streaks[:current],
+      longest_streak: streaks[:longest]
     }
   end
 
@@ -92,7 +97,47 @@ class GithubContributionsService
       total: 0,
       yearly_totals: {},
       weeks: [],
-      contributions: []
+      contributions: [],
+      current_streak: 0,
+      longest_streak: 0
     }
+  end
+
+  # Calculate current and longest contribution streaks
+  def calculate_streaks(contributions)
+    return { current: 0, longest: 0 } if contributions.empty?
+
+    # Sort by date descending (most recent first) for current streak
+    sorted_desc = contributions.sort_by { |c| c[:date] }.reverse
+
+    current_streak = 0
+    longest_streak = 0
+    temp_streak = 0
+
+    # Calculate current streak (from today backwards)
+    today = Date.today
+    sorted_desc.each do |day|
+      date = Date.parse(day[:date])
+      # Allow for today or yesterday to start the streak (in case no commits yet today)
+      break if (today - date).to_i > current_streak + 1
+
+      if day[:count] > 0
+        current_streak += 1
+      else
+        break
+      end
+    end
+
+    # Calculate longest streak (iterate through all days)
+    contributions.sort_by { |c| c[:date] }.each do |day|
+      if day[:count] > 0
+        temp_streak += 1
+        longest_streak = [ temp_streak, longest_streak ].max
+      else
+        temp_streak = 0
+      end
+    end
+
+    { current: current_streak, longest: longest_streak }
   end
 end

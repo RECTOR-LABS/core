@@ -315,4 +315,127 @@
       @apply mt-1;
     }
   }
+
+  /* Coding Streak */
+  .streak-container {
+    @apply flex items-center gap-4 mt-3 text-sm;
+  }
+
+  .streak-current {
+    @apply font-semibold text-orange;
+  }
+
+  .streak-longest {
+    @apply text-brown/60;
+  }
+
+  @media (max-width: 640px) {
+    .streak-container {
+      @apply flex-col items-start gap-1;
+    }
+  }
+
+  /* Aggregate Impact Stats */
+  .aggregate-stats {
+    @apply flex items-center justify-between mt-6 p-4 rounded-lg;
+    @apply bg-brown/5 border border-brown/10;
+  }
+
+  .aggregate-stat {
+    @apply flex flex-col items-center text-center;
+  }
+
+  .aggregate-icon {
+    @apply text-lg mb-1;
+  }
+
+  .aggregate-value {
+    @apply text-xl font-bold text-brown;
+  }
+
+  .aggregate-label {
+    @apply text-xs text-brown/60;
+  }
+
+  @media (max-width: 640px) {
+    .aggregate-stats {
+      @apply grid grid-cols-4 gap-2 p-3;
+    }
+
+    .aggregate-value {
+      @apply text-base;
+    }
+
+    .aggregate-icon {
+      @apply text-sm;
+    }
+  }
+
+  /* Currently Building Live Indicator */
+  .currently-building {
+    @apply mt-6 p-4 rounded-lg;
+    @apply bg-green/10 border border-green/30;
+  }
+
+  .currently-building-header {
+    @apply flex items-center gap-2 mb-2;
+  }
+
+  .live-dot {
+    @apply w-2.5 h-2.5 rounded-full bg-green;
+    animation: pulse-live 1.5s ease-in-out infinite;
+  }
+
+  @keyframes pulse-live {
+    0%, 100% {
+      opacity: 1;
+      transform: scale(1);
+    }
+    50% {
+      opacity: 0.5;
+      transform: scale(1.2);
+    }
+  }
+
+  .live-label {
+    @apply text-xs font-bold text-green uppercase tracking-wider;
+  }
+
+  .idle-dot {
+    @apply w-2.5 h-2.5 rounded-full bg-brown/30;
+  }
+
+  .idle-label {
+    @apply text-xs font-bold text-brown/50 uppercase tracking-wider;
+  }
+
+  .currently-building-content {
+    @apply flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-0;
+  }
+
+  .currently-building-name {
+    @apply font-semibold text-brown;
+  }
+
+  .currently-building-name a {
+    @apply text-brown no-underline;
+  }
+
+  .currently-building-name a:hover {
+    @apply text-sky-blue underline;
+  }
+
+  .currently-building-meta {
+    @apply text-sm text-brown/60;
+  }
+
+  @media (max-width: 640px) {
+    .currently-building {
+      @apply p-3;
+    }
+
+    .currently-building-meta {
+      @apply text-xs;
+    }
+  }
 }
