@@ -44,7 +44,7 @@
 
 @layer components {
   .container-homepage {
-    @apply max-w-2xl mx-auto px-6 py-12;
+    @apply max-w-2xl mx-auto px-4 sm:px-6 py-8 sm:py-12;
   }
 
   .container-homepage p {
@@ -52,13 +52,19 @@
     text-align-last: left;
   }
 
+  @media (max-width: 640px) {
+    .container-homepage p {
+      text-align: left;
+    }
+  }
+
   .profile-picture {
-    @apply w-[150px] h-[150px] rounded-full mx-auto mb-8;
+    @apply w-[120px] h-[120px] sm:w-[150px] sm:h-[150px] rounded-full mx-auto mb-6 sm:mb-8;
     box-shadow: 0 4px 12px rgba(199, 90, 68, 0.2);
   }
 
   .section-divider {
-    @apply border-t-2 border-yellow my-12;
+    @apply border-t-2 border-yellow my-8 sm:my-12;
   }
 
   .code-inline {

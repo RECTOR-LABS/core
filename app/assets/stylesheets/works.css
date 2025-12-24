@@ -126,3 +126,58 @@
   font-size: inherit;
   margin: 0;
 }
+
+/* Mobile Responsive Styles */
+@media (max-width: 640px) {
+  .story-content > h1:first-child {
+    font-size: 1.75rem;
+  }
+
+  .story-content h2 {
+    font-size: 1.25rem;
+    margin-top: 2rem;
+  }
+
+  .story-content h3 {
+    font-size: 1.1rem;
+    margin-top: 1.5rem;
+  }
+
+  .story-content p {
+    font-size: 1rem;
+    text-align: left;
+    hyphens: none;
+    margin-bottom: 1.25rem;
+  }
+
+  .story-content p strong {
+    font-size: 1.1rem;
+    margin-top: 2rem;
+  }
+
+  .story-content ul, .story-content ol {
+    padding-left: 1.25rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .story-content li {
+    margin-bottom: 0.5rem;
+  }
+
+  .story-content blockquote {
+    padding-left: 1rem;
+    font-size: 1rem;
+    margin-bottom: 1.5rem;
+    margin-top: 1.5rem;
+  }
+
+  .story-content pre {
+    padding: 1rem;
+    font-size: 0.8rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .story-content hr {
+    margin: 2rem 0;
+  }
+}

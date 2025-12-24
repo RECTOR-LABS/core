@@ -2,14 +2,14 @@
 
 <%= stylesheet_link_tag "works", "data-turbo-track": "reload" %>
 
-<div class="max-w-3xl mx-auto px-6 py-12">
-  <div class="mb-8">
+<div class="max-w-3xl mx-auto px-4 sm:px-6 py-8 sm:py-12">
+  <div class="mb-6 sm:mb-8">
     <%= link_to "← Back to Work", works_path, class: "text-[#41CFFF] hover:text-[#E58C2E] transition-colors" %>
   </div>
 
   <article class="max-w-none">
-    <header class="mb-8 pb-8 border-b-2 border-[#3B2C22]/10">
-      <h1 class="text-4xl font-bold mb-4 text-[#3B2C22]"><%= @work.title %></h1>
+    <header class="mb-6 sm:mb-8 pb-6 sm:pb-8 border-b-2 border-[#3B2C22]/10">
+      <h1 class="text-2xl sm:text-4xl font-bold mb-4 text-[#3B2C22]"><%= @work.title %></h1>
 
       <div class="flex flex-wrap items-center gap-4 text-sm text-[#3B2C22]/60 mb-4">
         <span class="px-3 py-1 bg-[#A8E063] text-[#3B2C22] font-medium rounded"><%= @work.status %></span>
