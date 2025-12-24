@@ -64,12 +64,20 @@
             <p class="work-card-event"><%= badge[:event] %></p>
             <p class="work-card-summary"><%= work.summary %></p>
 
+            <% repo = GithubRepo.find_by(full_name: work.repo_name) %>
             <div class="work-card-meta">
               <% if work.technologies.present? %>
                 <span class="work-card-tech"><%= work.technologies.first(3).join(" • ") %></span>
               <% end %>
-              <% if work.github_stars.to_i > 0 %>
-                <span class="work-card-stars">⭐ <%= work.github_stars %></span>
+              <% stars = repo&.stargazers_count || work.github_stars %>
+              <% if stars.to_i > 0 %>
+                <span class="work-card-stars">⭐ <%= stars %></span>
+              <% end %>
+              <% if repo&.commit_count.to_i > 0 %>
+                <span class="work-card-commits">⊙ <%= repo.commit_count %></span>
+              <% end %>
+              <% if repo&.latest_commit_sha.present? %>
+                <span class="work-card-sha font-mono text-[10px] text-brown/40"><%= repo.latest_commit_sha %></span>
               <% end %>
             </div>
           <% end %>
@@ -102,12 +110,20 @@
             <h3 class="work-card-title"><%= work.title %></h3>
             <p class="work-card-summary"><%= work.summary %></p>
 
+            <% repo = GithubRepo.find_by(full_name: work.repo_name) %>
             <div class="work-card-meta">
               <% if work.technologies.present? %>
                 <span class="work-card-tech"><%= work.technologies.first(3).join(" • ") %></span>
               <% end %>
-              <% if work.github_stars.to_i > 0 %>
-                <span class="work-card-stars">⭐ <%= work.github_stars %></span>
+              <% stars = repo&.stargazers_count || work.github_stars %>
+              <% if stars.to_i > 0 %>
+                <span class="work-card-stars">⭐ <%= stars %></span>
+              <% end %>
+              <% if repo&.commit_count.to_i > 0 %>
+                <span class="work-card-commits">⊙ <%= repo.commit_count %></span>
+              <% end %>
+              <% if repo&.latest_commit_sha.present? %>
+                <span class="work-card-sha font-mono text-[10px] text-brown/40"><%= repo.latest_commit_sha %></span>
               <% end %>
             </div>
           <% end %>
