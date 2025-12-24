@@ -32,7 +32,9 @@ class GithubRepo < ApplicationRecord
         updated_at_github: repo_data[:updated_at],
         topics: repo_data[:topics],
         is_fork: repo_data[:is_fork],
-        account: repo_data[:account]
+        account: repo_data[:account],
+        commit_count: repo_data[:commit_count],
+        latest_commit_sha: repo_data[:latest_commit_sha]
       )
     end
 

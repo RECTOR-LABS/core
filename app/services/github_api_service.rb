@@ -132,6 +132,7 @@ class GithubApiService
 
   def parse_repos(repos, account)
     repos.map do |repo|
+      commit_info = fetch_commit_info(repo[:full_name])
       {
         name: repo[:name],
         full_name: repo[:full_name],
@@ -145,8 +146,49 @@ class GithubApiService
         updated_at: Time.parse(repo[:updated_at]),
         topics: repo[:topics] || [],
         is_fork: repo[:fork],
-        account: account
+        account: account,
+        commit_count: commit_info[:count],
+        latest_commit_sha: commit_info[:sha]
       }
     end
+  end
+
+  # Fetch commit count and latest commit sha for a repo
+  def fetch_commit_info(full_name)
+    uri = URI("#{API_BASE_URL}/repos/#{full_name}/commits?per_page=1")
+
+    begin
+      http = Net::HTTP.new(uri.host, uri.port)
+      http.use_ssl = true
+
+      request = Net::HTTP::Get.new(uri)
+      @http_options.each { |key, value| request[key] = value }
+
+      response = http.request(request)
+
+      if response.code == "200"
+        commits = JSON.parse(response.body, symbolize_names: true)
+        latest_sha = commits.first&.dig(:sha)&.slice(0, 7)
+
+        # Parse commit count from Link header (last page number)
+        commit_count = parse_commit_count_from_link(response["Link"])
+
+        { sha: latest_sha, count: commit_count }
+      else
+        { sha: nil, count: nil }
+      end
+    rescue StandardError => e
+      Rails.logger.error "Failed to fetch commit info for #{full_name}: #{e.message}"
+      { sha: nil, count: nil }
+    end
+  end
+
+  # Parse total commit count from GitHub's Link header pagination
+  def parse_commit_count_from_link(link_header)
+    return nil unless link_header
+
+    # Link header format: <url?page=N>; rel="last"
+    last_match = link_header.match(/page=(\d+)>; rel="last"/)
+    last_match ? last_match[1].to_i : 1
   end
 end

@@ -158,11 +158,12 @@
               <div class="flex-1 min-w-0">
                 <p class="mb-0 font-semibold truncate">
                   <%= link_to project.name, project.html_url, target: "_blank", rel: "noopener" %>
-                  <% # Check if this is a hackathon winner %>
+                  <% # Check if this is a hackathon/bounty winner %>
                   <% winner_projects = {
                     'web3-deal-discovery-nft-coupons' => '🥇',
                     'sip-protocol' => '🏆',
-                    'openbudget-id' => '🥈'
+                    'openbudget-id' => '🥈',
+                    'saros-docs' => '🥇'
                   } %>
                   <% if winner_projects[project.name] %>
                     <span class="project-winner-badge ml-1"><%= winner_projects[project.name] %> Winner</span>
@@ -194,6 +195,19 @@
                     <path d="M5 5.372v.878c0 .414.336.75.75.75h4.5a.75.75 0 0 0 .75-.75v-.878a2.25 2.25 0 1 1 1.5 0v.878a2.25 2.25 0 0 1-2.25 2.25h-1.5v2.128a2.251 2.251 0 1 1-1.5 0V8.5h-1.5A2.25 2.25 0 0 1 3.5 6.25v-.878a2.25 2.25 0 1 1 1.5 0ZM5 3.25a.75.75 0 1 0-1.5 0 .75.75 0 0 0 1.5 0Zm6.75.75a.75.75 0 1 0 0-1.5.75.75 0 0 0 0 1.5Zm-3 8.75a.75.75 0 1 0-1.5 0 .75.75 0 0 0 1.5 0Z"/>
                   </svg>
                   <%= project.forks_count %>
+                </span>
+              <% end %>
+              <% if project.commit_count.to_i > 0 %>
+                <span class="project-stat">
+                  <svg class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 16 16">
+                    <path d="M11.93 8.5a4.002 4.002 0 0 1-7.86 0H.75a.75.75 0 0 1 0-1.5h3.32a4.002 4.002 0 0 1 7.86 0h3.32a.75.75 0 0 1 0 1.5Zm-1.43-.75a2.5 2.5 0 1 0-5 0 2.5 2.5 0 0 0 5 0Z"/>
+                  </svg>
+                  <%= project.commit_count %>
+                </span>
+              <% end %>
+              <% if project.latest_commit_sha.present? %>
+                <span class="project-stat font-mono text-[10px] text-[#3B2C22]/50">
+                  <%= project.latest_commit_sha %>
                 </span>
               <% end %>
               <span class="project-stat ml-auto">
