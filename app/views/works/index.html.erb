@@ -1,74 +1,119 @@
 <% content_for :title, "Work" %>
 
-<div class="max-w-4xl mx-auto px-4 sm:px-6 py-8 sm:py-12">
+<div class="container-work">
   <div class="mb-6 sm:mb-8">
-    <%= link_to "← Home", root_path, class: "text-[#41CFFF] hover:text-[#E58C2E] transition-colors" %>
+    <%= link_to "← Home", root_path, class: "back-link" %>
   </div>
 
-  <div class="mb-8 sm:mb-12">
-    <h1 class="text-3xl sm:text-4xl font-bold mb-4 text-[#3B2C22]">Work</h1>
-    <p class="text-base sm:text-lg leading-relaxed text-[#3B2C22]/80">
+  <!-- Header -->
+  <div class="work-header">
+    <h1>Work</h1>
+    <p class="work-tagline">
       Projects I've built, problems I've solved, and stories worth telling.
     </p>
   </div>
 
-  <% if @featured_works.any? %>
-    <div class="mb-16">
-      <h2 class="text-2xl font-semibold mb-6 text-[#3B2C22]">Featured</h2>
-      <div class="space-y-6">
-        <% @featured_works.each do |work| %>
-          <%= link_to work_path(work), class: "block group" do %>
-            <div class="bg-white border-2 border-[#3B2C22]/10 rounded-lg p-4 sm:p-6 hover:border-[#41CFFF] transition-colors">
-              <div class="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-2 mb-3">
-                <h3 class="text-xl sm:text-2xl font-semibold text-[#3B2C22] group-hover:text-[#41CFFF] transition-colors">
-                  <%= work.title %>
-                </h3>
-                <% if work.status == "Live" %>
-                  <span class="px-3 py-1 bg-[#A8E063] text-[#3B2C22] text-sm font-medium rounded w-fit">Live</span>
-                <% end %>
+  <!-- Stats Banner -->
+  <div class="work-stats-banner">
+    <div class="work-stat">
+      <span class="work-stat-value">4</span>
+      <span class="work-stat-label">wins</span>
+    </div>
+    <span class="work-stat-divider">•</span>
+    <div class="work-stat">
+      <span class="work-stat-value">~$10,800</span>
+      <span class="work-stat-label">earned</span>
+    </div>
+    <span class="work-stat-divider">•</span>
+    <div class="work-stat">
+      <span class="work-stat-value"><%= @works.count %></span>
+      <span class="work-stat-label">projects</span>
+    </div>
+  </div>
+
+  <% winners = @works.where(status: "Winner").order(launched_at: :desc) %>
+  <% active = @works.where.not(status: "Winner").order(launched_at: :desc) %>
+
+  <!-- Hackathon Wins Section -->
+  <% if winners.any? %>
+    <section class="work-section">
+      <h2 class="work-section-title">
+        <span class="work-section-icon">🏆</span>
+        Hackathon & Bounty Wins
+      </h2>
+
+      <div class="work-grid">
+        <% winners.each do |work| %>
+          <%= link_to work_path(work), class: "work-card work-card-winner" do %>
+            <div class="work-card-header">
+              <% badge = case work.title
+                when "Web3 Deal Discovery" then { icon: "🥇", text: "1st Place", prize: "$5,000 + NFT", event: "MonkeDAO Cypherpunk" }
+                when "SIP Protocol" then { icon: "🏆", text: "Winner", prize: "$4,000", event: "Zypherpunk • NEAR Track" }
+                when "OpenBudget.ID" then { icon: "🥈", text: "2nd Place", prize: "$1,500", event: "Garuda Spark" }
+                when "Saros SDK Docs" then { icon: "🥇", text: "1st Place", prize: "$300", event: "Saros SDK Challenge" }
+                else { icon: "🏆", text: "Winner", prize: "", event: "" }
+              end %>
+
+              <div class="work-card-badge badge-winner">
+                <%= badge[:icon] %> <%= badge[:text] %>
               </div>
-              <p class="text-[#3B2C22]/70 leading-relaxed mb-4 text-sm sm:text-base">
-                <%= work.summary %>
-              </p>
-              <div class="flex flex-wrap items-center gap-2 sm:gap-4 text-xs sm:text-sm text-[#3B2C22]/60">
-                <span><%= work.category %></span>
-                <% if work.technologies.present? %>
-                  <span>•</span>
-                  <span><%= work.technologies.first(3).join(", ") %></span>
-                <% end %>
-              </div>
+              <span class="work-card-prize"><%= badge[:prize] %></span>
+            </div>
+
+            <h3 class="work-card-title"><%= work.title %></h3>
+            <p class="work-card-event"><%= badge[:event] %></p>
+            <p class="work-card-summary"><%= work.summary %></p>
+
+            <div class="work-card-meta">
+              <% if work.technologies.present? %>
+                <span class="work-card-tech"><%= work.technologies.first(3).join(" • ") %></span>
+              <% end %>
+              <% if work.github_stars.to_i > 0 %>
+                <span class="work-card-stars">⭐ <%= work.github_stars %></span>
+              <% end %>
             </div>
           <% end %>
         <% end %>
       </div>
-    </div>
+    </section>
   <% end %>
 
-  <% if @works.where.not(featured: true).any? %>
-    <div>
-      <h2 class="text-2xl font-semibold mb-6 text-[#3B2C22]">All Projects</h2>
-      <div class="space-y-4">
-        <% @works.where.not(featured: true).each do |work| %>
-          <%= link_to work_path(work), class: "block group" do %>
-            <div class="bg-white border-2 border-[#3B2C22]/10 rounded-lg p-4 sm:p-5 hover:border-[#41CFFF] transition-colors">
-              <div class="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-1 sm:gap-2 mb-2">
-                <h3 class="text-lg sm:text-xl font-semibold text-[#3B2C22] group-hover:text-[#41CFFF] transition-colors">
-                  <%= work.title %>
-                </h3>
-                <% if work.status %>
-                  <span class="px-2 py-1 bg-[#3B2C22]/5 text-[#3B2C22] text-xs font-medium rounded w-fit">
-                    <%= work.status %>
-                  </span>
-                <% end %>
-              </div>
-              <p class="text-[#3B2C22]/70 text-sm leading-relaxed">
-                <%= work.summary %>
-              </p>
+  <!-- Active Projects Section -->
+  <% if active.any? %>
+    <section class="work-section">
+      <h2 class="work-section-title">
+        <span class="work-section-icon">🔨</span>
+        Active Projects
+      </h2>
+
+      <div class="work-grid">
+        <% active.each do |work| %>
+          <%= link_to work_path(work), class: "work-card work-card-active" do %>
+            <div class="work-card-header">
+              <% if work.status == "Live" %>
+                <div class="work-card-badge badge-live">
+                  <span class="live-pulse"></span> Live
+                </div>
+              <% elsif work.status.present? %>
+                <div class="work-card-badge badge-status"><%= work.status %></div>
+              <% end %>
+            </div>
+
+            <h3 class="work-card-title"><%= work.title %></h3>
+            <p class="work-card-summary"><%= work.summary %></p>
+
+            <div class="work-card-meta">
+              <% if work.technologies.present? %>
+                <span class="work-card-tech"><%= work.technologies.first(3).join(" • ") %></span>
+              <% end %>
+              <% if work.github_stars.to_i > 0 %>
+                <span class="work-card-stars">⭐ <%= work.github_stars %></span>
+              <% end %>
             </div>
           <% end %>
         <% end %>
       </div>
-    </div>
+    </section>
   <% end %>
 
   <% if @works.empty? %>
