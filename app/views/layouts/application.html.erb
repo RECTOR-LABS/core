@@ -6,11 +6,28 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="application-name" content="RECTOR">
     <meta name="mobile-web-app-capable" content="yes">
+    <meta name="description" content="<%= content_for(:meta_description) || "Full-stack builder. Hackathon hunter. 4 wins, ~$10,800 earned. Building for eternity." %>">
     <%= csrf_meta_tags %>
     <%= csp_meta_tag %>
 
     <%# Canonical URL for SEO - always use non-www %>
     <link rel="canonical" href="https://rectorspace.com<%= request.path %>">
+
+    <%# Open Graph meta tags for social sharing %>
+    <meta property="og:type" content="<%= content_for(:og_type) || "website" %>">
+    <meta property="og:url" content="https://rectorspace.com<%= request.path %>">
+    <meta property="og:title" content="<%= content_for(:title) ? "#{content_for(:title)} • RECTOR" : "RECTOR • Building for Eternity" %>">
+    <meta property="og:description" content="<%= content_for(:meta_description) || "Full-stack builder. Hackathon hunter. 4 wins, ~$10,800 earned. Building for eternity." %>">
+    <meta property="og:image" content="<%= content_for(:og_image) || "https://rectorspace.com#{asset_path('og-image.png')}" %>">
+    <meta property="og:site_name" content="RECTOR">
+
+    <%# Twitter Card meta tags %>
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:site" content="@RZ1989sol">
+    <meta name="twitter:creator" content="@RZ1989sol">
+    <meta name="twitter:title" content="<%= content_for(:title) ? "#{content_for(:title)} • RECTOR" : "RECTOR • Building for Eternity" %>">
+    <meta name="twitter:description" content="<%= content_for(:meta_description) || "Full-stack builder. Hackathon hunter. 4 wins, ~$10,800 earned. Building for eternity." %>">
+    <meta name="twitter:image" content="<%= content_for(:og_image) || "https://rectorspace.com#{asset_path('og-image.png')}" %>">
 
     <%= yield :head %>
 
