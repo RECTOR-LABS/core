@@ -67,6 +67,74 @@
     @apply border-t-2 border-yellow my-8 sm:my-12;
   }
 
+  /* Introduction Section */
+  .intro-section {
+    @apply text-center mb-6;
+  }
+
+  .intro-greeting {
+    @apply text-2xl sm:text-3xl font-bold text-brown mb-2;
+  }
+
+  .intro-tagline {
+    @apply text-base sm:text-lg text-brown/70 mb-0;
+  }
+
+  /* Now Status Card */
+  .now-card {
+    @apply mt-6 p-4 sm:p-5 rounded-lg;
+    @apply bg-brown/5 border border-brown/10;
+  }
+
+  .now-row {
+    @apply flex items-start gap-3 py-3;
+    @apply border-b border-brown/10 last:border-b-0;
+  }
+
+  .now-icon {
+    @apply text-lg flex-shrink-0 w-6 text-center;
+  }
+
+  .now-label {
+    @apply text-xs font-bold text-brown/50 uppercase tracking-wider;
+    @apply w-20 sm:w-24 flex-shrink-0 pt-0.5;
+  }
+
+  .now-content {
+    @apply flex-1 text-brown text-sm sm:text-base;
+  }
+
+  .now-content a {
+    @apply text-sky-blue font-semibold;
+  }
+
+  .now-meta {
+    @apply text-brown/50;
+  }
+
+  /* Quick Nav */
+  .quick-nav {
+    @apply mt-6 text-center text-sm text-brown/60;
+  }
+
+  .quick-nav a {
+    @apply text-sky-blue;
+  }
+
+  @media (max-width: 640px) {
+    .now-row {
+      @apply flex-col gap-1 py-3;
+    }
+
+    .now-label {
+      @apply w-auto;
+    }
+
+    .now-content {
+      @apply pl-9;
+    }
+  }
+
   .code-inline {
     @apply bg-brown text-cream px-1.5 py-0.5 rounded text-[15px];
   }
