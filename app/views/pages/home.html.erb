@@ -113,35 +113,106 @@
   <section>
     <h2>Building in Public</h2>
 
-    <% if @syncing %>
-      <p class="mt-4">Loading latest projects from GitHub...</p>
-    <% elsif @latest_projects.any? %>
-      <div class="mt-4 space-y-6">
-        <% @latest_projects.each do |project| %>
-          <div>
-            <p class="mb-2">
-              <strong><%= link_to project.name, project.html_url, target: "_blank", rel: "noopener" %></strong>
-              <% if project.language.present? %>
-                <span class="text-xs"> • <%= project.language %></span>
+    <!-- GitHub Contribution Graph -->
+    <% if @contributions && @contributions[:weeks].any? %>
+      <div class="mt-6">
+        <div class="contribution-graph">
+          <div class="contribution-grid">
+            <% @contributions[:weeks].each do |week| %>
+              <% week.each do |day| %>
+                <div class="contribution-day contribution-level-<%= day[:level] %>"
+                     title="<%= day[:count] %> contributions on <%= day[:date] %>"></div>
               <% end %>
-              <span class="text-xs"> • Updated <%= project.time_ago %></span>
-            </p>
-            <% if project.description.present? %>
-              <p><%= sanitize project.description, tags: [] %></p>
+              <% # Pad incomplete weeks with empty cells %>
+              <% (7 - week.size).times do %>
+                <div class="contribution-day contribution-level-0"></div>
+              <% end %>
             <% end %>
+          </div>
+        </div>
+        <div class="contribution-stats">
+          <span class="contribution-total">
+            <span class="contribution-total-number"><%= number_with_delimiter(@contributions[:total]) %></span>
+            contributions in the last year
+          </span>
+          <div class="contribution-legend">
+            <span>Less</span>
+            <div class="contribution-legend-box contribution-level-0"></div>
+            <div class="contribution-legend-box contribution-level-1"></div>
+            <div class="contribution-legend-box contribution-level-2"></div>
+            <div class="contribution-legend-box contribution-level-3"></div>
+            <div class="contribution-legend-box contribution-level-4"></div>
+            <span>More</span>
+          </div>
+        </div>
+      </div>
+    <% end %>
+
+    <% if @syncing %>
+      <p class="mt-6">Loading latest projects from GitHub...</p>
+    <% elsif @latest_projects.any? %>
+      <div class="mt-6 space-y-3">
+        <% @latest_projects.each do |project| %>
+          <div class="project-card">
+            <div class="flex items-start justify-between gap-2">
+              <div class="flex-1 min-w-0">
+                <p class="mb-0 font-semibold truncate">
+                  <%= link_to project.name, project.html_url, target: "_blank", rel: "noopener" %>
+                  <% # Check if this is a hackathon winner %>
+                  <% winner_projects = {
+                    'web3-deal-discovery-nft-coupons' => '🥇',
+                    'sip-protocol' => '🏆',
+                    'openbudget-id' => '🥈'
+                  } %>
+                  <% if winner_projects[project.name] %>
+                    <span class="project-winner-badge ml-1"><%= winner_projects[project.name] %> Winner</span>
+                  <% end %>
+                </p>
+                <% if project.description.present? %>
+                  <p class="text-sm text-[#3B2C22]/70 mt-1 mb-0 line-clamp-1"><%= sanitize project.description, tags: [] %></p>
+                <% end %>
+              </div>
+            </div>
+            <div class="project-stats">
+              <% if project.language.present? %>
+                <span class="project-stat">
+                  <span class="w-2 h-2 rounded-full bg-sky-blue"></span>
+                  <%= project.language %>
+                </span>
+              <% end %>
+              <% if project.stargazers_count.to_i > 0 %>
+                <span class="project-stat">
+                  <svg class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 16 16">
+                    <path d="M8 .25a.75.75 0 0 1 .673.418l1.882 3.815 4.21.612a.75.75 0 0 1 .416 1.279l-3.046 2.97.719 4.192a.75.75 0 0 1-1.088.791L8 12.347l-3.766 1.98a.75.75 0 0 1-1.088-.79l.72-4.194L.818 6.374a.75.75 0 0 1 .416-1.28l4.21-.611L7.327.668A.75.75 0 0 1 8 .25Z"/>
+                  </svg>
+                  <%= project.stargazers_count %>
+                </span>
+              <% end %>
+              <% if project.forks_count.to_i > 0 %>
+                <span class="project-stat">
+                  <svg class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 16 16">
+                    <path d="M5 5.372v.878c0 .414.336.75.75.75h4.5a.75.75 0 0 0 .75-.75v-.878a2.25 2.25 0 1 1 1.5 0v.878a2.25 2.25 0 0 1-2.25 2.25h-1.5v2.128a2.251 2.251 0 1 1-1.5 0V8.5h-1.5A2.25 2.25 0 0 1 3.5 6.25v-.878a2.25 2.25 0 1 1 1.5 0ZM5 3.25a.75.75 0 1 0-1.5 0 .75.75 0 0 0 1.5 0Zm6.75.75a.75.75 0 1 0 0-1.5.75.75 0 0 0 0 1.5Zm-3 8.75a.75.75 0 1 0-1.5 0 .75.75 0 0 0 1.5 0Z"/>
+                  </svg>
+                  <%= project.forks_count %>
+                </span>
+              <% end %>
+              <span class="project-stat ml-auto">
+                <%= project.time_ago %>
+              </span>
+            </div>
           </div>
         <% end %>
       </div>
     <% else %>
-      <p class="mt-4">No projects found. Check back later!</p>
+      <p class="mt-6">No projects found. Check back later!</p>
     <% end %>
 
     <% if @tech_stack && @tech_stack[:primary].present? %>
-      <div class="mt-8 p-6 bg-[#3B2C22]/5 border-l-4 border-[#41CFFF] rounded">
-        <p class="text-sm font-medium text-[#3B2C22]/60 mb-2">
+      <div class="mt-6 p-4 bg-[#3B2C22]/5 border-l-4 border-[#41CFFF] rounded">
+        <p class="text-sm font-medium text-[#3B2C22]/60 mb-1">
           BUILDING ACROSS <%= @tech_stack[:total_repos] %> REPOSITORIES
         </p>
-        <p class="font-mono text-lg font-semibold text-[#3B2C22]">
+        <p class="font-mono text-base font-semibold text-[#3B2C22] mb-0">
           <%= @tech_stack[:primary].map { |l| l[:name] }.join(" • ") %>
         </p>
       </div>
