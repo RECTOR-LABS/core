@@ -260,30 +260,20 @@
 
   /* GitHub Contribution Graph */
   .contribution-graph {
-    @apply overflow-x-auto pb-2 -mx-6 px-6;
-    scrollbar-width: thin;
-    scrollbar-color: rgba(59, 44, 34, 0.2) transparent;
-  }
-
-  .contribution-graph::-webkit-scrollbar {
-    height: 4px;
-  }
-
-  .contribution-graph::-webkit-scrollbar-thumb {
-    background: rgba(59, 44, 34, 0.2);
-    border-radius: 2px;
+    @apply pb-2;
+    overflow: visible; /* Allow tooltips to escape */
   }
 
   .contribution-grid {
     display: grid;
     grid-template-rows: repeat(7, 1fr);
     grid-auto-flow: column;
-    gap: 3px;
+    gap: 2px;
     width: max-content;
   }
 
   .contribution-day {
-    @apply w-[11px] h-[11px] rounded-sm;
+    @apply w-[10px] h-[10px] rounded-sm;
     @apply transition-transform duration-100;
   }
 
@@ -293,11 +283,11 @@
 
   @media (max-width: 640px) {
     .contribution-day {
-      @apply w-[9px] h-[9px];
+      @apply w-[8px] h-[8px];
     }
 
     .contribution-grid {
-      gap: 2px;
+      gap: 1px;
     }
   }
 
@@ -327,7 +317,7 @@
   }
 
   .contribution-legend-box {
-    @apply w-[11px] h-[11px] rounded-sm;
+    @apply w-[10px] h-[10px] rounded-sm;
   }
 
   .contribution-stats {
@@ -340,6 +330,163 @@
 
   .contribution-total-number {
     @apply text-green text-lg;
+  }
+
+  /* Contribution Container - wraps entire graph section */
+  .contribution-container {
+    @apply mt-4;
+  }
+
+  /* Year Tabs - selector above contribution graph */
+  .year-tabs {
+    @apply flex items-center gap-2 mb-4;
+  }
+
+  .year-tab {
+    @apply px-3 py-1.5 text-sm font-medium rounded-lg no-underline;
+    @apply text-brown/60 bg-brown/5 border border-transparent;
+    @apply transition-all duration-200;
+  }
+
+  .year-tab:hover {
+    @apply text-brown bg-brown/10;
+  }
+
+  .year-tab-active {
+    @apply text-cream bg-brown border-brown;
+  }
+
+  .year-tab-active:hover {
+    @apply text-cream bg-brown;
+  }
+
+  /* Streak Badge - top info bar */
+  .streak-badge {
+    @apply flex items-center gap-2 mb-4 text-sm;
+    @apply flex-wrap;
+  }
+
+  .streak-fire {
+    @apply text-base;
+  }
+
+  .streak-current {
+    @apply font-bold text-orange;
+  }
+
+  .streak-separator {
+    @apply text-brown/30;
+  }
+
+  .streak-longest {
+    @apply text-brown/60;
+  }
+
+  .streak-best {
+    @apply text-brown/60;
+  }
+
+  /* Month Labels - positioned above contribution graph */
+  .contribution-months {
+    display: flex;
+    gap: 0;
+    margin-bottom: 4px;
+    overflow-x: auto;
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+    width: max-content;
+  }
+
+  .contribution-months::-webkit-scrollbar {
+    display: none;
+  }
+
+  .month-label {
+    @apply text-[10px] text-brown/50 font-medium;
+    white-space: nowrap;
+    min-width: calc(4.3 * (10px + 2px)); /* ~4.3 weeks per month */
+  }
+
+  /* Busiest Day Highlight */
+  .busiest-day {
+    @apply ring-2 ring-yellow ring-offset-1;
+    box-shadow: 0 0 8px rgba(249, 200, 70, 0.6);
+  }
+
+  /* Tooltip on hover - only for grid cells, not legend */
+  .contribution-grid .contribution-day {
+    position: relative;
+    cursor: pointer;
+  }
+
+  .contribution-grid .contribution-day::after {
+    content: attr(data-count) " contributions on " attr(data-date);
+    position: absolute;
+    bottom: calc(100% + 8px);
+    left: 50%;
+    transform: translateX(-50%);
+    @apply bg-brown text-cream text-[10px] px-2 py-1 rounded whitespace-nowrap;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.15s ease-in-out;
+    z-index: 50;
+  }
+
+  .contribution-grid .contribution-day:hover::after {
+    opacity: 1;
+  }
+
+  /* Hide tooltip for empty days */
+  .contribution-grid .contribution-level-0::after {
+    content: "No contributions on " attr(data-date);
+  }
+
+  /* Cascade Animation - only for grid cells */
+  @keyframes contribution-cascade {
+    0% {
+      opacity: 0;
+      transform: scale(0);
+    }
+    100% {
+      opacity: 1;
+      transform: scale(1);
+    }
+  }
+
+  .contribution-grid .contribution-day {
+    animation: contribution-cascade 0.3s ease-out forwards;
+    opacity: 0;
+  }
+
+  @media (max-width: 640px) {
+    .streak-badge {
+      @apply text-xs gap-1.5;
+    }
+
+    .streak-fire {
+      @apply text-sm;
+    }
+
+    .month-label {
+      @apply text-[8px];
+      min-width: calc(4.3 * (8px + 1px)); /* ~4.3 weeks per month on mobile */
+    }
+
+    .year-tabs {
+      @apply gap-1 flex-wrap;
+    }
+
+    .year-tab {
+      @apply px-2 py-1 text-xs;
+    }
+
+    .contribution-grid .contribution-day::after {
+      @apply text-[8px] px-1.5 py-0.5;
+    }
+
+    .busiest-day {
+      @apply ring-1;
+    }
   }
 
   /* Project cards with stats */
@@ -403,55 +550,19 @@
     }
   }
 
-  /* Aggregate Impact Stats */
-  .aggregate-stats {
-    @apply flex items-center justify-between mt-6 p-4 rounded-lg;
-    @apply bg-brown/5 border border-brown/10;
+  /* Compact Activity Bar */
+  .activity-bar {
+    @apply flex items-center gap-2 mt-6 py-3 px-4 rounded-lg;
+    @apply bg-green/10 border border-green/20;
   }
 
-  .aggregate-stat {
-    @apply flex flex-col items-center text-center;
-  }
-
-  .aggregate-icon {
-    @apply text-lg mb-1;
-  }
-
-  .aggregate-value {
-    @apply text-xl font-bold text-brown;
-  }
-
-  .aggregate-label {
-    @apply text-xs text-brown/60;
-  }
-
-  @media (max-width: 640px) {
-    .aggregate-stats {
-      @apply grid grid-cols-4 gap-2 p-3;
-    }
-
-    .aggregate-value {
-      @apply text-base;
-    }
-
-    .aggregate-icon {
-      @apply text-sm;
-    }
-  }
-
-  /* Currently Building Live Indicator */
-  .currently-building {
-    @apply mt-6 p-4 rounded-lg;
-    @apply bg-green/10 border border-green/30;
-  }
-
-  .currently-building-header {
-    @apply flex items-center gap-2 mb-2;
-  }
-
-  .live-dot {
-    @apply w-2.5 h-2.5 rounded-full bg-green;
+  .live-pulse {
+    @apply w-2.5 h-2.5 rounded-full bg-green flex-shrink-0;
     animation: pulse-live 1.5s ease-in-out infinite;
+  }
+
+  .idle-pulse {
+    @apply w-2.5 h-2.5 rounded-full bg-brown/30 flex-shrink-0;
   }
 
   @keyframes pulse-live {
@@ -465,45 +576,37 @@
     }
   }
 
-  .live-label {
-    @apply text-xs font-bold text-green uppercase tracking-wider;
+  .activity-text {
+    @apply text-sm text-brown leading-relaxed;
   }
 
-  .idle-dot {
-    @apply w-2.5 h-2.5 rounded-full bg-brown/30;
+  .activity-link {
+    @apply font-semibold text-brown no-underline;
   }
 
-  .idle-label {
-    @apply text-xs font-bold text-brown/50 uppercase tracking-wider;
-  }
-
-  .currently-building-content {
-    @apply flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-0;
-  }
-
-  .currently-building-name {
-    @apply font-semibold text-brown;
-  }
-
-  .currently-building-name a {
-    @apply text-brown no-underline;
-  }
-
-  .currently-building-name a:hover {
+  .activity-link:hover {
     @apply text-sky-blue underline;
   }
 
-  .currently-building-meta {
-    @apply text-sm text-brown/60;
+  .activity-separator {
+    @apply text-brown/30 mx-1;
+  }
+
+  .activity-time {
+    @apply text-brown/50;
   }
 
   @media (max-width: 640px) {
-    .currently-building {
-      @apply p-3;
+    .activity-bar {
+      @apply flex-wrap py-2.5 px-3;
     }
 
-    .currently-building-meta {
-      @apply text-xs;
+    .activity-text {
+      @apply text-xs leading-normal;
+    }
+
+    .activity-separator {
+      @apply mx-0.5;
     }
   }
 

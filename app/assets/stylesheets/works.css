@@ -181,3 +181,206 @@
     margin: 2rem 0;
   }
 }
+
+/* Show More Button */
+.work-show-more {
+  display: flex;
+  justify-content: center;
+  margin-top: 2rem;
+}
+
+.show-more-btn {
+  background-color: transparent;
+  color: #3B2C22;
+  border: 2px solid #3B2C22;
+  padding: 0.75rem 2rem;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.875rem;
+  font-weight: 500;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.show-more-btn:hover {
+  background-color: #3B2C22;
+  color: #FFF7E1;
+}
+
+.show-more-btn:focus {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(59, 44, 34, 0.2);
+}
+
+/* ========================================
+   Filter & Sort Controls
+   ======================================== */
+
+.work-section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.work-counter {
+  font-size: 0.875rem;
+  font-weight: 400;
+  color: #3B2C22;
+  opacity: 0.5;
+  margin-left: 0.75rem;
+}
+
+/* Filter Bar - contains chips and sort */
+.filter-bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+  padding: 1rem;
+  background-color: rgba(59, 44, 34, 0.03);
+  border-radius: 0.5rem;
+}
+
+/* Filter Chips */
+.filter-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.filter-chip {
+  padding: 0.375rem 0.875rem;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: #3B2C22;
+  background-color: transparent;
+  border: 1.5px solid rgba(59, 44, 34, 0.2);
+  border-radius: 9999px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.filter-chip:hover {
+  border-color: #3B2C22;
+  background-color: rgba(59, 44, 34, 0.05);
+}
+
+.filter-chip.active {
+  background-color: #3B2C22;
+  color: #FFF7E1;
+  border-color: #3B2C22;
+}
+
+/* Sort Buttons */
+.sort-buttons {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.sort-label {
+  font-size: 0.75rem;
+  color: #3B2C22;
+  opacity: 0.5;
+  margin-right: 0.5rem;
+}
+
+.sort-btn {
+  padding: 0.375rem 0.625rem;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: #3B2C22;
+  opacity: 0.5;
+  background-color: transparent;
+  border: none;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  border-radius: 0.25rem;
+}
+
+.sort-btn:hover {
+  opacity: 1;
+  background-color: rgba(59, 44, 34, 0.05);
+}
+
+.sort-btn.active {
+  opacity: 1;
+  color: #41CFFF;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+/* Hidden state for filtered cards */
+.work-card.filter-hidden {
+  display: none !important;
+}
+
+/* Hidden state for show-more pagination */
+.work-card.show-more-hidden {
+  display: none !important;
+}
+
+/* No Results Message */
+.no-results {
+  text-align: center;
+  padding: 3rem 1rem;
+  color: #3B2C22;
+  opacity: 0.5;
+}
+
+.no-results.hidden {
+  display: none;
+}
+
+/* Stars and Commits icons in cards */
+.work-card-stars::before {
+  content: "⭐ ";
+}
+
+.work-card-commits::before {
+  content: "⊙ ";
+}
+
+/* Mobile Responsive - Filter & Sort */
+@media (max-width: 640px) {
+  .filter-bar {
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 0.75rem;
+  }
+
+  .filter-chips {
+    width: 100%;
+  }
+
+  .filter-chip {
+    font-size: 0.7rem;
+    padding: 0.3rem 0.65rem;
+  }
+
+  .sort-buttons {
+    width: 100%;
+    justify-content: flex-start;
+    flex-wrap: wrap;
+    margin-top: 0.5rem;
+    padding-top: 0.75rem;
+    border-top: 1px solid rgba(59, 44, 34, 0.1);
+  }
+
+  .sort-btn {
+    font-size: 0.7rem;
+    padding: 0.3rem 0.5rem;
+  }
+
+  .work-counter {
+    display: block;
+    margin-left: 0;
+    margin-top: 0.25rem;
+  }
+}
