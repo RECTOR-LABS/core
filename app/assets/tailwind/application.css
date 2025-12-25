@@ -268,12 +268,12 @@
     display: grid;
     grid-template-rows: repeat(7, 1fr);
     grid-auto-flow: column;
-    gap: 3px;
+    gap: 2px;
     width: max-content;
   }
 
   .contribution-day {
-    @apply w-[11px] h-[11px] rounded-sm;
+    @apply w-[10px] h-[10px] rounded-sm;
     @apply transition-transform duration-100;
   }
 
@@ -283,11 +283,11 @@
 
   @media (max-width: 640px) {
     .contribution-day {
-      @apply w-[9px] h-[9px];
+      @apply w-[8px] h-[8px];
     }
 
     .contribution-grid {
-      gap: 2px;
+      gap: 1px;
     }
   }
 
@@ -317,7 +317,7 @@
   }
 
   .contribution-legend-box {
-    @apply w-[11px] h-[11px] rounded-sm;
+    @apply w-[10px] h-[10px] rounded-sm;
   }
 
   .contribution-stats {
@@ -334,7 +334,30 @@
 
   /* Contribution Container - wraps entire graph section */
   .contribution-container {
-    @apply mt-6;
+    @apply mt-4;
+  }
+
+  /* Year Tabs - selector above contribution graph */
+  .year-tabs {
+    @apply flex items-center gap-2 mb-4;
+  }
+
+  .year-tab {
+    @apply px-3 py-1.5 text-sm font-medium rounded-lg no-underline;
+    @apply text-brown/60 bg-brown/5 border border-transparent;
+    @apply transition-all duration-200;
+  }
+
+  .year-tab:hover {
+    @apply text-brown bg-brown/10;
+  }
+
+  .year-tab-active {
+    @apply text-cream bg-brown border-brown;
+  }
+
+  .year-tab-active:hover {
+    @apply text-cream bg-brown;
   }
 
   /* Streak Badge - top info bar */
@@ -381,7 +404,7 @@
   .month-label {
     @apply text-[10px] text-brown/50 font-medium;
     white-space: nowrap;
-    min-width: calc(4 * (11px + 3px)); /* ~4 weeks per month */
+    min-width: calc(4.3 * (10px + 2px)); /* ~4.3 weeks per month */
   }
 
   /* Busiest Day Highlight */
@@ -446,7 +469,15 @@
 
     .month-label {
       @apply text-[8px];
-      min-width: calc(4 * (9px + 2px)); /* ~4 weeks per month on mobile */
+      min-width: calc(4.3 * (8px + 1px)); /* ~4.3 weeks per month on mobile */
+    }
+
+    .year-tabs {
+      @apply gap-1 flex-wrap;
+    }
+
+    .year-tab {
+      @apply px-2 py-1 text-xs;
     }
 
     .contribution-grid .contribution-day::after {

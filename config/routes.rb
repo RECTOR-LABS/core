@@ -2,6 +2,9 @@ Rails.application.routes.draw do
   # RECTOR LABS - Homepage
   root "pages#home"
 
+  # Contribution graph (Turbo Frame endpoint)
+  get "contributions", to: "pages#contributions"
+
   # Work section - story-driven project showcase
   resources :works, path: "work", only: [ :index, :show ]
 

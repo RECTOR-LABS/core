@@ -11,9 +11,10 @@ class GithubContributionsService
     @username = username
   end
 
-  # Fetch contribution data for the last year
-  def fetch_contributions
-    uri = URI("#{API_URL}/#{@username}?y=last")
+  # Fetch contribution data for a specific year or last year
+  # year: integer (e.g., 2025) or "last" for rolling 12 months
+  def fetch_contributions(year: "last")
+    uri = URI("#{API_URL}/#{@username}?y=#{year}")
 
     begin
       http = Net::HTTP.new(uri.host, uri.port)
@@ -29,7 +30,7 @@ class GithubContributionsService
       response = http.request(request)
 
       if response.code == "200"
-        parse_response(JSON.parse(response.body, symbolize_names: true))
+        parse_response(JSON.parse(response.body, symbolize_names: true), year)
       else
         Rails.logger.error "GitHub Contributions API error: #{response.code}"
         fallback_data
@@ -40,17 +41,55 @@ class GithubContributionsService
     end
   end
 
+  # Fetch available years from API (returns hash of year => total)
+  def fetch_available_years
+    # Fetch "all" years to get the totals
+    uri = URI("#{API_URL}/#{@username}")
+
+    begin
+      http = Net::HTTP.new(uri.host, uri.port)
+      http.use_ssl = true
+      http.verify_mode = OpenSSL::SSL::VERIFY_PEER
+      http.open_timeout = 5
+      http.read_timeout = 10
+
+      request = Net::HTTP::Get.new(uri)
+      request["Accept"] = "application/json"
+      request["User-Agent"] = "RECTOR-LABS-CORE"
+
+      response = http.request(request)
+
+      if response.code == "200"
+        data = JSON.parse(response.body, symbolize_names: true)
+        totals = data[:total] || {}
+        # Convert to array of years with contributions, sorted descending
+        totals.except(:lastYear).map { |year, count| { year: year.to_s.to_i, count: count } }
+              .select { |y| y[:year] > 2000 && y[:count] > 0 }
+              .sort_by { |y| -y[:year] }
+      else
+        []
+      end
+    rescue StandardError => e
+      Rails.logger.error "GitHub fetch years failed: #{e.message}"
+      []
+    end
+  end
+
   private
 
-  def parse_response(data)
+  def parse_response(data, year)
     # Get contributions from API response
     contributions = data[:contributions] || []
 
     # Sort by date (API returns sorted, but ensure)
     sorted_contributions = contributions.sort_by { |c| c[:date] }
 
-    # Get total from API response (format: {lastYear: N})
-    total_last_year = data.dig(:total, :lastYear) || sorted_contributions.sum { |c| c[:count] }
+    # Get total - use year-specific if available, otherwise calculate
+    total = if year == "last"
+      data.dig(:total, :lastYear) || sorted_contributions.sum { |c| c[:count] }
+    else
+      data.dig(:total, year.to_s.to_sym) || sorted_contributions.sum { |c| c[:count] }
+    end
 
     # Organize into weeks (for grid layout)
     weeks = organize_into_weeks(sorted_contributions)
@@ -59,7 +98,8 @@ class GithubContributionsService
     streaks = calculate_streaks(sorted_contributions)
 
     {
-      total: total_last_year,
+      total: total,
+      selected_year: year,
       yearly_totals: data[:total] || {},
       weeks: weeks,
       contributions: sorted_contributions,

@@ -6,8 +6,15 @@ class PagesController < ApplicationController
     # Parse tech stack from all repos
     @tech_stack = TechStackParser.current_stack
 
-    # Fetch GitHub contributions for graph (includes streaks)
-    @contributions = GithubContributionsService.new.fetch_contributions
+    # Get selected year (default to current year)
+    @selected_year = params[:year].presence || Date.current.year.to_s
+
+    # Fetch available years for tabs
+    service = GithubContributionsService.new
+    @available_years = service.fetch_available_years
+
+    # Fetch GitHub contributions for selected year
+    @contributions = service.fetch_contributions(year: @selected_year)
 
     # Aggregate stats across all repos
     @aggregate_stats = GithubRepo.aggregate_stats
@@ -20,5 +27,19 @@ class PagesController < ApplicationController
       SyncGithubReposJob.perform_later
       @syncing = true
     end
+  end
+
+  # Turbo Frame endpoint for contribution graph
+  def contributions
+    @selected_year = params[:year].presence || Date.current.year.to_s
+    service = GithubContributionsService.new
+    @available_years = service.fetch_available_years
+    @contributions = service.fetch_contributions(year: @selected_year)
+
+    render partial: "pages/contribution_graph", locals: {
+      contributions: @contributions,
+      selected_year: @selected_year,
+      available_years: @available_years
+    }
   end
 end
