@@ -342,6 +342,136 @@
     @apply text-green text-lg;
   }
 
+  /* Contribution Container - wraps entire graph section */
+  .contribution-container {
+    @apply mt-6;
+  }
+
+  /* Streak Badge - top info bar */
+  .streak-badge {
+    @apply flex items-center gap-2 mb-4 text-sm;
+    @apply flex-wrap;
+  }
+
+  .streak-fire {
+    @apply text-base;
+  }
+
+  .streak-current {
+    @apply font-bold text-orange;
+  }
+
+  .streak-separator {
+    @apply text-brown/30;
+  }
+
+  .streak-longest {
+    @apply text-brown/60;
+  }
+
+  .streak-best {
+    @apply text-brown/60;
+  }
+
+  /* Month Labels - grid above contribution graph */
+  .contribution-months {
+    display: grid;
+    grid-template-columns: repeat(53, 11px);
+    gap: 3px;
+    margin-bottom: 4px;
+    margin-left: 0;
+    overflow-x: auto;
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+
+  .contribution-months::-webkit-scrollbar {
+    display: none;
+  }
+
+  .month-label {
+    @apply text-[10px] text-brown/50 font-medium;
+    white-space: nowrap;
+  }
+
+  /* Busiest Day Highlight */
+  .busiest-day {
+    @apply ring-2 ring-yellow ring-offset-1;
+    box-shadow: 0 0 8px rgba(249, 200, 70, 0.6);
+  }
+
+  /* Tooltip on hover */
+  .contribution-day {
+    position: relative;
+    cursor: pointer;
+  }
+
+  .contribution-day::after {
+    content: attr(data-count) " contributions on " attr(data-date);
+    position: absolute;
+    bottom: calc(100% + 8px);
+    left: 50%;
+    transform: translateX(-50%);
+    @apply bg-brown text-cream text-[10px] px-2 py-1 rounded whitespace-nowrap;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.15s ease-in-out;
+    z-index: 50;
+  }
+
+  .contribution-day:hover::after {
+    opacity: 1;
+  }
+
+  /* Hide tooltip for empty days */
+  .contribution-level-0::after {
+    content: "No contributions on " attr(data-date);
+  }
+
+  /* Cascade Animation */
+  @keyframes contribution-cascade {
+    0% {
+      opacity: 0;
+      transform: scale(0);
+    }
+    100% {
+      opacity: 1;
+      transform: scale(1);
+    }
+  }
+
+  .contribution-day {
+    animation: contribution-cascade 0.3s ease-out forwards;
+    opacity: 0;
+  }
+
+  @media (max-width: 640px) {
+    .streak-badge {
+      @apply text-xs gap-1.5;
+    }
+
+    .streak-fire {
+      @apply text-sm;
+    }
+
+    .contribution-months {
+      grid-template-columns: repeat(53, 9px);
+      gap: 2px;
+    }
+
+    .month-label {
+      @apply text-[8px];
+    }
+
+    .contribution-day::after {
+      @apply text-[8px] px-1.5 py-0.5;
+    }
+
+    .busiest-day {
+      @apply ring-1;
+    }
+  }
+
   /* Project cards with stats */
   .project-card {
     @apply p-3 rounded-lg border border-brown/10 bg-cream/50;
