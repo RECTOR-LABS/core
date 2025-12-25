@@ -181,3 +181,33 @@
     margin: 2rem 0;
   }
 }
+
+/* Show More Button */
+.work-show-more {
+  display: flex;
+  justify-content: center;
+  margin-top: 2rem;
+}
+
+.show-more-btn {
+  background-color: transparent;
+  color: #3B2C22;
+  border: 2px solid #3B2C22;
+  padding: 0.75rem 2rem;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.875rem;
+  font-weight: 500;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.show-more-btn:hover {
+  background-color: #3B2C22;
+  color: #FFF7E1;
+}
+
+.show-more-btn:focus {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(59, 44, 34, 0.2);
+}

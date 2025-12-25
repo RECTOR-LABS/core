@@ -88,7 +88,7 @@
 
   <!-- Active Projects Section -->
   <% if active.any? %>
-    <section class="work-section">
+    <section class="work-section" data-controller="show-more" data-show-more-limit-value="12">
       <h2 class="work-section-title">
         <span class="work-section-icon">🔨</span>
         Active Projects
@@ -96,7 +96,7 @@
 
       <div class="work-grid">
         <% active.each do |work| %>
-          <%= link_to work_path(work), class: "work-card work-card-active" do %>
+          <%= link_to work_path(work), class: "work-card work-card-active", data: { show_more_target: "item" } do %>
             <div class="work-card-header">
               <% if work.status == "Live" %>
                 <div class="work-card-badge badge-live">
@@ -129,6 +129,14 @@
           <% end %>
         <% end %>
       </div>
+
+      <% if active.count > 12 %>
+        <div class="work-show-more">
+          <button data-show-more-target="button" data-action="click->show-more#toggle" class="show-more-btn">
+            Show <%= active.count - 12 %> more
+          </button>
+        </div>
+      <% end %>
     </section>
   <% end %>
 
