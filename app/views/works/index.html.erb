@@ -88,15 +88,61 @@
 
   <!-- Active Projects Section -->
   <% if active.any? %>
-    <section class="work-section" data-controller="show-more" data-show-more-limit-value="12">
-      <h2 class="work-section-title">
-        <span class="work-section-icon">🔨</span>
-        Active Projects
-      </h2>
+    <section class="work-section" data-controller="filter-sort" data-filter-sort-sort-by-value="date">
+      <div class="work-section-header">
+        <h2 class="work-section-title">
+          <span class="work-section-icon">🔨</span>
+          Active Projects
+          <span class="work-counter" data-filter-sort-target="counter"><%= active.count %> projects</span>
+        </h2>
+      </div>
+
+      <!-- Filter Chips -->
+      <div class="filter-bar">
+        <div class="filter-chips">
+          <button class="filter-chip active" data-filter-sort-target="filterChip" data-tech="all" data-action="click->filter-sort#toggleFilter">
+            All
+          </button>
+          <% %w[TypeScript Solana Rust Next.js Anchor Python AI Shell].each do |tech| %>
+            <button class="filter-chip" data-filter-sort-target="filterChip" data-tech="<%= tech.downcase %>" data-action="click->filter-sort#toggleFilter">
+              <%= tech %>
+            </button>
+          <% end %>
+        </div>
+
+        <!-- Sort Buttons -->
+        <div class="sort-buttons">
+          <span class="sort-label">Sort:</span>
+          <button class="sort-btn active" data-filter-sort-target="sortButton" data-sort="date" data-action="click->filter-sort#setSort">
+            Latest
+          </button>
+          <button class="sort-btn" data-filter-sort-target="sortButton" data-sort="stars" data-action="click->filter-sort#setSort">
+            Stars
+          </button>
+          <button class="sort-btn" data-filter-sort-target="sortButton" data-sort="commits" data-action="click->filter-sort#setSort">
+            Commits
+          </button>
+          <button class="sort-btn" data-filter-sort-target="sortButton" data-sort="alpha" data-action="click->filter-sort#setSort">
+            A-Z
+          </button>
+        </div>
+      </div>
 
       <div class="work-grid">
         <% active.each do |work| %>
-          <%= link_to work_path(work), class: "work-card work-card-active", data: { show_more_target: "item" } do %>
+          <% repo = GithubRepo.find_by(full_name: work.repo_name) %>
+          <% stars = repo&.stargazers_count || work.github_stars || 0 %>
+          <% commits = repo&.commit_count || 0 %>
+          <%= link_to work_path(work),
+              class: "work-card work-card-active",
+              data: {
+                filter_sort_target: "card",
+                technologies: (work.technologies || []).to_json,
+                stars: stars,
+                commits: commits,
+                date: work.launched_at&.iso8601,
+                title: work.title
+              } do %>
             <div class="work-card-header">
               <% if work.status == "Live" %>
                 <div class="work-card-badge badge-live">
@@ -110,17 +156,15 @@
             <h3 class="work-card-title"><%= work.title %></h3>
             <p class="work-card-summary"><%= work.summary %></p>
 
-            <% repo = GithubRepo.find_by(full_name: work.repo_name) %>
             <div class="work-card-meta">
               <% if work.technologies.present? %>
                 <span class="work-card-tech"><%= work.technologies.first(3).join(" • ") %></span>
               <% end %>
-              <% stars = repo&.stargazers_count || work.github_stars %>
               <% if stars.to_i > 0 %>
-                <span class="work-card-stars">⭐ <%= stars %></span>
+                <span class="work-card-stars"><%= stars %></span>
               <% end %>
-              <% if repo&.commit_count.to_i > 0 %>
-                <span class="work-card-commits">⊙ <%= repo.commit_count %></span>
+              <% if commits.to_i > 0 %>
+                <span class="work-card-commits"><%= commits %></span>
               <% end %>
               <% if repo&.latest_commit_sha.present? %>
                 <span class="work-card-sha font-mono text-[10px] text-brown/40"><%= repo.latest_commit_sha %></span>
@@ -130,13 +174,10 @@
         <% end %>
       </div>
 
-      <% if active.count > 12 %>
-        <div class="work-show-more">
-          <button data-show-more-target="button" data-action="click->show-more#toggle" class="show-more-btn">
-            Show <%= active.count - 12 %> more
-          </button>
-        </div>
-      <% end %>
+      <!-- No Results Message -->
+      <div class="no-results hidden" data-filter-sort-target="noResults">
+        <p>No projects match your filters. Try adjusting your selection.</p>
+      </div>
     </section>
   <% end %>
 
