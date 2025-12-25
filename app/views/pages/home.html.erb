@@ -163,13 +163,15 @@
           <span class="idle-pulse"></span>
         <% end %>
         <span class="activity-text">
-          Shipping <%= link_to @currently_building.name, @currently_building.html_url, target: "_blank", rel: "noopener", class: "activity-link" %><% if @currently_building.language.present? %> (<%= @currently_building.language %>)<% end %>
+          <%= link_to @currently_building.name, @currently_building.html_url, target: "_blank", rel: "noopener", class: "activity-link" %>
           <span class="activity-separator">•</span>
-          <%= number_to_human(@aggregate_stats[:total_stars], precision: 1, significant: false, format: '%n%u', units: { thousand: 'k' }) %> ⭐
+          <%= @currently_building.language %>
           <span class="activity-separator">•</span>
-          <%= number_to_human(@aggregate_stats[:total_commits], precision: 1, significant: false, format: '%n%u', units: { thousand: 'k' }) %> commits
+          ⭐ <%= number_to_human(@aggregate_stats[:total_stars], precision: 1, significant: false, format: '%n%u', units: { thousand: 'k' }) %>
           <span class="activity-separator">•</span>
-          <%= @aggregate_stats[:total_repos] %> repos
+          ⊙ <%= number_to_human(@aggregate_stats[:total_commits], precision: 1, significant: false, format: '%n%u', units: { thousand: 'k' }) %>
+          <span class="activity-separator">•</span>
+          📦 <%= @aggregate_stats[:total_repos] %>
           <span class="activity-separator">•</span>
           <span class="activity-time"><%= @currently_building.detailed_time_ago %></span>
         </span>
