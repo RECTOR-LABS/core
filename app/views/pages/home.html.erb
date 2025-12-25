@@ -154,58 +154,25 @@
       </div>
     <% end %>
 
-    <!-- Aggregate Impact Stats -->
-    <% if @aggregate_stats %>
-      <div class="aggregate-stats">
-        <div class="aggregate-stat">
-          <span class="aggregate-icon">⭐</span>
-          <span class="aggregate-value"><%= number_with_delimiter(@aggregate_stats[:total_stars]) %></span>
-          <span class="aggregate-label">stars</span>
-        </div>
-        <div class="aggregate-stat">
-          <span class="aggregate-icon">🔀</span>
-          <span class="aggregate-value"><%= number_with_delimiter(@aggregate_stats[:total_forks]) %></span>
-          <span class="aggregate-label">forks</span>
-        </div>
-        <div class="aggregate-stat">
-          <span class="aggregate-icon">⊙</span>
-          <span class="aggregate-value"><%= number_with_delimiter(@aggregate_stats[:total_commits]) %></span>
-          <span class="aggregate-label">commits</span>
-        </div>
-        <div class="aggregate-stat">
-          <span class="aggregate-icon">📦</span>
-          <span class="aggregate-value"><%= @aggregate_stats[:total_repos] %></span>
-          <span class="aggregate-label">repos</span>
-        </div>
-      </div>
-    <% end %>
-
-    <!-- Currently Building Live Indicator -->
-    <% if @currently_building %>
-      <div class="currently-building">
-        <div class="currently-building-header">
-          <% if @currently_building.recently_active? %>
-            <span class="live-dot"></span>
-            <span class="live-label">LIVE NOW</span>
-          <% else %>
-            <span class="idle-dot"></span>
-            <span class="idle-label">LAST ACTIVE</span>
-          <% end %>
-        </div>
-        <div class="currently-building-content">
-          <span class="currently-building-name">
-            <%= link_to @currently_building.name, @currently_building.html_url, target: "_blank", rel: "noopener" %>
-          </span>
-          <span class="currently-building-meta">
-            <% if @currently_building.language.present? %>
-              • <%= @currently_building.language %>
-            <% end %>
-            <% if @currently_building.commit_count.to_i > 0 %>
-              • <%= @currently_building.commit_count %> commits
-            <% end %>
-            • <%= @currently_building.detailed_time_ago %>
-          </span>
-        </div>
+    <!-- Compact Activity Bar -->
+    <% if @currently_building && @aggregate_stats %>
+      <div class="activity-bar">
+        <% if @currently_building.recently_active? %>
+          <span class="live-pulse"></span>
+        <% else %>
+          <span class="idle-pulse"></span>
+        <% end %>
+        <span class="activity-text">
+          Shipping <%= link_to @currently_building.name, @currently_building.html_url, target: "_blank", rel: "noopener", class: "activity-link" %><% if @currently_building.language.present? %> (<%= @currently_building.language %>)<% end %>
+          <span class="activity-separator">•</span>
+          <%= number_to_human(@aggregate_stats[:total_stars], precision: 1, significant: false, format: '%n%u', units: { thousand: 'k' }) %> ⭐
+          <span class="activity-separator">•</span>
+          <%= number_to_human(@aggregate_stats[:total_commits], precision: 1, significant: false, format: '%n%u', units: { thousand: 'k' }) %> commits
+          <span class="activity-separator">•</span>
+          <%= @aggregate_stats[:total_repos] %> repos
+          <span class="activity-separator">•</span>
+          <span class="activity-time"><%= @currently_building.detailed_time_ago %></span>
+        </span>
       </div>
     <% end %>
 
