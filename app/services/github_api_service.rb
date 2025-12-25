@@ -92,7 +92,17 @@ class GithubApiService
   end
 
   def fetch_repos_for_account(account)
-    uri = URI("#{API_BASE_URL}/users/#{account}/repos?per_page=100&sort=pushed")
+    # Use authenticated endpoints to include private repos
+    uri = if ENV["GITHUB_TOKEN"].present? && account == PERSONAL_ACCOUNT
+      # For personal account: get all owned repos including private
+      URI("#{API_BASE_URL}/user/repos?visibility=all&affiliation=owner&per_page=100&sort=pushed")
+    elsif ENV["GITHUB_TOKEN"].present?
+      # For orgs: get all repos including private (if token has access)
+      URI("#{API_BASE_URL}/orgs/#{account}/repos?type=all&per_page=100&sort=pushed")
+    else
+      # Fallback to public only
+      URI("#{API_BASE_URL}/users/#{account}/repos?per_page=100&sort=pushed")
+    end
 
     begin
       http = Net::HTTP.new(uri.host, uri.port)
