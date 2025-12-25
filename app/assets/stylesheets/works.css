@@ -321,6 +321,11 @@
   display: none !important;
 }
 
+/* Hidden state for show-more pagination */
+.work-card.show-more-hidden {
+  display: none !important;
+}
+
 /* No Results Message */
 .no-results {
   text-align: center;

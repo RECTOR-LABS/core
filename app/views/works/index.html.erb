@@ -88,7 +88,11 @@
 
   <!-- Active Projects Section -->
   <% if active.any? %>
-    <section class="work-section" data-controller="filter-sort" data-filter-sort-sort-by-value="date">
+    <section class="work-section"
+             data-controller="filter-sort show-more"
+             data-filter-sort-sort-by-value="date"
+             data-show-more-limit-value="12"
+             data-action="filter-sort:filtered->show-more#handleFilter">
       <div class="work-section-header">
         <h2 class="work-section-title">
           <span class="work-section-icon">🔨</span>
@@ -137,6 +141,7 @@
               class: "work-card work-card-active",
               data: {
                 filter_sort_target: "card",
+                show_more_target: "item",
                 technologies: (work.technologies || []).to_json,
                 stars: stars,
                 commits: commits,
@@ -173,6 +178,15 @@
           <% end %>
         <% end %>
       </div>
+
+      <!-- Show More Button -->
+      <% if active.count > 12 %>
+        <div class="work-show-more">
+          <button data-show-more-target="button" data-action="click->show-more#toggle" class="show-more-btn">
+            Show <%= active.count - 12 %> more
+          </button>
+        </div>
+      <% end %>
 
       <!-- No Results Message -->
       <div class="no-results hidden" data-filter-sort-target="noResults">
