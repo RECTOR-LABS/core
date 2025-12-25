@@ -125,44 +125,42 @@
         all_days = @contributions[:weeks].flatten
         busiest_day = all_days.max_by { |d| d[:count] }
 
-        # Get month labels (first week of each month)
-        month_positions = {}
-        week_index = 0
+        # Get ordered list of months that appear in the data
+        months_in_order = []
         @contributions[:weeks].each do |week|
           first_day = week.first
           if first_day
             date = Date.parse(first_day[:date])
             month_key = date.strftime("%b")
-            month_positions[week_index] ||= month_key if date.day <= 7
+            months_in_order << month_key unless months_in_order.last == month_key
           end
-          week_index += 1
         end
       %>
 
       <div class="contribution-container">
         <!-- Streak Badge -->
         <div class="streak-badge">
+          <% has_previous = false %>
           <% if @contributions[:current_streak].to_i > 0 %>
             <span class="streak-fire">🔥</span>
             <span class="streak-current"><%= @contributions[:current_streak] %>-day streak</span>
+            <% has_previous = true %>
           <% end %>
           <% if @contributions[:longest_streak].to_i > 0 %>
-            <span class="streak-separator">•</span>
+            <% if has_previous %><span class="streak-separator">•</span><% end %>
             <span class="streak-longest">Longest: <%= @contributions[:longest_streak] %> days</span>
+            <% has_previous = true %>
           <% end %>
           <% if busiest_day && busiest_day[:count].to_i > 0 %>
-            <span class="streak-separator">•</span>
+            <% if has_previous %><span class="streak-separator">•</span><% end %>
             <span class="streak-best">Best: <%= busiest_day[:count] %> on <%= Date.parse(busiest_day[:date]).strftime("%b %-d") %></span>
           <% end %>
         </div>
 
         <!-- Month Labels -->
         <div class="contribution-months">
-          <% total_weeks = @contributions[:weeks].size %>
-          <% (0...total_weeks).each do |i| %>
-            <% if month_positions[i] %>
-              <span class="month-label" style="grid-column: <%= i + 1 %>"><%= month_positions[i] %></span>
-            <% end %>
+          <% months_in_order.each do |month| %>
+            <span class="month-label"><%= month %></span>
           <% end %>
         </div>
 

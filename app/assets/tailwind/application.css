@@ -373,16 +373,15 @@
     @apply text-brown/60;
   }
 
-  /* Month Labels - grid above contribution graph */
+  /* Month Labels - positioned above contribution graph */
   .contribution-months {
-    display: grid;
-    grid-template-columns: repeat(53, 11px);
-    gap: 3px;
+    display: flex;
+    gap: 0;
     margin-bottom: 4px;
-    margin-left: 0;
     overflow-x: auto;
     -ms-overflow-style: none;
     scrollbar-width: none;
+    width: max-content;
   }
 
   .contribution-months::-webkit-scrollbar {
@@ -392,6 +391,7 @@
   .month-label {
     @apply text-[10px] text-brown/50 font-medium;
     white-space: nowrap;
+    min-width: calc(4 * (11px + 3px)); /* ~4 weeks per month */
   }
 
   /* Busiest Day Highlight */
@@ -400,13 +400,13 @@
     box-shadow: 0 0 8px rgba(249, 200, 70, 0.6);
   }
 
-  /* Tooltip on hover */
-  .contribution-day {
+  /* Tooltip on hover - only for grid cells, not legend */
+  .contribution-grid .contribution-day {
     position: relative;
     cursor: pointer;
   }
 
-  .contribution-day::after {
+  .contribution-grid .contribution-day::after {
     content: attr(data-count) " contributions on " attr(data-date);
     position: absolute;
     bottom: calc(100% + 8px);
@@ -419,16 +419,16 @@
     z-index: 50;
   }
 
-  .contribution-day:hover::after {
+  .contribution-grid .contribution-day:hover::after {
     opacity: 1;
   }
 
   /* Hide tooltip for empty days */
-  .contribution-level-0::after {
+  .contribution-grid .contribution-level-0::after {
     content: "No contributions on " attr(data-date);
   }
 
-  /* Cascade Animation */
+  /* Cascade Animation - only for grid cells */
   @keyframes contribution-cascade {
     0% {
       opacity: 0;
@@ -440,7 +440,7 @@
     }
   }
 
-  .contribution-day {
+  .contribution-grid .contribution-day {
     animation: contribution-cascade 0.3s ease-out forwards;
     opacity: 0;
   }
@@ -454,16 +454,12 @@
       @apply text-sm;
     }
 
-    .contribution-months {
-      grid-template-columns: repeat(53, 9px);
-      gap: 2px;
-    }
-
     .month-label {
       @apply text-[8px];
+      min-width: calc(4 * (9px + 2px)); /* ~4 weeks per month on mobile */
     }
 
-    .contribution-day::after {
+    .contribution-grid .contribution-day::after {
       @apply text-[8px] px-1.5 py-0.5;
     }
 
