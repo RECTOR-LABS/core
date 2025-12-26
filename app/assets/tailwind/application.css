@@ -261,7 +261,20 @@
   /* GitHub Contribution Graph */
   .contribution-graph {
     @apply pb-2;
-    overflow: visible; /* Allow tooltips to escape */
+    overflow: visible; /* Allow tooltips to escape on desktop */
+  }
+
+  /* Mobile: horizontal scroll for contribution graph */
+  @media (max-width: 640px) {
+    .contribution-container {
+      @apply -mx-4 px-4;
+      overflow-x: auto;
+      overflow-y: visible;
+    }
+
+    .contribution-graph {
+      min-width: max-content;
+    }
   }
 
   .contribution-grid {
@@ -473,11 +486,13 @@
     }
 
     .year-tabs {
-      @apply gap-1 flex-wrap;
+      @apply gap-1;
+      flex-wrap: nowrap;
     }
 
     .year-tab {
       @apply px-2 py-1 text-xs;
+      flex-shrink: 0;
     }
 
     .contribution-grid .contribution-day::after {
