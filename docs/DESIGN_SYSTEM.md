@@ -435,7 +435,7 @@ end
     <h2 class="text-2xl font-bold text-brown mb-4">## Get in Touch</h2>
     <p class="text-brown">
       <a href="https://github.com/rz1989s">GitHub</a> •
-      <a href="https://x.com/yourusername">X</a> •
+      <a href="https://x.com/sipprotocol">X</a> •
       <a href="mailto:your@email.com">Email</a>
     </p>
   </section>
