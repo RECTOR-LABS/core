@@ -14,14 +14,15 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## RECTOR's Achievements (2024-2025)
 
-**Total Earnings:** ~$13,300 USDC + Gen3 Monke NFT
+**Total Earnings:** ~$23,300 USDC + Gen3 Monke NFT
 
 | # | Project | Type | Place | Prize | Event |
 |---|---------|------|-------|-------|-------|
-| 1 | **Web3 Deal Discovery** | Hackathon | 🥇 1st | $5,000 + NFT | MonkeDAO Cypherpunk (Superteam Earn, Dec 2025) |
-| 2 | **SIP Protocol** | Hackathon | 🏆 Winner | $6,500 | Zypherpunk (NEAR + Tachyon + Pump.fun) |
-| 3 | **OpenBudget.ID** | Hackathon | 🥈 2nd | $1,500 | Garuda Spark (Superteam Indonesia, Oct 2025) |
-| 4 | **Saros SDK Docs** | Bounty | 🥇 1st | $300 | Saros SDK Guide Challenge (Dec 2024) |
+| 1 | **SIP Protocol** | Grant | ✅ Approved | $10,000 | Superteam Indonesia (Solana Foundation, Jan 2026) |
+| 2 | **Web3 Deal Discovery** | Hackathon | 🥇 1st | $5,000 + NFT | MonkeDAO Cypherpunk (Superteam Earn, Dec 2025) |
+| 3 | **SIP Protocol** | Hackathon | 🏆 Winner | $6,500 | Zypherpunk (NEAR + Tachyon + Pump.fun) |
+| 4 | **OpenBudget.ID** | Hackathon | 🥈 2nd | $1,500 | Garuda Spark (Superteam Indonesia, Oct 2025) |
+| 5 | **Saros SDK Docs** | Bounty | 🥇 1st | $300 | Saros SDK Guide Challenge (Dec 2024) |
 
 **Project Details:**
 
