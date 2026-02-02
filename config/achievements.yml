@@ -1,0 +1,81 @@
+# Single source of truth for all achievements
+# Order: newest first (display order on homepage)
+# Adding a new achievement: just add an entry here - totals auto-calculate
+---
+- slug: sip-protocol-grant
+  title: SIP Protocol
+  type: grant
+  place: approved
+  prize_amount: 10000
+  prize_extras: null
+  event: Superteam Indonesia
+  event_detail: Solana Foundation
+  date: "2026-01"
+  github_url: https://github.com/sip-protocol/sip-protocol
+  repo_name: sip-protocol
+  description: Privacy layer for cross-chain transactions. Stealth addresses, Pedersen commitments, ZK proofs.
+
+- slug: pnode-pulse
+  title: pNode Pulse
+  type: bounty
+  place: 3rd
+  prize_amount: 1000
+  prize_extras: null
+  event: Xandeum pNodes Analytics
+  event_detail: Superteam Earn
+  date: "2026-02"
+  github_url: https://github.com/RECTOR-LABS/pnode-pulse
+  repo_name: pnode-pulse
+  description: Real-time analytics for Xandeum's decentralized pNode storage network. 200+ nodes tracked.
+
+- slug: web3-deal-discovery
+  title: Web3 Deal Discovery
+  type: hackathon
+  place: 1st
+  prize_amount: 5000
+  prize_extras: NFT
+  event: MonkeDAO Cypherpunk
+  event_detail: Superteam Earn
+  date: "2025-12"
+  github_url: https://github.com/RECTOR-LABS/web3-deal-discovery-nft-coupons
+  repo_name: web3-deal-discovery-nft-coupons
+  description: NFT coupons on Solana — "Groupon meets DeFi" with escrow-based resale marketplace.
+
+- slug: sip-protocol-zypherpunk
+  title: SIP Protocol
+  type: hackathon
+  place: winner
+  prize_amount: 6500
+  prize_extras: null
+  event: Zypherpunk Hackathon
+  event_detail: 3 Tracks
+  github_url: https://github.com/sip-protocol/sip-protocol
+  repo_name: sip-protocol
+  date: "2025-12"
+  description: Privacy layer for cross-chain transactions via NEAR Intents + Zcash. Stealth addresses & ZK proofs.
+
+- slug: openbudget-id
+  title: OpenBudget.ID
+  type: hackathon
+  place: 2nd
+  prize_amount: 1500
+  prize_extras: null
+  event: Garuda Spark
+  event_detail: Superteam Indonesia
+  date: "2025-10"
+  github_url: https://github.com/RECTOR-LABS/openbudget-id
+  repo_name: openbudget-id
+  description: Government spending transparency on Solana. Ministries publish on-chain, citizens verify.
+
+- slug: saros-sdk-docs
+  title: Saros SDK Docs
+  type: bounty
+  place: 1st
+  prize_amount: 300
+  prize_extras: null
+  event: Saros SDK Guide Challenge
+  event_detail: Bounty
+  date: "2024-12"
+  github_url: https://github.com/rz1989s/saros-docs
+  repo_name: saros-docs
+  description: Comprehensive Docusaurus documentation for Saros Finance SDKs with interactive API Explorer.

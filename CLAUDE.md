@@ -12,18 +12,30 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ---
 
-## RECTOR's Achievements (2024-2026)
+## RECTOR's Achievements (YAML-Driven)
 
-**Total Earnings:** ~$24,300 USDC + Gen3 Monke NFT
+**Source of Truth:** `config/achievements.yml`
 
-| # | Project | Type | Place | Prize | Event |
-|---|---------|------|-------|-------|-------|
-| 1 | **SIP Protocol** | Grant | ✅ Approved | $10,000 | Superteam Indonesia (Solana Foundation, Jan 2026) |
-| 2 | **Web3 Deal Discovery** | Hackathon | 🥇 1st | $5,000 + NFT | MonkeDAO Cypherpunk (Superteam Earn, Dec 2025) |
-| 3 | **SIP Protocol** | Hackathon | 🏆 Winner | $6,500 | Zypherpunk (NEAR + Tachyon + Pump.fun) |
-| 4 | **OpenBudget.ID** | Hackathon | 🥈 2nd | $1,500 | Garuda Spark (Superteam Indonesia, Oct 2025) |
-| 5 | **Saros SDK Docs** | Bounty | 🥇 1st | $300 | Saros SDK Guide Challenge (Dec 2024) |
-| 6 | **pNode Pulse** | Bounty | 🥉 3rd | $1,000 | Xandeum pNodes Analytics (Superteam Earn, Feb 2026) |
+Achievements are managed via a YAML file. Homepage, meta tags, and totals auto-calculate.
+
+**To add a new achievement:**
+1. Edit `config/achievements.yml`
+2. Add entry at the top (newest first)
+3. Deploy - everything auto-updates
+
+**Auto-calculated fields:**
+- `Achievement.total_earnings` → sum of all prize amounts
+- `Achievement.win_count` → total count
+- `Achievement.year_range` → "2024-2026" from dates
+- `Achievement.winner_projects` → hash for project badges
+
+**Architecture:**
+```
+config/achievements.yml          # Single source of truth
+app/models/achievement.rb        # PORO - loads YAML, queries, calculates
+app/helpers/achievements_helper.rb  # Formatting helpers
+app/views/pages/_achievement_card.html.erb  # Reusable card partial
+```
 
 **Project Details:**
 
@@ -87,6 +99,7 @@ core/
 │   │   ├── pages_controller.rb       # Homepage (✅ implemented)
 │   │   └── works_controller.rb       # Work section (✅ implemented)
 │   ├── models/
+│   │   ├── achievement.rb            # PORO for YAML achievements (✅ implemented)
 │   │   ├── github_repo.rb            # GitHub repository cache (✅ implemented)
 │   │   └── work.rb                   # Work/project stories (✅ implemented)
 │   ├── views/
@@ -96,6 +109,7 @@ core/
 │   │       ├── index.html.erb        # Work listing (✅ implemented)
 │   │       └── show.html.erb         # Story page with custom CSS (✅ implemented)
 │   ├── helpers/
+│   │   ├── achievements_helper.rb    # Achievement summary formatting (✅ implemented)
 │   │   └── works_helper.rb           # Markdown rendering (✅ implemented)
 │   ├── jobs/
 │   │   └── sync_github_repos_job.rb  # Hourly GitHub sync (✅ implemented)
@@ -103,6 +117,7 @@ core/
 │       ├── github_api_service.rb     # GitHub API client (✅ implemented)
 │       └── tech_stack_parser.rb      # Language parser (✅ implemented)
 ├── config/
+│   ├── achievements.yml              # Single source of truth for achievements (✅ implemented)
 │   ├── routes.rb                     # Routes for /, /work (✅ configured)
 │   └── recurring.yml                 # Solid Queue job schedule
 ├── db/
