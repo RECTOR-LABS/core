@@ -20,12 +20,10 @@
 
     <% if @recently_active_repos.any? %>
       <p class="intro-tagline mt-2">
-        Recently shipping
-        <% @recently_active_repos.each_with_index do |repo, index| -%>
-          <% if index == @recently_active_repos.size - 1 && @recently_active_repos.size > 1 %> and <% elsif index > 0 %>, <% end -%>
-          <strong><%= link_to repo.name, repo.html_url, target: "_blank", rel: "noopener" %></strong>
-        <%- end %>
-        (latest: <%= @recently_active_repos.first.detailed_time_ago %>).
+        Recently shipping <%= @recently_active_repos.each_with_index.map { |repo, i|
+          separator = i == 0 ? "" : (i == @recently_active_repos.size - 1 ? " and " : ", ")
+          "#{separator}<strong>#{link_to repo.name, repo.html_url, target: "_blank", rel: "noopener"}</strong>"
+        }.join.html_safe %> (latest: <%= @recently_active_repos.first.detailed_time_ago %>).
       </p>
     <% end %>
   </div>
