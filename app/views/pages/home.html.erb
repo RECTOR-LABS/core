@@ -38,10 +38,25 @@
   <section>
     <h2>Achievements</h2>
     <p class="mt-4 mb-6 text-[#3B2C22]/70">
-      4 wins across bounties and hackathons in 2024-2025.
+      6 wins across grants, bounties and hackathons in 2024-2026.
     </p>
 
     <div class="space-y-4">
+      <!-- SIP Protocol Grant - Approved -->
+      <div class="achievement-card">
+        <div class="flex justify-between items-start">
+          <div>
+            <span class="achievement-badge achievement-gold">✅ Grant Approved</span>
+            <h3 class="achievement-title">
+              <%= link_to "SIP Protocol", "https://github.com/sip-protocol/sip-protocol", target: "_blank", rel: "noopener" %>
+            </h3>
+            <p class="achievement-event">Superteam Indonesia • Solana Foundation</p>
+          </div>
+          <span class="achievement-prize">$10,000</span>
+        </div>
+        <p class="achievement-desc">Privacy layer for cross-chain transactions. Stealth addresses, Pedersen commitments, ZK proofs.</p>
+      </div>
+
       <!-- Web3 Deal Discovery - 1st Place -->
       <div class="achievement-card">
         <div class="flex justify-between items-start">
@@ -101,12 +116,27 @@
         </div>
         <p class="achievement-desc">Comprehensive Docusaurus documentation for Saros Finance SDKs with interactive API Explorer.</p>
       </div>
+
+      <!-- pNode Pulse - 3rd Place Bounty -->
+      <div class="achievement-card">
+        <div class="flex justify-between items-start">
+          <div>
+            <span class="achievement-badge achievement-bounty">🥉 3rd Place</span>
+            <h3 class="achievement-title">
+              <%= link_to "pNode Pulse", "https://github.com/RECTOR-LABS/pnode-pulse", target: "_blank", rel: "noopener" %>
+            </h3>
+            <p class="achievement-event">Xandeum pNodes Analytics • Superteam Earn</p>
+          </div>
+          <span class="achievement-prize">$1,000</span>
+        </div>
+        <p class="achievement-desc">Real-time analytics for Xandeum's decentralized pNode storage network. 200+ nodes tracked.</p>
+      </div>
     </div>
 
     <!-- Total Summary -->
     <div class="mt-6 p-4 bg-[#F9C846]/10 border-l-4 border-[#F9C846] rounded">
       <p class="font-mono text-sm font-semibold text-[#3B2C22]">
-        Total Earned: ~$10,800 USDC + Gen3 Monke NFT
+        Total Earned: ~$24,300 USDC + Gen3 Monke NFT
       </p>
     </div>
   </section>
@@ -163,7 +193,8 @@
                     'web3-deal-discovery-nft-coupons' => '🥇',
                     'sip-protocol' => '🏆',
                     'openbudget-id' => '🥈',
-                    'saros-docs' => '🥇'
+                    'saros-docs' => '🥇',
+                    'pnode-pulse' => '🥉'
                   } %>
                   <% if winner_projects[project.name] %>
                     <span class="project-winner-badge ml-1"><%= winner_projects[project.name] %> Winner</span>
