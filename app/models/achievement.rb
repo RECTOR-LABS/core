@@ -63,7 +63,7 @@ class Achievement
 
     def load_from_yaml
       yaml_path = Rails.root.join("config", "achievements.yml")
-      data = YAML.load_file(yaml_path, permitted_classes: [Date])
+      data = YAML.load_file(yaml_path, permitted_classes: [ Date ])
       data.map { |attrs| new(attrs) }
     end
   end
