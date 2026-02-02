@@ -13,13 +13,24 @@
       <% else %>
         building for eternity.
       <% end %>
-      <% if @currently_building %>
-        Currently shipping <strong><%= link_to @currently_building.name, @currently_building.html_url, target: "_blank", rel: "noopener" %></strong>
-        (<%= @currently_building.detailed_time_ago %>).
-      <% end %>
-      <strong><%= number_with_delimiter(@contributions[:total]) %></strong> contributions this year
+      <strong><%= number_with_delimiter(@rolling_year_contributions[:total]) %></strong> contributions this past year •
+      <strong><%= number_with_delimiter(@all_time_contributions) %></strong> all-time
       across <strong><%= @aggregate_stats[:total_repos] %></strong> repositories.
     </p>
+
+    <% if @recently_active_repos.any? %>
+      <div class="recently-active mt-4">
+        <p class="text-sm text-[#3B2C22]/60 mb-2">Recently shipping:</p>
+        <ul class="space-y-1">
+          <% @recently_active_repos.each do |repo| %>
+            <li class="font-mono text-sm">
+              • <%= link_to repo.name, repo.html_url, target: "_blank", rel: "noopener" %>
+              <span class="text-[#3B2C22]/50">(<%= repo.detailed_time_ago %>)</span>
+            </li>
+          <% end %>
+        </ul>
+      </div>
+    <% end %>
   </div>
 
   <!-- Quick Nav -->

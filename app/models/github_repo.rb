@@ -95,5 +95,10 @@ class GithubRepo < ApplicationRecord
       # Get the most recently pushed non-fork repo
       not_forks.latest_first.first
     end
+
+    def recently_active_repos(limit = 3)
+      # Get the most recently pushed non-fork repos
+      not_forks.latest_first.limit(limit)
+    end
   end
 end

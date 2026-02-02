@@ -13,13 +13,22 @@ class PagesController < ApplicationController
     service = GithubContributionsService.new
     @available_years = service.fetch_available_years
 
-    # Fetch GitHub contributions for selected year
+    # Fetch GitHub contributions for selected year (graph display)
     @contributions = service.fetch_contributions(year: @selected_year)
+
+    # Fetch rolling 365-day contributions for intro stats
+    @rolling_year_contributions = service.fetch_contributions(year: "last")
+
+    # Calculate all-time contributions from available years
+    @all_time_contributions = @available_years.sum { |y| y[:count] }
 
     # Aggregate stats across all repos
     @aggregate_stats = GithubRepo.aggregate_stats
 
-    # Currently building (most recently pushed repo)
+    # Recently active repos (top 3 for intro section)
+    @recently_active_repos = GithubRepo.recently_active_repos(3)
+
+    # Currently building (most recently pushed repo) - kept for activity bar
     @currently_building = GithubRepo.currently_building
 
     # If cache is empty, trigger sync job and show placeholder
