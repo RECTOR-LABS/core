@@ -2,6 +2,19 @@
 # Order: newest first (display order on homepage)
 # Adding a new achievement: just add an entry here - totals auto-calculate
 ---
+- slug: sip-protocol-audit-subsidy
+  title: SIP Protocol
+  type: grant
+  place: approved
+  prize_amount: 6000
+  prize_extras: null
+  event: Solana Audit Subsidy Program
+  event_detail: Cohort V
+  date: "2026-02"
+  github_url: https://github.com/sip-protocol/sip-protocol
+  repo_name: sip-protocol
+  description: Awarded $6K audit subsidy from Solana's $1M security program. Covers 30% of professional smart contract audit.
+
 - slug: sip-protocol-grant
   title: SIP Protocol
   type: grant
