@@ -10,7 +10,7 @@ module ApplicationHelper
     elsif links.size == 2
       safe_join(links, " and ")
     else
-      safe_join([safe_join(links[0...-1], ", "), links.last], " and ")
+      safe_join([ safe_join(links[0...-1], ", "), links.last ], " and ")
     end
   end
 end
