@@ -20,7 +20,8 @@ jobs:
 
       - name: Scan for common Rails security vulnerabilities using static analysis
         run: |
-          bin/brakeman --no-pager; EXIT_CODE=$?
+          EXIT_CODE=0
+          bin/brakeman --no-pager || EXIT_CODE=$?
           if [ "$EXIT_CODE" -eq 5 ]; then
             echo "::warning::Brakeman is not the latest version"
             exit 0
