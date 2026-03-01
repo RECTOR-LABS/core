@@ -41,7 +41,7 @@ jobs:
 
             echo "🚀 Starting deployment..."
 
-            cd $HOME/core
+            cd ~/core
 
             # Initialize rbenv (add shims to PATH for bundle/rails commands)
             export PATH="/home/core/.rbenv/shims:/home/core/.rbenv/bin:$PATH"
