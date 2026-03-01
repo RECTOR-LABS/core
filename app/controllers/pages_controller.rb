@@ -1,7 +1,7 @@
 class PagesController < ApplicationController
   def home
     # Fetch latest projects from cache (database)
-    @latest_projects = GithubRepo.not_forks.latest_first.limit(6)
+    @latest_projects = GithubRepo.public_only.not_forks.latest_first.limit(6)
 
     # Parse tech stack from all repos
     @tech_stack = TechStackParser.current_stack

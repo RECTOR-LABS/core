@@ -13,7 +13,7 @@ class TechStackParser
   }.freeze
 
   def initialize(repos = nil)
-    @repos = repos || GithubRepo.not_forks.all
+    @repos = repos || GithubRepo.public_only.not_forks.all
   end
 
   # Parse tech stack from all repos
@@ -34,7 +34,7 @@ class TechStackParser
 
   def count_languages
     # Use database aggregation for better performance with large datasets
-    GithubRepo.not_forks
+    GithubRepo.public_only.not_forks
       .where.not(language: nil)
       .group(:language)
       .count
