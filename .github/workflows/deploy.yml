@@ -12,56 +12,37 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v6
-
-      - name: Setup Ruby
-        uses: ruby/setup-ruby@v1
-        with:
-          ruby-version: '3.3'
-          bundler-cache: true
-
-      - name: Install SSH key
-        uses: shimataro/ssh-key-action@v2
-        with:
-          key: ${{ secrets.VPS_SSH_KEY }}
-          known_hosts: unnecessary
-          if_key_exists: replace
-
-      - name: Add VPS to known hosts
-        run: ssh-keyscan -H ${{ secrets.VPS_HOST }} >> ~/.ssh/known_hosts
-
       - name: Deploy to VPS
-        env:
-          VPS_HOST: ${{ secrets.VPS_HOST }}
-          VPS_USER: ${{ secrets.VPS_USER }}
-        run: |
-          ssh $VPS_USER@$VPS_HOST << 'ENDSSH'
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.VPS_HOST }}
+          username: ${{ secrets.VPS_USER }}
+          key: ${{ secrets.VPS_SSH_KEY }}
+          script: |
             set -e
 
-            echo "🚀 Starting deployment..."
+            echo "Starting deployment..."
 
-            cd ~/core
+            cd $HOME/core
 
-            # Initialize rbenv (add shims to PATH for bundle/rails commands)
-            export PATH="/home/core/.rbenv/shims:/home/core/.rbenv/bin:$PATH"
-            eval "$(/home/core/.rbenv/bin/rbenv init - bash)"
+            # Initialize rbenv
+            export PATH="$HOME/.rbenv/shims:$HOME/.rbenv/bin:$PATH"
+            eval "$($HOME/.rbenv/bin/rbenv init - bash)"
 
             # Pull latest changes
-            echo "📥 Pulling latest code from main..."
+            echo "Pulling latest code from main..."
             git fetch origin
             git reset --hard origin/main
 
-            # Generate REVISION file with commit SHA, branch, and commit count
-            echo "📝 Generating REVISION file..."
+            # Generate REVISION file
             COMMIT_SHA=$(git rev-parse HEAD)
             BRANCH=$(git rev-parse --abbrev-ref HEAD)
             COMMIT_COUNT=$(git rev-list --count HEAD)
             echo "${COMMIT_SHA}|${BRANCH}|${COMMIT_COUNT}" > REVISION
-            echo "✅ REVISION: ${BRANCH}@${COMMIT_SHA:0:7} (${COMMIT_COUNT} commits)"
+            echo "REVISION: ${BRANCH}@${COMMIT_SHA:0:7} (${COMMIT_COUNT} commits)"
 
             # Install dependencies
-            echo "📦 Installing dependencies..."
+            echo "Installing dependencies..."
             bundle config set deployment true
             bundle config set without "development test"
             bundle install
@@ -70,51 +51,29 @@ jobs:
             export $(cat .env | grep -v '^#' | xargs)
 
             # Precompile assets
-            echo "🎨 Precompiling assets..."
+            echo "Precompiling assets..."
             RAILS_ENV=production bundle exec rails assets:precompile
 
             # Run database migrations
-            echo "🗄️  Running database migrations..."
+            echo "Running database migrations..."
             RAILS_ENV=production bundle exec rails db:migrate
 
-            # Restart services (zero-downtime)
-            echo "🔄 Restarting Puma (zero-downtime)..."
+            # Restart services
+            echo "Restarting Puma (zero-downtime)..."
             sudo systemctl reload core-puma
 
-            echo "🔄 Restarting Solid Queue..."
+            echo "Restarting Solid Queue..."
             sudo systemctl restart core-solidqueue
 
-            # Verify deployment
-            echo "✅ Deployment complete!"
-            echo "📊 App status:"
+            echo "Deployment complete!"
             sudo systemctl status core-puma --no-pager -l
 
-          ENDSSH
-
       - name: Verify deployment
-        env:
-          VPS_HOST: ${{ secrets.VPS_HOST }}
-          VPS_USER: ${{ secrets.VPS_USER }}
         run: |
-          # Wait for app to be ready
           sleep 5
-
-          # Check if site is responding
           if curl -f -s -o /dev/null https://rectorspace.com/up; then
-            echo "✅ Production site is healthy!"
+            echo "Production site is healthy!"
           else
-            echo "❌ Production site health check failed!"
+            echo "Production site health check failed!"
             exit 1
           fi
-
-      - name: Notify deployment success
-        if: success()
-        run: |
-          echo "✅ Deployment successful!"
-          echo "🌐 Visit: https://rectorspace.com"
-
-      - name: Notify deployment failure
-        if: failure()
-        run: |
-          echo "❌ Deployment failed!"
-          echo "Check logs: https://github.com/${{ github.repository }}/actions"
