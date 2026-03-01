@@ -215,22 +215,36 @@ bin/rails server
 
 ---
 
-## Deployment Strategy
+## Deployment
 
-**VPS Deployment:**
-- Single Rails app deployment (Nginx + Puma/Passenger)
-- 1 user account per deployment environment (staging/production)
-- PostgreSQL database
-- Let's Encrypt SSL for rectorspace.com
-- GitHub Actions CI/CD
-- SSH via `~/.ssh/config`
+**Architecture:** Docker on shared VPS (reclabs3, 151.245.137.75)
 
-**Environment Variables:**
-- Ghost CMS API credentials
-- Database connection strings
-- External API keys (GitHub API, Quran API)
+```
+GitHub push → Actions build → GHCR image → SSH → docker compose pull → up -d → image prune -f
+```
 
-**Security:** Never commit `.env`, use Rails credentials (encrypted)
+**Containers** (docker-compose.yml):
+| Service | Image | Port |
+|---------|-------|------|
+| postgres | postgres:16 | 127.0.0.1:5435:5432 |
+| web | ghcr.io/rector-labs/core:latest | 8000:80 |
+| solidqueue | ghcr.io/rector-labs/core:latest | — |
+
+- Puma runs behind Thruster (port 80 inside container)
+- nginx reverse proxies `rectorspace.com` → `127.0.0.1:8000`
+- `db:prepare` runs automatically on container start (entrypoint)
+- Solid Queue runs as a separate container (`bundle exec rake solid_queue:start`)
+
+**VPS User:** `core` (SSH alias: `core`)
+
+**GitHub Secrets:** `VPS_HOST`, `VPS_USER`, `VPS_SSH_KEY`, `VPS_APP_PATH`
+
+**Environment Variables** (VPS `~/core/.env`):
+- `SECRET_KEY_BASE` — Rails secret
+- `CORE_DATABASE_PASSWORD` — PostgreSQL password
+- `GITHUB_TOKEN` — GitHub API access for repo sync
+
+**Security:** Never commit `.env`. DB port bound to localhost only.
 
 ---
 
