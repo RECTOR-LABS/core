@@ -2,6 +2,19 @@
 # Order: newest first (display order on homepage)
 # Adding a new achievement: just add an entry here - totals auto-calculate
 ---
+- slug: sip-protocol-graveyard-torque
+  title: SIP Protocol
+  type: hackathon
+  place: 1st
+  prize_amount: 750
+  prize_extras: null
+  event: Solana Graveyard Hackathon
+  event_detail: Torque Sponsor Track
+  date: "2026-03"
+  github_url: https://github.com/sip-protocol/sip-protocol
+  repo_name: sip-protocol
+  description: Privacy middleware with Torque SDK integration for token-based loyalty and incentive programs on Solana.
+
 - slug: sip-protocol-audit-subsidy
   title: SIP Protocol
   type: grant
