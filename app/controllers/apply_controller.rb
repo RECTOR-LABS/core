@@ -159,7 +159,7 @@ class ApplyController < ApplicationController
   end
 
   def set_superteam_data
-    @resume = YAML.load_file(Rails.root.join("config/resume.yml")).deep_symbolize_keys
+    @resume = YAML.load_file(Rails.root.join("config/resume.yml"), permitted_classes: [Date]).deep_symbolize_keys
     @achievements = Achievement.all
     @stats = build_stats
   end

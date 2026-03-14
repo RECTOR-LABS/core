@@ -183,20 +183,20 @@
   border-left-color: var(--leaf-green);
 }
 
-.award-card .award-title {
+.award-card .award-place {
   font-size: 0.95rem;
   font-weight: 600;
   color: var(--brown);
   margin: 0 0 4px;
 }
 
-.award-card .award-org {
+.award-card .award-event {
   font-size: 0.8rem;
   color: var(--brown-muted);
   margin-bottom: 8px;
 }
 
-.award-card .award-date {
+.award-card .award-project {
   font-size: 0.75rem;
   color: var(--brown-muted);
 }
