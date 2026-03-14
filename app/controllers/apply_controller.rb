@@ -2,6 +2,7 @@ class ApplyController < ApplicationController
   layout "apply"
 
   before_action :set_arbital_data, only: [ :arbital, :arbital_retro, :arbital_modern ]
+  before_action :set_superteam_data, only: [ :superteam ]
 
   # Final CV page with theme switcher
   def arbital
@@ -16,6 +17,10 @@ class ApplyController < ApplicationController
   # Modern Dark version
   def arbital_modern
     render :arbital_modern
+  end
+
+  def superteam
+    render :superteam
   end
 
   private
@@ -151,5 +156,25 @@ class ApplyController < ApplicationController
       twitter: "https://x.com/rz1989sol",
       email: "apply@rectorspace.com"
     }
+  end
+
+  def set_superteam_data
+    @resume = YAML.load_file(Rails.root.join("config/resume.yml"), permitted_classes: [Date]).deep_symbolize_keys
+    @achievements = Achievement.all
+    @stats = build_stats
+  end
+
+  def build_stats
+    earnings = Achievement.total_earnings
+    wins = Achievement.win_count
+    grants = Achievement.all.count { |a| a.type == "grant" }
+    yaml_stats = @resume[:stats] || []
+
+    [
+      { label: "Ecosystem Earnings", value: "$#{ActiveSupport::NumberHelper.number_to_delimited(earnings)}+", number: earnings },
+      { label: "Wins", value: wins.to_s, number: wins },
+      *yaml_stats.map { |s| { label: s[:label], value: s[:value], number: s[:number] } },
+      { label: "Grants Received", value: grants.to_s, number: grants }
+    ]
   end
 end

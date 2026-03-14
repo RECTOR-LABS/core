@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title><%= resume[:personal][:name] %> — Resume</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+    @page {
+      size: letter;
+      margin: 0.5in 0.6in;
+    }
+
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html {
+      font-size: 10px;
+      line-height: 1.5;
+      print-color-adjust: exact;
+      -webkit-print-color-adjust: exact;
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      font-size: 10px;
+      line-height: 1.5;
+      color: #1a1a1a;
+      max-width: 8.5in;
+      margin: 0 auto;
+      padding: 0.5in 0.6in;
+    }
+
+    @media print {
+      body { padding: 0; }
+    }
+
+    /* ── Header ─────────────────────────────────── */
+
+    .header {
+      text-align: center;
+      margin-bottom: 10px;
+    }
+
+    .header h1 {
+      font-size: 22px;
+      font-weight: 700;
+      color: #41CFFF;
+      letter-spacing: 2px;
+      margin-bottom: 3px;
+      text-transform: uppercase;
+    }
+
+    .header .contact-line {
+      font-size: 9px;
+      color: #555;
+    }
+
+    .header .contact-line .sep {
+      margin: 0 5px;
+      color: #ccc;
+    }
+
+    /* ── Summary ─────────────────────────────────── */
+
+    .summary {
+      margin-bottom: 8px;
+    }
+
+    .summary p {
+      font-size: 10px;
+      color: #333;
+      text-align: justify;
+    }
+
+    /* ── Stats Bar ───────────────────────────────── */
+
+    .stats-bar {
+      text-align: center;
+      margin-bottom: 10px;
+      padding: 5px 0;
+      border-top: 1px solid #e5e5e5;
+      border-bottom: 1px solid #e5e5e5;
+      font-size: 9.5px;
+      color: #444;
+    }
+
+    .stats-bar .stat-value {
+      color: #41CFFF;
+      font-weight: 700;
+    }
+
+    .stats-bar .stat-sep {
+      margin: 0 10px;
+      color: #ccc;
+    }
+
+    /* ── Section Titles ──────────────────────────── */
+
+    .section-title {
+      font-size: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      border-bottom: 1.5px solid #41CFFF;
+      padding-bottom: 2px;
+      margin-bottom: 6px;
+      color: #1a1a1a;
+    }
+
+    section {
+      margin-bottom: 8px;
+    }
+
+    /* ── Technical Skills ────────────────────────── */
+
+    .skills-row {
+      display: flex;
+      line-height: 1.6;
+    }
+
+    .skills-label {
+      width: 120px;
+      min-width: 120px;
+      font-weight: 600;
+      font-size: 9.5px;
+      color: #333;
+    }
+
+    .skills-value {
+      font-size: 9.5px;
+      color: #444;
+      flex: 1;
+    }
+
+    /* ── Experience ──────────────────────────────── */
+
+    .exp-entry {
+      margin-bottom: 6px;
+    }
+
+    .exp-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+    }
+
+    .exp-title {
+      font-size: 10px;
+      font-weight: 600;
+      color: #1a1a1a;
+    }
+
+    .exp-company {
+      font-weight: 400;
+      color: #555;
+    }
+
+    .exp-date {
+      font-size: 9px;
+      color: #777;
+      white-space: nowrap;
+    }
+
+    .exp-bullets {
+      list-style: disc;
+      padding-left: 16px;
+      margin-top: 2px;
+    }
+
+    .exp-bullets li {
+      font-size: 9.5px;
+      color: #333;
+      margin-bottom: 1px;
+    }
+
+    /* ── Awards & Grants ─────────────────────────── */
+
+    .awards-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 2px 20px;
+    }
+
+    .award-item {
+      font-size: 9.5px;
+      line-height: 1.5;
+    }
+
+    .award-name {
+      color: #41CFFF;
+      font-weight: 600;
+    }
+
+    .award-place {
+      font-weight: 600;
+      color: #333;
+    }
+
+    .award-event {
+      color: #555;
+    }
+
+    /* ── Education ───────────────────────────────── */
+
+    .education p {
+      font-size: 9.5px;
+      color: #777;
+      font-style: italic;
+    }
+  </style>
+</head>
+<body>
+
+  <%# ── 1. Header ─────────────────────────────── %>
+
+  <div class="header">
+    <h1><%= resume[:personal][:name].upcase %></h1>
+    <div class="contact-line">
+      <%= resume[:personal][:location] %><span class="sep">&middot;</span><%= resume[:personal][:email] %><span class="sep">&middot;</span><%= resume[:personal][:website] %><span class="sep">&middot;</span><%= resume[:personal][:github] %>
+    </div>
+  </div>
+
+  <%# ── 2. Summary ────────────────────────────── %>
+
+  <div class="summary">
+    <p><%= resume[:summary][:pdf] %></p>
+  </div>
+
+  <%# ── 3. Stats Bar ──────────────────────────── %>
+
+  <div class="stats-bar">
+    <span class="stat-value"><%= stats[:wins] %></span> Wins<span class="stat-sep">|</span><span class="stat-value"><%= stats[:earnings] %></span> Earned<span class="stat-sep">|</span><span class="stat-value">125</span> Vulns Found<span class="stat-sep">|</span><span class="stat-value"><%= stats[:grants_amount] %></span> in Grants
+  </div>
+
+  <%# ── 4. Technical Skills ───────────────────── %>
+
+  <section>
+    <div class="section-title">Technical Skills</div>
+    <% resume[:skills].each do |skill| %>
+      <div class="skills-row">
+        <span class="skills-label"><%= skill[:category] %></span>
+        <span class="skills-value"><%= skill[:items].join(", ") %></span>
+      </div>
+    <% end %>
+  </section>
+
+  <%# ── 5. Experience ─────────────────────────── %>
+
+  <section>
+    <div class="section-title">Experience</div>
+    <% resume[:experience].each do |exp| %>
+      <div class="exp-entry">
+        <div class="exp-header">
+          <div class="exp-title">
+            <%= exp[:title] %> <span class="exp-company">— <%= exp[:company] %></span>
+          </div>
+          <div class="exp-date"><%= exp[:date_start] %> — <%= exp[:date_end] %></div>
+        </div>
+        <ul class="exp-bullets">
+          <% exp[:bullets].select { |b| b[:pdf] }.each do |bullet| %>
+            <li><%= bullet[:text] %></li>
+          <% end %>
+        </ul>
+      </div>
+    <% end %>
+  </section>
+
+  <%# ── 6. Awards & Grants ────────────────────── %>
+
+  <section>
+    <div class="section-title">Awards & Grants</div>
+    <div class="awards-grid">
+      <% achievements.sort_by { |a| -a.prize_amount }.each do |a| %>
+        <div class="award-item">
+          <span class="award-name"><%= a.formatted_prize %></span>
+          <span class="award-place"><%= a.badge_label %></span>
+          — <span class="award-event"><%= a.full_event %> (<%= a.title %>)</span>
+        </div>
+      <% end %>
+    </div>
+  </section>
+
+  <%# ── 7. Education ──────────────────────────── %>
+
+  <section class="education">
+    <div class="section-title">Education</div>
+    <p><%= resume[:education][:text] %></p>
+  </section>
+
+</body>
+</html>

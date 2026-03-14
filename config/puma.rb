@@ -40,8 +40,8 @@ pidfile ENV["PIDFILE"] if ENV["PIDFILE"]
 
 # Environment-specific configuration
 if ENV["RAILS_ENV"] == "production"
-  # Production: Use Unix socket for Nginx reverse proxy
-  bind "unix://#{ENV.fetch('PUMA_SOCKET', 'tmp/sockets/puma.sock')}"
+  # Production: TCP binding (thruster proxies port 80 → Puma in Docker)
+  port ENV.fetch("PORT", 3000)
 
   # Run 2 worker processes for production
   workers ENV.fetch("WEB_CONCURRENCY", 2)
@@ -49,11 +49,6 @@ if ENV["RAILS_ENV"] == "production"
   # Preload application for memory efficiency
   preload_app!
 
-  # Allow phased restarts for zero-downtime deployments
-  # When you run `systemctl reload core-puma`, Puma will:
-  # 1. Start new workers with updated code
-  # 2. Gradually kill old workers after requests complete
-  # 3. No requests are dropped during deployment
   worker_timeout 30
   worker_boot_timeout 30
 

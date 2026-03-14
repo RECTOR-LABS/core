@@ -9,6 +9,7 @@ class GithubRepo < ApplicationRecord
   scope :personal, -> { where(account: "rz1989s") }
   scope :organization, -> { where(account: "RECTOR-LABS") }
   scope :not_forks, -> { where(is_fork: false) }
+  scope :public_only, -> { where(private: false) }
 
   # Serialize topics array as JSON
   serialize :topics, coder: JSON
@@ -32,6 +33,7 @@ class GithubRepo < ApplicationRecord
         updated_at_github: repo_data[:updated_at],
         topics: repo_data[:topics],
         is_fork: repo_data[:is_fork],
+        private: repo_data[:private],
         account: repo_data[:account],
         commit_count: repo_data[:commit_count],
         latest_commit_sha: repo_data[:latest_commit_sha]
@@ -82,7 +84,7 @@ class GithubRepo < ApplicationRecord
   # Class methods for aggregate stats
   class << self
     def aggregate_stats
-      non_forks = not_forks
+      non_forks = public_only.not_forks
       {
         total_stars: non_forks.sum(:stargazers_count),
         total_forks: non_forks.sum(:forks_count),
@@ -92,8 +94,11 @@ class GithubRepo < ApplicationRecord
     end
 
     def currently_building
-      # Get the most recently pushed non-fork repo
-      not_forks.latest_first.first
+      public_only.not_forks.latest_first.first
+    end
+
+    def recently_active_repos(limit = 3)
+      public_only.not_forks.latest_first.limit(limit)
     end
   end
 end

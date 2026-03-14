@@ -12,16 +12,30 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ---
 
-## RECTOR's Achievements (2024-2025)
+## RECTOR's Achievements (YAML-Driven)
 
-**Total Earnings:** ~$10,800 USDC + Gen3 Monke NFT
+**Source of Truth:** `config/achievements.yml`
 
-| # | Project | Type | Place | Prize | Event |
-|---|---------|------|-------|-------|-------|
-| 1 | **Web3 Deal Discovery** | Hackathon | 🥇 1st | $5,000 + NFT | MonkeDAO Cypherpunk (Superteam Earn, Dec 2025) |
-| 2 | **SIP Protocol** | Hackathon | 🏆 Winner | $4,000 | Zypherpunk NEAR Track |
-| 3 | **OpenBudget.ID** | Hackathon | 🥈 2nd | $1,500 | Garuda Spark (Superteam Indonesia, Oct 2025) |
-| 4 | **Saros SDK Docs** | Bounty | 🥇 1st | $300 | Saros SDK Guide Challenge (Dec 2024) |
+Achievements are managed via a YAML file. Homepage, meta tags, and totals auto-calculate.
+
+**To add a new achievement:**
+1. Edit `config/achievements.yml`
+2. Add entry at the top (newest first)
+3. Deploy - everything auto-updates
+
+**Auto-calculated fields:**
+- `Achievement.total_earnings` → sum of all prize amounts
+- `Achievement.win_count` → total count
+- `Achievement.year_range` → "2024-2026" from dates
+- `Achievement.winner_projects` → hash for project badges
+
+**Architecture:**
+```
+config/achievements.yml          # Single source of truth
+app/models/achievement.rb        # PORO - loads YAML, queries, calculates
+app/helpers/achievements_helper.rb  # Formatting helpers
+app/views/pages/_achievement_card.html.erb  # Reusable card partial
+```
 
 **Project Details:**
 
@@ -44,6 +58,12 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
    - Comprehensive Docusaurus documentation for Saros Finance SDKs
    - Interactive API Explorer, 15+ tutorials, production examples
    - Live: https://saros-docs.rectorspace.com
+
+5. **pNode Pulse** (`RECTOR-LABS/pnode-pulse`)
+   - Real-time analytics for Xandeum's decentralized pNode storage network
+   - TimescaleDB time-series, health scoring, 200+ nodes tracked
+   - Stack: Next.js 14 + TypeScript + tRPC + TimescaleDB + Redis
+   - Live: https://pulse.rectorspace.com
 
 ---
 
@@ -79,6 +99,7 @@ core/
 │   │   ├── pages_controller.rb       # Homepage (✅ implemented)
 │   │   └── works_controller.rb       # Work section (✅ implemented)
 │   ├── models/
+│   │   ├── achievement.rb            # PORO for YAML achievements (✅ implemented)
 │   │   ├── github_repo.rb            # GitHub repository cache (✅ implemented)
 │   │   └── work.rb                   # Work/project stories (✅ implemented)
 │   ├── views/
@@ -88,6 +109,7 @@ core/
 │   │       ├── index.html.erb        # Work listing (✅ implemented)
 │   │       └── show.html.erb         # Story page with custom CSS (✅ implemented)
 │   ├── helpers/
+│   │   ├── achievements_helper.rb    # Achievement summary formatting (✅ implemented)
 │   │   └── works_helper.rb           # Markdown rendering (✅ implemented)
 │   ├── jobs/
 │   │   └── sync_github_repos_job.rb  # Hourly GitHub sync (✅ implemented)
@@ -95,6 +117,7 @@ core/
 │       ├── github_api_service.rb     # GitHub API client (✅ implemented)
 │       └── tech_stack_parser.rb      # Language parser (✅ implemented)
 ├── config/
+│   ├── achievements.yml              # Single source of truth for achievements (✅ implemented)
 │   ├── routes.rb                     # Routes for /, /work (✅ configured)
 │   └── recurring.yml                 # Solid Queue job schedule
 ├── db/
@@ -192,22 +215,36 @@ bin/rails server
 
 ---
 
-## Deployment Strategy
+## Deployment
 
-**VPS Deployment:**
-- Single Rails app deployment (Nginx + Puma/Passenger)
-- 1 user account per deployment environment (staging/production)
-- PostgreSQL database
-- Let's Encrypt SSL for rectorspace.com
-- GitHub Actions CI/CD
-- SSH via `~/.ssh/config`
+**Architecture:** Docker on shared VPS (reclabs3, 151.245.137.75)
 
-**Environment Variables:**
-- Ghost CMS API credentials
-- Database connection strings
-- External API keys (GitHub API, Quran API)
+```
+GitHub push → Actions build → GHCR image → SSH → docker compose pull → up -d → image prune -f
+```
 
-**Security:** Never commit `.env`, use Rails credentials (encrypted)
+**Containers** (docker-compose.yml):
+| Service | Image | Port |
+|---------|-------|------|
+| postgres | postgres:16 | 127.0.0.1:5435:5432 |
+| web | ghcr.io/rector-labs/core:latest | 8000:80 |
+| solidqueue | ghcr.io/rector-labs/core:latest | — |
+
+- Puma runs behind Thruster (port 80 inside container)
+- nginx reverse proxies `rectorspace.com` → `127.0.0.1:8000`
+- `db:prepare` runs automatically on container start (entrypoint)
+- Solid Queue runs as a separate container (`bundle exec rake solid_queue:start`)
+
+**VPS User:** `core` (SSH alias: `core`)
+
+**GitHub Secrets:** `VPS_HOST`, `VPS_USER`, `VPS_SSH_KEY`, `VPS_APP_PATH`
+
+**Environment Variables** (VPS `~/core/.env`):
+- `SECRET_KEY_BASE` — Rails secret
+- `CORE_DATABASE_PASSWORD` — PostgreSQL password
+- `GITHUB_TOKEN` — GitHub API access for repo sync
+
+**Security:** Never commit `.env`. DB port bound to localhost only.
 
 ---
 

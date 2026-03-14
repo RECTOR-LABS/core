@@ -1,0 +1,180 @@
+<%# ── 1. Head content ────────────────────────── %>
+
+<% content_for :title do %>RECTOR | Superteam Application<% end %>
+
+<% content_for :head do %>
+  <meta property="og:title" content="Rheza Sulaiman — Superteam Application">
+  <meta property="og:description" content="<%= @resume[:summary][:web] %>">
+  <meta property="og:type" content="profile">
+<% end %>
+
+<% content_for :body_class do %>superteam-page<% end %>
+
+<% content_for :styles do %>
+  <%= stylesheet_link_tag "apply_superteam", "data-turbo-track": "reload" %>
+<% end %>
+
+<div class="superteam-container">
+
+  <%# ── 2. Header ──────────────────────────────── %>
+
+  <header class="superteam-header">
+    <%= image_tag @resume[:personal][:avatar], class: "avatar", alt: @resume[:personal][:name] %>
+    <h1 class="name"><%= @resume[:personal][:name] %></h1>
+    <p class="alias"><%= @resume[:personal][:alias] %> · <%= @resume[:personal][:location] %></p>
+    <p class="tagline"><%= @resume[:summary][:web] %></p>
+
+    <div class="contact-pills">
+      <%= link_to "https://#{@resume[:personal][:github]}", target: "_blank", rel: "noopener", class: "contact-pill" do %>
+        GitHub
+      <% end %>
+      <%= link_to "https://x.com/#{@resume[:personal][:twitter].delete('@')}", target: "_blank", rel: "noopener", class: "contact-pill" do %>
+        Twitter
+      <% end %>
+      <%= link_to "https://t.me/#{@resume[:personal][:telegram].delete('@')}", target: "_blank", rel: "noopener", class: "contact-pill" do %>
+        Telegram
+      <% end %>
+      <%= link_to "mailto:#{@resume[:personal][:email]}", class: "contact-pill" do %>
+        Email
+      <% end %>
+    </div>
+  </header>
+
+  <%# ── 3. Stats Banner ───────────────────────── %>
+
+  <section class="superteam-stats" data-controller="scroll-reveal">
+    <% @stats.each do |stat| %>
+      <div class="stat-card" data-scroll-reveal-target="item">
+        <span class="stat-number"
+              data-controller="counter"
+              data-counter-number-value="<%= stat[:number] %>"
+              data-counter-display-value="<%= stat[:value] %>">
+          0
+        </span>
+        <div class="stat-label"><%= stat[:label] %></div>
+      </div>
+    <% end %>
+  </section>
+
+  <%# ── 4. Awards & Grants ─────────────────────── %>
+
+  <section class="superteam-awards" data-controller="scroll-reveal">
+    <h2 class="section-title">Awards & Grants</h2>
+    <div class="awards-grid">
+      <% @achievements.sort_by { |a| -a.prize_amount }.each do |a| %>
+        <div class="award-card award-<%= a.type %>" data-scroll-reveal-target="item">
+          <div class="award-place"><%= a.badge_emoji %> <%= a.badge_label %></div>
+          <div class="award-prize"><%= a.formatted_prize %></div>
+          <div class="award-event"><%= a.full_event %></div>
+          <div class="award-project"><%= a.title %></div>
+        </div>
+      <% end %>
+    </div>
+  </section>
+
+  <%# ── 5. Featured Projects ──────────────────── %>
+
+  <section class="superteam-projects" data-controller="scroll-reveal">
+    <h2 class="section-title">Featured Projects</h2>
+    <div class="projects-grid">
+      <% @resume[:projects].select { |p| p[:featured] }.each do |project| %>
+        <div class="project-card" data-scroll-reveal-target="item">
+          <h3 class="project-name"><%= project[:name] %></h3>
+          <span class="project-org">@<%= project[:org] %></span>
+          <p class="project-desc"><%= project[:description] %></p>
+          <div class="project-tags">
+            <% project[:tags].each do |tag| %>
+              <span class="project-tag"><%= tag %></span>
+            <% end %>
+          </div>
+          <div class="project-links">
+            <%= link_to "GitHub", project[:github_url], target: "_blank", rel: "noopener", class: "project-link" %>
+            <% if project[:live_url].present? %>
+              <%= link_to "Live", project[:live_url], target: "_blank", rel: "noopener", class: "project-link" %>
+            <% end %>
+          </div>
+        </div>
+      <% end %>
+    </div>
+  </section>
+
+  <%# ── 6. Experience ──────────────────────────── %>
+
+  <section class="superteam-experience" data-controller="scroll-reveal">
+    <h2 class="section-title">Experience</h2>
+    <% @resume[:experience].each do |exp| %>
+      <div class="exp-entry" data-scroll-reveal-target="item">
+        <div class="exp-header">
+          <div class="exp-title-group">
+            <h3 class="exp-title"><%= exp[:title] %></h3>
+            <div class="exp-company"><%= exp[:company] %></div>
+          </div>
+          <div class="exp-date">
+            <%= exp[:date_start] %> — <%= exp[:date_end] %>
+          </div>
+        </div>
+        <div class="exp-location"><%= exp[:location] %></div>
+        <ul class="exp-bullets">
+          <% exp[:bullets].select { |b| b[:web] }.each do |bullet| %>
+            <li><%= bullet[:text] %></li>
+          <% end %>
+        </ul>
+      </div>
+    <% end %>
+  </section>
+
+  <%# ── 7. Technical Skills ────────────────────── %>
+
+  <%
+    skill_modifier_map = {
+      "Languages" => "lang",
+      "Security" => "security",
+      "Frameworks" => "framework",
+      "Databases" => "database",
+      "Infrastructure" => "infra",
+      "Blockchain" => "blockchain"
+    }
+  %>
+
+  <section class="superteam-skills" data-controller="scroll-reveal">
+    <h2 class="section-title">Technical Skills</h2>
+    <div class="skills-grid">
+      <% @resume[:skills].each do |group| %>
+        <div data-scroll-reveal-target="item">
+          <div class="skill-category"><%= group[:category] %></div>
+          <div class="skill-pills">
+            <% modifier = skill_modifier_map[group[:category]] || "lang" %>
+            <% group[:items].each do |item| %>
+              <span class="skill-pill <%= modifier %>"><%= item %></span>
+            <% end %>
+          </div>
+        </div>
+      <% end %>
+    </div>
+  </section>
+
+  <%# ── 8. Security Expertise ──────────────────── %>
+
+  <section class="superteam-security" data-controller="scroll-reveal">
+    <h2 class="section-title">Security Expertise</h2>
+    <% @resume[:security_expertise].each do |item| %>
+      <div class="security-item" data-scroll-reveal-target="item">
+        <p class="area-name"><%= item[:area] %></p>
+        <p class="area-detail"><%= item[:detail] %></p>
+      </div>
+    <% end %>
+  </section>
+
+  <%# ── 9. Education + Footer ──────────────────── %>
+
+  <section class="superteam-education">
+    <h2 class="section-title">Education</h2>
+    <p><%= @resume[:education][:text] %></p>
+  </section>
+
+  <footer class="superteam-footer">
+    <p>Built with Rails 8 &middot; rectorspace.com/apply/superteam</p>
+    <p><%= Time.current.strftime("%Y-%m-%d") %></p>
+  </footer>
+
+</div>

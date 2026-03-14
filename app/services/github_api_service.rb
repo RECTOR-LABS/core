@@ -156,6 +156,7 @@ class GithubApiService
         updated_at: Time.parse(repo[:updated_at]),
         topics: repo[:topics] || [],
         is_fork: repo[:fork],
+        private: repo[:private] || false,
         account: account,
         commit_count: commit_info[:count],
         latest_commit_sha: commit_info[:sha]

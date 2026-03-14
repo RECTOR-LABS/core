@@ -13,13 +13,17 @@
       <% else %>
         building for eternity.
       <% end %>
-      <% if @currently_building %>
-        Currently shipping <strong><%= link_to @currently_building.name, @currently_building.html_url, target: "_blank", rel: "noopener" %></strong>
-        (<%= @currently_building.detailed_time_ago %>).
-      <% end %>
-      <strong><%= number_with_delimiter(@contributions[:total]) %></strong> contributions this year
+      <strong><%= number_with_delimiter(@rolling_year_contributions[:total]) %></strong> contributions this past year •
+      <strong><%= number_with_delimiter(@all_time_contributions) %></strong> all-time
       across <strong><%= @aggregate_stats[:total_repos] %></strong> repositories.
     </p>
+
+    <% if @recently_active_repos.any? %>
+      <p class="intro-tagline mt-2">
+        Recently shipping <%= recently_shipping_list(@recently_active_repos) %>
+        (latest: <%= @recently_active_repos.first.detailed_time_ago %>).
+      </p>
+    <% end %>
   </div>
 
   <!-- Quick Nav -->
@@ -38,75 +42,19 @@
   <section>
     <h2>Achievements</h2>
     <p class="mt-4 mb-6 text-[#3B2C22]/70">
-      4 wins across bounties and hackathons in 2024-2025.
+      <%= Achievement.win_count %> wins across grants, bounties and hackathons in <%= Achievement.year_range %>.
     </p>
 
     <div class="space-y-4">
-      <!-- Web3 Deal Discovery - 1st Place -->
-      <div class="achievement-card">
-        <div class="flex justify-between items-start">
-          <div>
-            <span class="achievement-badge achievement-gold">🥇 1st Place</span>
-            <h3 class="achievement-title">
-              <%= link_to "Web3 Deal Discovery", "https://github.com/RECTOR-LABS/web3-deal-discovery-nft-coupons", target: "_blank", rel: "noopener" %>
-            </h3>
-            <p class="achievement-event">MonkeDAO Cypherpunk • Superteam Earn</p>
-          </div>
-          <span class="achievement-prize">$5,000 + NFT</span>
-        </div>
-        <p class="achievement-desc">NFT coupons on Solana — "Groupon meets DeFi" with escrow-based resale marketplace.</p>
-      </div>
-
-      <!-- SIP Protocol - Winner -->
-      <div class="achievement-card">
-        <div class="flex justify-between items-start">
-          <div>
-            <span class="achievement-badge achievement-gold">🏆 Winner</span>
-            <h3 class="achievement-title">
-              <%= link_to "SIP Protocol", "https://github.com/sip-protocol/sip-protocol", target: "_blank", rel: "noopener" %>
-            </h3>
-            <p class="achievement-event">Zypherpunk Hackathon • NEAR Track</p>
-          </div>
-          <span class="achievement-prize">$4,000</span>
-        </div>
-        <p class="achievement-desc">Privacy layer for cross-chain transactions via NEAR Intents + Zcash. Stealth addresses & ZK proofs.</p>
-      </div>
-
-      <!-- OpenBudget.ID - 2nd Place -->
-      <div class="achievement-card">
-        <div class="flex justify-between items-start">
-          <div>
-            <span class="achievement-badge achievement-silver">🥈 2nd Place</span>
-            <h3 class="achievement-title">
-              <%= link_to "OpenBudget.ID", "https://github.com/RECTOR-LABS/openbudget-id", target: "_blank", rel: "noopener" %>
-            </h3>
-            <p class="achievement-event">Garuda Spark • Superteam Indonesia</p>
-          </div>
-          <span class="achievement-prize">$1,500</span>
-        </div>
-        <p class="achievement-desc">Government spending transparency on Solana. Ministries publish on-chain, citizens verify.</p>
-      </div>
-
-      <!-- Saros SDK Docs - 1st Place Bounty -->
-      <div class="achievement-card">
-        <div class="flex justify-between items-start">
-          <div>
-            <span class="achievement-badge achievement-bounty">📚 1st Place</span>
-            <h3 class="achievement-title">
-              <%= link_to "Saros SDK Docs", "https://github.com/rz1989s/saros-docs", target: "_blank", rel: "noopener" %>
-            </h3>
-            <p class="achievement-event">Saros SDK Guide Challenge • Bounty</p>
-          </div>
-          <span class="achievement-prize">$300</span>
-        </div>
-        <p class="achievement-desc">Comprehensive Docusaurus documentation for Saros Finance SDKs with interactive API Explorer.</p>
-      </div>
+      <% Achievement.all.each do |achievement| %>
+        <%= render "pages/achievement_card", achievement: achievement %>
+      <% end %>
     </div>
 
     <!-- Total Summary -->
     <div class="mt-6 p-4 bg-[#F9C846]/10 border-l-4 border-[#F9C846] rounded">
       <p class="font-mono text-sm font-semibold text-[#3B2C22]">
-        Total Earned: ~$10,800 USDC + Gen3 Monke NFT
+        Total Earned: ~$<%= number_with_delimiter(Achievement.total_earnings) %> USDC + Gen3 Monke NFT
       </p>
     </div>
   </section>
@@ -159,12 +107,7 @@
                 <p class="mb-0 font-semibold truncate">
                   <%= link_to project.name, project.html_url, target: "_blank", rel: "noopener" %>
                   <% # Check if this is a hackathon/bounty winner %>
-                  <% winner_projects = {
-                    'web3-deal-discovery-nft-coupons' => '🥇',
-                    'sip-protocol' => '🏆',
-                    'openbudget-id' => '🥈',
-                    'saros-docs' => '🥇'
-                  } %>
+                  <% winner_projects = Achievement.winner_projects %>
                   <% if winner_projects[project.name] %>
                     <span class="project-winner-badge ml-1"><%= winner_projects[project.name] %> Winner</span>
                   <% end %>

@@ -9,7 +9,7 @@ echo "🌐 Setting up Nginx..."
 # Create Nginx config
 cat > /etc/nginx/sites-available/rectorspace.com << 'EOF'
 upstream puma_core {
-  server localhost:3000 fail_timeout=0;
+  server unix:///home/core/core/tmp/sockets/puma.sock fail_timeout=0;
 }
 
 server {
