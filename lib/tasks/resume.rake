@@ -5,7 +5,7 @@ namespace :resume do
   task generate: :environment do
     resume = YAML.load_file(
       Rails.root.join("config/resume.yml"),
-      permitted_classes: [Date]
+      permitted_classes: [ Date ]
     ).deep_symbolize_keys
 
     achievements = Achievement.all
