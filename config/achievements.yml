@@ -2,6 +2,19 @@
 # Order: newest first (display order on homepage)
 # Adding a new achievement: just add an entry here - totals auto-calculate
 ---
+- slug: adrena-trading-arena
+  title: Adrena Trading Arena
+  type: bounty
+  place: 2nd
+  prize_amount: 1500
+  prize_extras: null
+  event: Adrena x Autonom Trading Competition
+  event_detail: Superteam Earn
+  date: "2026-04"
+  github_url: https://github.com/RECTOR-LABS/adrena-trading-arena
+  repo_name: adrena-trading-arena
+  description: On-chain trading competition platform for Adrena Protocol. 4-layer monorepo with Anchor program, TypeScript SDK, Rust orchestrator, and Next.js frontend.
+
 - slug: sip-protocol-graveyard-torque
   title: SIP Protocol
   type: hackathon
