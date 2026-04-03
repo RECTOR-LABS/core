@@ -2,6 +2,19 @@
 # Order: newest first (display order on homepage)
 # Adding a new achievement: just add an entry here - totals auto-calculate
 ---
+- slug: solis-narrative-detection
+  title: SOLIS
+  type: bounty
+  place: 1st
+  prize_amount: 2000
+  prize_extras: null
+  event: Narrative Detection & Idea Generation
+  event_detail: Superteam Earn
+  date: "2026-03"
+  github_url: https://github.com/RECTOR-LABS/solis
+  repo_name: solis
+  description: Autonomous 4-layer signal fusion engine detecting Solana narratives daily. Z-score anomaly detection, LLM clustering, and build idea generation from onchain, developer, social, and market signals.
+
 - slug: adrena-trading-arena
   title: Adrena Trading Arena
   type: bounty

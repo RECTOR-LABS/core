@@ -25,8 +25,8 @@ stats:
 
 summary:
   pdf: >-
-    Full-stack Solana engineer with 9 wins across hackathons, bounties, and
-    grants totaling $32.5K+ in the Solana ecosystem. Awarded $10K Solana
+    Full-stack Solana engineer with 10 wins across hackathons, bounties, and
+    grants totaling $34.5K+ in the Solana ecosystem. Awarded $10K Solana
     Foundation grant and $6K audit subsidy for SIP Protocol. Currently
     building multi-chain automated trading infrastructure in Rust (Axum,
     Tokio, TimescaleDB) across Solana, Starknet, and ZKSync.
@@ -34,7 +34,7 @@ summary:
     125 vulnerabilities. Built LUMOS, a type-safe schema language bridging
     Rust and TypeScript for Solana with full IDE ecosystem.
   web: >-
-    Full-stack Solana engineer. 9 wins, $32.5K+ earned, $16K in grants.
+    Full-stack Solana engineer. 10 wins, $34.5K+ earned, $16K in grants.
     Building production trading infrastructure in Rust across
     Solana/Starknet/ZKSync. Security-focused: 125 vulnerabilities
     documented in Solana gaming protocol audit.

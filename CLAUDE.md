@@ -59,7 +59,14 @@ app/views/pages/_achievement_card.html.erb  # Reusable card partial
    - Interactive API Explorer, 15+ tutorials, production examples
    - Live: https://saros-docs.rectorspace.com
 
-5. **pNode Pulse** (`RECTOR-LABS/pnode-pulse`)
+5. **SOLIS** (`RECTOR-LABS/solis`)
+   - Solana Onchain & Landscape Intelligence Signal
+   - 4-layer signal fusion (social, developer, DeFi, market) with Z-score anomaly detection
+   - LLM narrative clustering + build idea generation, autonomous daily reports
+   - Stack: TypeScript + Next.js 15 + Claude Haiku (OpenRouter) + Recharts
+   - Live: https://solis.rectorspace.com
+
+6. **pNode Pulse** (`RECTOR-LABS/pnode-pulse`)
    - Real-time analytics for Xandeum's decentralized pNode storage network
    - TimescaleDB time-series, health scoring, 200+ nodes tracked
    - Stack: Next.js 14 + TypeScript + tRPC + TimescaleDB + Redis
