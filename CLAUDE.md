@@ -72,6 +72,12 @@ app/views/pages/_achievement_card.html.erb  # Reusable card partial
    - Stack: Next.js 14 + TypeScript + tRPC + TimescaleDB + Redis
    - Live: https://pulse.rectorspace.com
 
+7. **Solana Security Audit** (`RECTOR-LABS/solana-security-audit`)
+   - 1st place ($1,500 USDG) out of 116 submissions on Superteam Earn
+   - Systematic audit of 14 open-source Solana repos, 13 vulnerabilities found across 7 repos
+   - Submitted: Anchor CPI Return Data Spoofing (CVSSv3 7.5) — framework-level impact
+   - Stack: Rust + Anchor + Solana CLI
+
 ---
 
 ## The 7-Section Architecture

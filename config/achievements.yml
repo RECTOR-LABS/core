@@ -2,6 +2,19 @@
 # Order: newest first (display order on homepage)
 # Adding a new achievement: just add an entry here - totals auto-calculate
 ---
+- slug: solana-security-audit
+  title: Solana Security Audit
+  type: bounty
+  place: 1st
+  prize_amount: 1500
+  prize_extras: null
+  event: Audit & Fix Open-Source Solana Repos for Vulnerabilities
+  event_detail: Superteam Earn
+  date: "2026-03"
+  github_url: https://github.com/RECTOR-LABS/solana-security-audit
+  repo_name: solana-security-audit
+  description: 1st place out of 116 submissions. Audited 14 open-source Solana repos, found 13 vulnerabilities across 7 repos. Submitted Anchor CPI Return Data Spoofing (CVSSv3 7.5) — framework-level impact affecting all Anchor programs.
+
 - slug: solis-narrative-detection
   title: SOLIS
   type: bounty
