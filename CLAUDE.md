@@ -148,7 +148,7 @@ core/
 └── .env.example                      # Template for setup
 ```
 
-**Branches:** `main` (protected) | `dev` (default) | `feature/*`
+**Branches:** `main` (default; push to `main` deploys to production) | feature branches (`feat/*`, `fix/*`, `docs/*`, `chore/*`, `refactor/*`) → PR into `main`
 
 ---
 
@@ -301,7 +301,7 @@ GitHub push → Actions build → GHCR image → SSH → docker compose pull →
 1. Read this CLAUDE.md first, check branch (`git branch`), understand Rails conventions
 2. Follow Rails MVC patterns and conventions
 3. Survey docs before creating new `.md` files - propose organization first
-4. Work in `dev` branch, never commit directly to `main`
+4. Branch from `main` with a typed prefix (`feat/`, `fix/`, `docs/`, `chore/`, `refactor/`) and open a PR into `main`
 5. Update this CLAUDE.md if architecture changes
 6. Use Rails generators when appropriate
 7. Write tests for new features (RSpec or Minitest)
