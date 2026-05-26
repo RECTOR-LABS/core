@@ -36,7 +36,7 @@ class OgImageGenerator
     FileUtils.mkdir_p(cache_file.dirname)
 
     # Build canvas with text layers
-    MiniMagick::Tool::Convert.new do |c|
+    MiniMagick.convert do |c|
       c.size "#{WIDTH}x#{HEIGHT}"
       c.xc BG_COLOR
 
