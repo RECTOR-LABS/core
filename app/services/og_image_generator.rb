@@ -21,7 +21,7 @@ class OgImageGenerator
   private
 
   def cache_file
-    Rails.root.join("tmp", "cache", "og", "og-image.png")
+    Rails.root.join("public", "og-image.png")
   end
 
   def valid_cache?

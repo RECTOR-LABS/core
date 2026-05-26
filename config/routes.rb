@@ -14,9 +14,6 @@ Rails.application.routes.draw do
   get "apply/arbital/modern", to: "apply#arbital_modern", as: :apply_arbital_modern
   get "apply/superteam",      to: "apply#superteam",      as: :apply_superteam
 
-  # Dynamic OG image (auto-updates from achievements.yml)
-  get "og-image", to: "og_images#show", as: :og_image
-
   # Health check
   get "up" => "rails/health#show", as: :rails_health_check
 
