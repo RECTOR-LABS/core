@@ -81,9 +81,11 @@ const USERNAME = "rz1989s";
 /**
  * Sum the count across all contribution days.
  * Used as a fallback total when the API's `total` object lacks the requested year key.
+ * Coerces each count defensively with `Number(d.count) || 0` to prevent NaN or
+ * string-concatenation if a malformed payload contains a non-numeric count field.
  */
 function sumCounts(days: ContributionDay[]): number {
-  return days.reduce((acc, d) => acc + d.count, 0);
+  return days.reduce((acc, d) => acc + (Number(d.count) || 0), 0);
 }
 
 /**
@@ -225,7 +227,9 @@ function parseResponse(
   },
   year: number | "last",
 ): YearContributions {
-  const days = data.contributions ?? [];
+  // Guard against a malformed payload where `contributions` is present but not an array
+  // (e.g. an object or string). `?? []` only guards null/undefined; this is more robust.
+  const days = Array.isArray(data?.contributions) ? data.contributions : [];
 
   // Sort ASC by date (API returns sorted, but ensure — string compare is valid for YYYY-MM-DD)
   const sorted = [...days].sort((a, b) => (a.date < b.date ? -1 : a.date > b.date ? 1 : 0));

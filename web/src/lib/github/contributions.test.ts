@@ -269,6 +269,40 @@ describe("fetchContributions — degradation", () => {
 });
 
 // ---------------------------------------------------------------------------
+// fetchContributions — non-array contributions guard
+// ---------------------------------------------------------------------------
+
+describe("fetchContributions — non-array contributions payload", () => {
+  it("resolves without throwing when contributions is not an array, returns empty weeks/contributions, no console.error", async () => {
+    const errorSpy = vi.spyOn(console, "error").mockImplementation(() => {});
+
+    // 200 OK response — clean HTTP, but contributions field is an object (not an array)
+    const fetchMock = vi.fn().mockResolvedValueOnce({
+      ok: true,
+      status: 200,
+      json: () =>
+        Promise.resolve({
+          total: { "2025": 42 },
+          contributions: {}, // malformed: object instead of array
+        }),
+    });
+    vi.stubGlobal("fetch", fetchMock);
+
+    const result = await fetchContributions(2025);
+
+    // Must not throw — already covered by resolves
+    expect(result.weeks).toEqual([]);
+    expect(result.contributions).toEqual([]);
+    // total comes from data.total["2025"] — no fallback sumCounts needed
+    expect(result.total).toBe(42);
+    expect(typeof result.total).toBe("number");
+    expect(Number.isNaN(result.total)).toBe(false);
+    // A clean 200 with unexpected shape should NOT trigger console.error
+    expect(errorSpy).not.toHaveBeenCalled();
+  });
+});
+
+// ---------------------------------------------------------------------------
 // fetchAvailableYears — happy path
 // ---------------------------------------------------------------------------
 
