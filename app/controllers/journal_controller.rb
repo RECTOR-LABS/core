@@ -5,7 +5,7 @@ class JournalController < ApplicationController
 
   def show
     @post = Post.find(params[:slug])
-    return render_not_found if @post.nil? || @post.draft?
+    render_not_found if @post.nil? || @post.draft?
   end
 
   private

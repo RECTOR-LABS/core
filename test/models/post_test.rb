@@ -29,7 +29,7 @@ class PostTest < ActiveSupport::TestCase
   end
 
   test "parses tags into an array" do
-    assert_equal ["alpha", "beta"], Post.find("sample-post").tags
+    assert_equal [ "alpha", "beta" ], Post.find("sample-post").tags
   end
 
   test "reading_time is at least one minute" do
@@ -43,7 +43,7 @@ class PostTest < ActiveSupport::TestCase
   end
 
   test "recent sorts published posts by date descending" do
-    assert_equal ["sample-post", "older-post"], Post.recent.map(&:slug)
+    assert_equal [ "sample-post", "older-post" ], Post.recent.map(&:slug)
   end
 
   test "find returns nil for an unknown slug" do
