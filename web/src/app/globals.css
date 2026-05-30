@@ -19,14 +19,48 @@ body {
   line-height: 1.8;
 }
 
-/* Journal prose + wide-table breakout (port of Rails journal.css) */
-.prose-journal { line-height: 1.85; }
-.prose-journal p { margin: 1.5rem 0; }
-.prose-journal a { color: var(--color-sky); text-decoration: underline; }
-.prose-journal h2 { font-weight: 700; font-size: 1.5rem; margin: 2.5rem 0 1rem; }
+/* Journal prose (full port of Rails journal.css → .journal-content rules) */
+.prose-journal { font-size: 1.0625rem; line-height: 1.8; }
+.prose-journal h1 { font-size: 2rem; font-weight: 700; margin: 2.5rem 0 1rem; color: var(--color-brown); }
+.prose-journal h2 { font-size: 1.6rem; font-weight: 700; margin: 2.25rem 0 .9rem; color: var(--color-brown); }
+.prose-journal h3 { font-size: 1.25rem; font-weight: 600; margin: 1.75rem 0 .6rem; color: var(--color-brown); }
+.prose-journal p { margin: 0 0 1.25rem; }
+.prose-journal a { color: var(--color-sky); text-decoration: underline; text-underline-offset: 2px; }
+.prose-journal a:hover { color: var(--color-clay); }
+.prose-journal ul,
+.prose-journal ol { margin: 0 0 1.25rem 1.25rem; }
+.prose-journal li { margin: .35rem 0; }
+.prose-journal blockquote { border-left: 3px solid var(--color-yellow); padding-left: 1rem; margin: 1.25rem 0; color: rgba(59, 44, 34, .8); }
+.prose-journal code { background: rgba(59, 44, 34, .07); padding: .1rem .35rem; border-radius: .25rem; font-size: .9em; }
+.prose-journal pre { background: var(--color-brown); color: var(--color-cream); padding: 1rem; border-radius: .5rem; overflow-x: auto; margin: 0 0 1.25rem; }
+.prose-journal pre code { background: transparent; padding: 0; color: inherit; }
+.prose-journal hr { border: 0; border-top: 1px solid rgba(59, 44, 34, .15); margin: 2rem 0; }
+.prose-journal img { max-width: 100%; height: auto; border-radius: .35rem; }
+
+/* Tables — wide reference tables break out beyond the prose column, centered,
+   capped to the viewport so they never exceed the screen width (no horizontal scroll). */
 .prose-journal table {
   width: min(70rem, 92vw);
-  position: relative; left: 50%; transform: translateX(-50%);
-  border-collapse: collapse; margin: 2rem 0;
+  border-collapse: collapse;
+  margin: 0 0 1.5rem;
+  font-size: .95rem;
+  position: relative;
+  left: 50%;
+  transform: translateX(-50%);
 }
-.prose-journal th, .prose-journal td { border: 1px solid var(--color-brown); padding: 0.5rem 0.75rem; }
+.prose-journal thead th { background: rgba(249, 200, 70, .25); text-align: left; font-weight: 600; }
+.prose-journal th,
+.prose-journal td { border: 1px solid rgba(59, 44, 34, .15); padding: .55rem .7rem; vertical-align: top; }
+.prose-journal tbody tr:nth-child(even) { background: rgba(59, 44, 34, .03); }
+
+/* Journal listing chrome (port of Rails .journal-list-* and .journal-tag rules) */
+.journal-list { list-style: none; padding: 0; margin: 0; }
+.journal-list-item { padding: 1.5rem 0; border-bottom: 1px solid rgba(59, 44, 34, .1); }
+.journal-list-link { text-decoration: none; }
+.journal-list-title { font-size: 1.4rem; font-weight: 700; color: var(--color-brown); margin: 0 0 .35rem; transition: color .15s; }
+.journal-list-link:hover .journal-list-title { color: var(--color-sky); }
+.journal-list-link:focus-visible { outline: 2px solid var(--color-sky); outline-offset: 2px; border-radius: 2px; }
+.journal-list-meta { font-size: .85rem; color: rgba(59, 44, 34, .75); margin-bottom: .5rem; }
+.journal-list-summary { color: rgba(59, 44, 34, .8); line-height: 1.6; margin: 0 0 .5rem; }
+.journal-tags { display: flex; flex-wrap: wrap; gap: .4rem; }
+.journal-tag { font-size: .72rem; padding: .15rem .5rem; border-radius: .35rem; background: rgba(59, 44, 34, .06); color: rgba(59, 44, 34, .75); }
