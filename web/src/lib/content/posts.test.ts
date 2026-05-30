@@ -16,9 +16,11 @@ describe("posts", () => {
     expect(published[0].slug).toBe("live-post");
   });
 
-  it("computes reading time excluding markdown table rows", () => {
-    const { published } = loadPosts(DIR);
-    expect(published[0].readingMinutes).toBeGreaterThanOrEqual(1);
+  it("excludes table rows from reading time (fails if stripping is removed)", () => {
+    const dir = path.join(__dirname, "__fixtures__/reading-time");
+    const { published } = loadPosts(dir);
+    // Prose alone ≈ 0 min → clamped to 1. If table rows were counted, this would be ≥ 2.
+    expect(published[0].readingMinutes).toBe(1);
   });
 
   it("finds a published post by slug and ignores drafts", () => {
