@@ -30,7 +30,7 @@ const stripTableRows = (md: string) =>
     .filter((l) => !/^\s*\|.*\|\s*$/.test(l))
     .join("\n");
 
-export const DEFAULT_DIR = path.join(process.cwd(), "content", "journal");
+const DEFAULT_DIR = path.join(process.cwd(), "content", "journal");
 
 export function loadPosts(dir: string = DEFAULT_DIR) {
   const files = fs.existsSync(dir)
