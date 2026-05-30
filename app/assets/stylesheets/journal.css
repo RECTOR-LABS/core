@@ -1,1 +1,36 @@
-/* Journal styles — populated in the styling task. */
+/* Journal listing */
+.journal-list { list-style: none; padding: 0; margin: 0; }
+.journal-list-item { padding: 1.5rem 0; border-bottom: 1px solid rgba(59, 44, 34, 0.1); }
+.journal-list-link { text-decoration: none; }
+.journal-list-title { font-size: 1.4rem; font-weight: 700; color: #3B2C22; margin: 0 0 .35rem; transition: color .15s; }
+.journal-list-link:hover .journal-list-title { color: #41CFFF; }
+.journal-list-link:focus-visible { outline: 2px solid #41CFFF; outline-offset: 2px; border-radius: 2px; }
+.journal-list-meta { font-size: .85rem; color: rgba(59, 44, 34, .75); margin-bottom: .5rem; }
+.journal-list-summary { color: rgba(59, 44, 34, .8); line-height: 1.6; margin: 0 0 .5rem; }
+
+/* Tags */
+.journal-tags { display: flex; flex-wrap: wrap; gap: .4rem; }
+.journal-tag { font-size: .72rem; padding: .15rem .5rem; border-radius: .35rem; background: rgba(59, 44, 34, .06); color: rgba(59, 44, 34, .75); }
+
+/* Article prose */
+.journal-content { font-size: 1.0625rem; line-height: 1.8; }
+.journal-content h1 { font-size: 2rem; font-weight: 700; margin: 2.5rem 0 1rem; color: #3B2C22; }
+.journal-content h2 { font-size: 1.6rem; font-weight: 700; margin: 2.25rem 0 .9rem; color: #3B2C22; }
+.journal-content h3 { font-size: 1.25rem; font-weight: 600; margin: 1.75rem 0 .6rem; color: #3B2C22; }
+.journal-content p { margin: 0 0 1.25rem; }
+.journal-content a { color: #41CFFF; text-decoration: underline; text-underline-offset: 2px; }
+.journal-content a:hover { color: #E58C2E; }
+.journal-content ul, .journal-content ol { margin: 0 0 1.25rem 1.25rem; }
+.journal-content li { margin: .35rem 0; }
+.journal-content blockquote { border-left: 3px solid #F9C846; padding-left: 1rem; margin: 1.25rem 0; color: rgba(59, 44, 34, .8); }
+.journal-content code { background: rgba(59, 44, 34, .07); padding: .1rem .35rem; border-radius: .25rem; font-size: .9em; }
+.journal-content pre { background: #3B2C22; color: #FFF7E1; padding: 1rem; border-radius: .5rem; overflow-x: auto; margin: 0 0 1.25rem; }
+.journal-content pre code { background: transparent; padding: 0; color: inherit; }
+.journal-content hr { border: 0; border-top: 1px solid rgba(59, 44, 34, .15); margin: 2rem 0; }
+.journal-content img { max-width: 100%; height: auto; border-radius: .35rem; }
+
+/* Tables — this post is table-heavy */
+.journal-content table { width: 100%; border-collapse: collapse; margin: 0 0 1.5rem; font-size: .95rem; display: block; overflow-x: auto; }
+.journal-content thead th { background: rgba(249, 200, 70, .25); text-align: left; font-weight: 600; }
+.journal-content th, .journal-content td { border: 1px solid rgba(59, 44, 34, .15); padding: .55rem .7rem; vertical-align: top; }
+.journal-content tbody tr:nth-child(even) { background: rgba(59, 44, 34, .03); }
