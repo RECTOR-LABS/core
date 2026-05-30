@@ -51,6 +51,8 @@ export interface Achievement {
   formattedPrize: string;
   /** Ported from Achievement#full_event */
   fullEvent: string;
+  /** Ported from Achievement#badge_class */
+  badgeClass: string;
 }
 
 export interface AchievementsResult {
@@ -111,6 +113,27 @@ function fullEvent(event: string, eventDetail: string | null): string {
   return eventDetail ? `${event} • ${eventDetail}` : event;
 }
 
+/** Ported from Achievement#badge_class */
+function badgeClass(type: string, place: string): string {
+  switch (type.toLowerCase()) {
+    case "grant":
+      return "achievement-gold";
+    case "bounty":
+      return "achievement-bounty";
+    default:
+      // Hackathon badges based on place
+      switch (place.toLowerCase()) {
+        case "1st":
+        case "winner":
+          return "achievement-gold";
+        case "2nd":
+          return "achievement-silver";
+        default:
+          return "achievement-bounty";
+      }
+  }
+}
+
 /** Map a raw validated YAML entry to the public Achievement shape */
 function toAchievement(raw: RawAchievement): Achievement {
   return {
@@ -130,6 +153,7 @@ function toAchievement(raw: RawAchievement): Achievement {
     badgeLabel: badgeLabel(raw.place),
     formattedPrize: formattedPrize(raw.prize_amount, raw.prize_extras),
     fullEvent: fullEvent(raw.event, raw.event_detail),
+    badgeClass: badgeClass(raw.type, raw.place),
   };
 }
 

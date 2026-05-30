@@ -64,4 +64,102 @@ describe("loadAchievements", () => {
     const uniqueRepos = new Set(all.map((a) => a.repoName)).size;
     expect(Object.keys(winnerProjects).length).toBe(uniqueRepos);
   });
+
+  // -------------------------------------------------------------------------
+  // badgeLabel — ported from Achievement#badge_label
+  // -------------------------------------------------------------------------
+  it("badgeLabel: approved place → 'Grant Approved'", () => {
+    const { all } = loadAchievements(REAL_YAML);
+    const bySlug = Object.fromEntries(all.map((a) => [a.slug, a]));
+    // sip-protocol-grant: type=grant, place=approved
+    expect(bySlug["sip-protocol-grant"].badgeLabel).toBe("Grant Approved");
+  });
+
+  it("badgeLabel: winner place → 'Winner'", () => {
+    const { all } = loadAchievements(REAL_YAML);
+    const bySlug = Object.fromEntries(all.map((a) => [a.slug, a]));
+    // sip-protocol-zypherpunk: type=hackathon, place=winner
+    expect(bySlug["sip-protocol-zypherpunk"].badgeLabel).toBe("Winner");
+  });
+
+  it("badgeLabel: placed entry → '<place> Place'", () => {
+    const { all } = loadAchievements(REAL_YAML);
+    const bySlug = Object.fromEntries(all.map((a) => [a.slug, a]));
+    // openbudget-id: type=hackathon, place=2nd
+    expect(bySlug["openbudget-id"].badgeLabel).toBe("2nd Place");
+  });
+
+  // -------------------------------------------------------------------------
+  // formattedPrize — ported from Achievement#formatted_prize
+  // -------------------------------------------------------------------------
+  it("formattedPrize: with prize_extras → '$<amount> + <extras>'", () => {
+    const { all } = loadAchievements(REAL_YAML);
+    const bySlug = Object.fromEntries(all.map((a) => [a.slug, a]));
+    // web3-deal-discovery: prize_amount=5000, prize_extras=NFT
+    expect(bySlug["web3-deal-discovery"].formattedPrize).toBe("$5,000 + NFT");
+  });
+
+  it("formattedPrize: without prize_extras → '$<amount>'", () => {
+    const { all } = loadAchievements(REAL_YAML);
+    const bySlug = Object.fromEntries(all.map((a) => [a.slug, a]));
+    // solana-security-audit: prize_amount=1500, prize_extras=null
+    expect(bySlug["solana-security-audit"].formattedPrize).toBe("$1,500");
+  });
+
+  // -------------------------------------------------------------------------
+  // fullEvent — ported from Achievement#full_event
+  // -------------------------------------------------------------------------
+  it("fullEvent: with event_detail → '<event> • <event_detail>'", () => {
+    const { all } = loadAchievements(REAL_YAML);
+    const bySlug = Object.fromEntries(all.map((a) => [a.slug, a]));
+    // solana-security-audit: event="Audit & Fix Open-Source Solana Repos for Vulnerabilities",
+    //   event_detail="Superteam Earn"
+    expect(bySlug["solana-security-audit"].fullEvent).toBe(
+      "Audit & Fix Open-Source Solana Repos for Vulnerabilities • Superteam Earn",
+    );
+  });
+
+  // -------------------------------------------------------------------------
+  // badgeClass — ported from Achievement#badge_class (the missing method)
+  // -------------------------------------------------------------------------
+  it("badgeClass: type=grant → 'achievement-gold'", () => {
+    const { all } = loadAchievements(REAL_YAML);
+    const bySlug = Object.fromEntries(all.map((a) => [a.slug, a]));
+    // sip-protocol-grant: type=grant, place=approved
+    expect(bySlug["sip-protocol-grant"].badgeClass).toBe("achievement-gold");
+    // sip-protocol-audit-subsidy: type=grant, place=approved
+    expect(bySlug["sip-protocol-audit-subsidy"].badgeClass).toBe("achievement-gold");
+  });
+
+  it("badgeClass: type=bounty → 'achievement-bounty'", () => {
+    const { all } = loadAchievements(REAL_YAML);
+    const bySlug = Object.fromEntries(all.map((a) => [a.slug, a]));
+    // solana-security-audit: type=bounty, place=1st
+    expect(bySlug["solana-security-audit"].badgeClass).toBe("achievement-bounty");
+    // pnode-pulse: type=bounty, place=3rd
+    expect(bySlug["pnode-pulse"].badgeClass).toBe("achievement-bounty");
+  });
+
+  it("badgeClass: type=hackathon, place=1st → 'achievement-gold'", () => {
+    const { all } = loadAchievements(REAL_YAML);
+    const bySlug = Object.fromEntries(all.map((a) => [a.slug, a]));
+    // web3-deal-discovery: type=hackathon, place=1st
+    expect(bySlug["web3-deal-discovery"].badgeClass).toBe("achievement-gold");
+    // sip-protocol-graveyard-torque: type=hackathon, place=1st
+    expect(bySlug["sip-protocol-graveyard-torque"].badgeClass).toBe("achievement-gold");
+  });
+
+  it("badgeClass: type=hackathon, place=winner → 'achievement-gold'", () => {
+    const { all } = loadAchievements(REAL_YAML);
+    const bySlug = Object.fromEntries(all.map((a) => [a.slug, a]));
+    // sip-protocol-zypherpunk: type=hackathon, place=winner
+    expect(bySlug["sip-protocol-zypherpunk"].badgeClass).toBe("achievement-gold");
+  });
+
+  it("badgeClass: type=hackathon, place=2nd → 'achievement-silver'", () => {
+    const { all } = loadAchievements(REAL_YAML);
+    const bySlug = Object.fromEntries(all.map((a) => [a.slug, a]));
+    // openbudget-id: type=hackathon, place=2nd
+    expect(bySlug["openbudget-id"].badgeClass).toBe("achievement-silver");
+  });
 });
