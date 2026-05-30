@@ -41,7 +41,12 @@ export function loadPosts(dir: string = DEFAULT_DIR) {
     .map((file) => {
       const raw = fs.readFileSync(path.join(dir, file), "utf8");
       const { data, content } = matter(raw);
-      const fm = Frontmatter.parse(data);
+      let fm: z.infer<typeof Frontmatter>;
+      try {
+        fm = Frontmatter.parse(data);
+      } catch (e) {
+        throw new Error(`Invalid front matter in "${file}": ${String(e)}`);
+      }
       return {
         ...fm,
         slug: fm.slug ?? file.replace(/\.md$/, ""),
