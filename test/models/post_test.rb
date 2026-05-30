@@ -61,4 +61,15 @@ class PostTest < ActiveSupport::TestCase
       assert_includes post.body, "CRLF body content."
     end
   end
+
+  test "reading_time counts prose only, excluding markdown tables" do
+    Dir.mktmpdir do |dir|
+      prose = ([ "word" ] * 200).join(" ")
+      table = "\n\n| A | B |\n|---|---|\n| one | two |\n| three | four |\n"
+      File.write(File.join(dir, "with-table.md"), "---\ntitle: T\ndate: 2026-05-15\n---\n\n#{prose}#{table}")
+      Post.content_dir = Pathname.new(dir)
+      Post.reload!
+      assert_equal 1, Post.find("with-table").reading_time
+    end
+  end
 end

@@ -86,7 +86,10 @@ class Post
   end
 
   def reading_time
-    words = body.to_s.split.size
+    # Count prose only — exclude markdown table rows (GFM rows start with "|"),
+    # which are dense reference content, not reading-paced prose.
+    prose = body.to_s.lines.reject { |line| line.lstrip.start_with?("|") }.join(" ")
+    words = prose.split.size
     [ (words / 200.0).ceil, 1 ].max
   end
 end
