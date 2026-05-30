@@ -507,3 +507,70 @@ describe("currentlyBuilding()", () => {
     expect(currentlyBuilding([])).toBeNull();
   });
 });
+
+// ---------------------------------------------------------------------------
+// fetchRepos — pagination cycle terminates (visited-URL Set guard)
+// ---------------------------------------------------------------------------
+
+describe("fetchRepos — pagination cycle guard", () => {
+  it("resolves without hanging when rel=next is a self-referential URL, warns once, and fetches the page only once", async () => {
+    const warnSpy = vi.spyOn(console, "warn").mockImplementation(() => {});
+    const repoData = makeGithubRepo({ name: "cycle-repo", full_name: "x/cycle-repo" });
+
+    const pageUrl = "https://api.github.com/users/x/repos?per_page=100&sort=pushed&page=1";
+
+    const fetchMock = vi.fn();
+    // The repos response — Link rel="next" points at the SAME URL (self-reference)
+    fetchMock.mockResolvedValueOnce({
+      ok: true,
+      status: 200,
+      json: () => Promise.resolve([repoData]),
+      headers: new Headers({
+        Link: `<${pageUrl}>; rel="next"`,
+      }),
+    });
+    // Commit info for cycle-repo
+    fetchMock.mockResolvedValueOnce({
+      ok: true,
+      status: 200,
+      json: () => Promise.resolve([{ sha: "cafebabe" }]),
+      headers: new Headers(),
+    });
+
+    vi.stubGlobal("fetch", fetchMock);
+
+    const repos = await fetchRepos(["x"]);
+
+    // Resolves with the one repo that was fetched
+    expect(repos).toHaveLength(1);
+    expect(repos[0].name).toBe("cycle-repo");
+
+    // Visited-Set guard fired: console.warn must have been called
+    expect(warnSpy).toHaveBeenCalled();
+    const warnMsg: string = warnSpy.mock.calls[0][0] as string;
+    expect(warnMsg).toMatch(/cycle/i);
+    expect(warnMsg).toMatch(/"x"/);
+
+    // The repos-list endpoint was fetched exactly once — cycle didn't repeat
+    const reposListCalls = (fetchMock.mock.calls as [string, unknown][]).filter(
+      ([url]) => (url as string).includes("/users/x/repos"),
+    );
+    expect(reposListCalls).toHaveLength(1);
+  });
+});
+
+// ---------------------------------------------------------------------------
+// fetchRepos — empty accounts array
+// ---------------------------------------------------------------------------
+
+describe("fetchRepos — empty accounts", () => {
+  it("returns [] immediately and never calls fetch when accounts is empty", async () => {
+    const fetchMock = vi.fn();
+    vi.stubGlobal("fetch", fetchMock);
+
+    const repos = await fetchRepos([]);
+
+    expect(repos).toEqual([]);
+    expect(fetchMock).not.toHaveBeenCalled();
+  });
+});

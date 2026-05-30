@@ -54,6 +54,16 @@ export const DEFAULT_ACCOUNTS = ["rz1989s", "RECTOR-LABS"] as const;
 
 const API_BASE = "https://api.github.com";
 
+// 1 hour — matches the Rails hourly Solid Queue repo sync (config/recurring.yml)
+const REVALIDATE_SECONDS = 3600;
+
+/**
+ * Hard cap on pages fetched per account.
+ * 50 × 100 = 5,000 repos — far beyond any real account.
+ * Backstop against a misbehaving proxy that keeps serving distinct next-page URLs.
+ */
+const MAX_PAGES_PER_ACCOUNT = 50;
+
 // ---------------------------------------------------------------------------
 // Internal helpers
 // ---------------------------------------------------------------------------
@@ -72,6 +82,20 @@ function buildHeaders(): Record<string, string> {
     headers["Authorization"] = `Bearer ${process.env.GITHUB_TOKEN}`;
   }
   return headers;
+}
+
+/**
+ * Single ISR-aware fetch wrapper.
+ * Applies shared headers and the Next.js `revalidate` option in one place.
+ */
+function githubFetch(
+  url: string,
+  headers: Record<string, string>,
+): Promise<Response> {
+  return fetch(url, {
+    headers,
+    next: { revalidate: REVALIDATE_SECONDS },
+  } as RequestInit & { next: { revalidate: number } });
 }
 
 /**
@@ -103,10 +127,7 @@ async function fetchCommitInfo(
 ): Promise<Pick<Repo, "commitCount" | "latestCommitSha">> {
   const url = `${API_BASE}/repos/${fullName}/commits?per_page=1`;
   try {
-    const res = await fetch(url, {
-      headers,
-      next: { revalidate: 3600 },
-    } as RequestInit & { next: { revalidate: number } });
+    const res = await githubFetch(url, headers);
 
     if (!res.ok) {
       console.error(
@@ -194,13 +215,33 @@ async function fetchAccountRepos(
   let nextUrl: string | null =
     `${API_BASE}/users/${account}/repos?per_page=100&sort=pushed&page=1`;
 
+  // Guard 1: visited-URL Set — stops self-referential or cycling rel="next"
+  const visitedUrls = new Set<string>();
+  // Guard 2: page counter — hard backstop against infinite distinct URLs
+  let pagesFetched = 0;
+
   while (nextUrl) {
+    // Cycle detection: abort if we've seen this URL before
+    if (visitedUrls.has(nextUrl)) {
+      console.warn(
+        `GitHub API pagination cycle detected for account "${account}" — aborting pagination at ${nextUrl}`,
+      );
+      break;
+    }
+    visitedUrls.add(nextUrl);
+
+    // Hard page cap: abort if we've exceeded the maximum allowed pages
+    if (pagesFetched >= MAX_PAGES_PER_ACCOUNT) {
+      console.warn(
+        `GitHub API pagination hard cap (${MAX_PAGES_PER_ACCOUNT} pages) reached for account "${account}" — aborting to prevent runaway`,
+      );
+      break;
+    }
+    pagesFetched++;
+
     let res: Response;
     try {
-      res = await fetch(nextUrl, {
-        headers,
-        next: { revalidate: 3600 },
-      } as RequestInit & { next: { revalidate: number } });
+      res = await githubFetch(nextUrl, headers);
     } catch (err) {
       console.error(
         `GitHub API network error for account "${account}" at ${nextUrl}: ${String(err)}`,
