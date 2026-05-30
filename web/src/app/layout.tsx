@@ -6,7 +6,7 @@ const jetbrains = localFont({
     { path: "../../public/fonts/JetBrainsMono-Regular.ttf", weight: "400" },
     { path: "../../public/fonts/JetBrainsMono-Bold.ttf", weight: "700" },
   ],
-  variable: "--font-mono",
+  variable: "--font-jetbrains",
 });
 
 export const metadata = { title: "RECTOR", description: "Building for Eternity" };

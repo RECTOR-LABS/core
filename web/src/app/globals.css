@@ -8,7 +8,7 @@
   --color-clay: #E58C2E;
   --color-leaf: #A8E063;
   --color-red: #C75A44;
-  --font-mono: "JetBrains Mono", ui-monospace, monospace;
+  --font-mono: var(--font-jetbrains, ui-monospace, monospace);
 }
 
 body {
