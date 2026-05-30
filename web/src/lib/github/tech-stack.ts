@@ -55,7 +55,7 @@ export const CATEGORIES: Record<string, readonly string[]> = {
   infra: ["Shell", "Dockerfile", "HCL"],
   data: ["Python", "R", "Julia"],
   systems: ["C", "C++", "Rust", "Go"],
-} as const;
+};
 
 // ---------------------------------------------------------------------------
 // Private helpers
@@ -89,6 +89,9 @@ function countLanguages(nonForkRepos: Repo[]): Record<string, number> {
  *
  * Iterates CATEGORIES in declaration order; includes a category only when ≥1 language matches.
  * Appends an `other` bucket for any language not present in ANY category; omits `other` if empty.
+ *
+ * @param languageCounts - assumed pre-sorted by count DESC (insertion order = count order);
+ *   that order is preserved into each category bucket and the `other` bucket.
  */
 function categorizeLanguages(
   languageCounts: Record<string, number>,
@@ -98,7 +101,7 @@ function categorizeLanguages(
   for (const [category, languages] of Object.entries(CATEGORIES)) {
     const bucket: Record<string, number> = {};
     for (const [lang, count] of Object.entries(languageCounts)) {
-      if ((languages as readonly string[]).includes(lang)) {
+      if (languages.includes(lang)) {
         bucket[lang] = count;
       }
     }
