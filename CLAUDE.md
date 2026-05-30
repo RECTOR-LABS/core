@@ -89,7 +89,7 @@ Single domain `rectorspace.com` with route-based sections:
 | Homepage | / | Identity hub & landing | ✅ Live |
 | Work | /work | Story-driven project showcase | ✅ Live |
 | Labs | /labs | Experiments & learning projects | 📋 Planned |
-| Journal | /journal | Blog & writings (Ghost CMS integration) | 📋 Planned |
+| Journal | /journal | Blog & writings (native file-based markdown) | ✅ Live |
 | Cheatsheet | /cheatsheet | Dev reference & notes | 📋 Planned |
 | Dakwa | /dakwa | Islamic da'wah content | 📋 Planned |
 | Quran | /quran | Quranic resources & tools | 📋 Planned |
@@ -98,7 +98,7 @@ Single domain `rectorspace.com` with route-based sections:
 - Rails monolith for unified codebase, shared authentication, single deployment
 - Route-based sections instead of separate apps/subdomains
 - Work (story-driven narratives) separate from Labs (experiments/learning)
-- Ghost CMS as external service, integrated via API for Journal section
+- Journal section uses native file-based markdown (no external CMS)
 
 ---
 
@@ -264,10 +264,9 @@ GitHub push → Actions build → GHCR image → SSH → docker compose pull →
 ## External Integrations
 
 **Journal Section:**
-- Ghost CMS hosted separately (journal subdomain or external)
-- Integrate via Ghost Content API
-- Fetch posts and display in `/journal` route
-- Consider caching strategy for performance
+- Native file-based blog (no external CMS) — content lives in git
+- Posts are markdown files in `content/journal/*.md` with YAML front matter
+- Rendered via the `Post` PORO + shared `markdown()` helper (Redcarpet); deploy = publish
 
 **Work Section:**
 - Story-driven project pages (narrative format, not traditional portfolio)
@@ -452,13 +451,54 @@ resources :works, only: [:index, :show]
 
 ---
 
+## Journal Section (File-Based Blog)
+
+**Implemented Features:**
+- Native file-based blog at `/journal` (no Ghost CMS — content lives in git, PR-reviewable)
+- Posts are markdown files with YAML front matter in `content/journal/*.md`
+- Rendered via the shared `markdown()` helper (Redcarpet); drafts excluded from the index and 404 on show
+- Warm cream theme with dedicated prose + table styling (`journal.css`)
+
+**Front Matter:**
+```yaml
+---
+title: Post Title
+slug: optional-slug        # defaults to the filename without .md
+date: 2026-05-30
+summary: One-line excerpt (listing + meta description)
+tags: [tag1, tag2]
+draft: false               # drafts excluded from index and 404 on show
+---
+```
+
+**Architecture:**
+```
+content/journal/*.md                    # source of truth (one file per post)
+app/models/post.rb                      # PORO: all/published/recent/find, reading_time
+app/controllers/journal_controller.rb   # index + show (drafts/unknown -> 404)
+app/views/journal/index.html.erb        # post listing
+app/views/journal/show.html.erb         # article (OG article meta)
+app/assets/stylesheets/journal.css      # prose + table styling
+app/helpers/markdown_helper.rb          # shared markdown() (also used by Work)
+```
+
+**Routes:**
+```ruby
+get "journal", to: "journal#index", as: :journal
+get "journal/:slug", to: "journal#show", as: :journal_post
+```
+
+**To add a post:** create `content/journal/<slug>.md` with front matter + markdown body, commit, deploy. The homepage "Latest article" and the `/journal` index update automatically.
+
+---
+
 ## Resources
 
-**Docs:** [Rails Guides](https://guides.rubyonrails.org) | [Tailwind CSS](https://tailwindcss.com/docs) | [Ghost API](https://ghost.org/docs/content-api/)
+**Docs:** [Rails Guides](https://guides.rubyonrails.org) | [Tailwind CSS](https://tailwindcss.com/docs) | [Redcarpet](https://github.com/vmg/redcarpet)
 
 **Links:** [@rz1989s](https://github.com/rz1989s) | [RECTOR-LABS](https://github.com/RECTOR-LABS) | [rectorspace.com](https://rectorspace.com)
 
-**Maintainer:** RECTOR | **Updated:** 2025-11-03 | **Version:** 3.1 (Work Section Live)
+**Maintainer:** RECTOR | **Updated:** 2026-05-30 | **Version:** 3.2 (Journal Section Live)
 
 ---
 
