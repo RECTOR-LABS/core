@@ -31,6 +31,9 @@ class PagesController < ApplicationController
     # Currently building (most recently pushed repo) - kept for activity bar
     @currently_building = GithubRepo.currently_building
 
+    # Latest journal post for homepage Writing section
+    @latest_post = Post.recent.first
+
     # If cache is empty, trigger sync job and show placeholder
     if @latest_projects.empty?
       SyncGithubReposJob.perform_later
