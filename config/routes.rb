@@ -8,6 +8,10 @@ Rails.application.routes.draw do
   # Work section - story-driven project showcase
   resources :works, path: "work", only: [ :index, :show ]
 
+  # Journal section - file-based blog
+  get "journal", to: "journal#index", as: :journal
+  get "journal/:slug", to: "journal#show", as: :journal_post
+
   # Apply section - targeted CVs for specific companies
   get "apply/arbital",        to: "apply#arbital",        as: :apply_arbital
   get "apply/arbital/retro",  to: "apply#arbital_retro",  as: :apply_arbital_retro

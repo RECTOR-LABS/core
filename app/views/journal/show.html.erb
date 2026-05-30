@@ -1,0 +1,31 @@
+<% content_for :title, @post.title %>
+<% content_for :meta_description, @post.summary %>
+<% content_for :og_type, "article" %>
+<% content_for :og_image, @post.og_image if @post.og_image.present? %>
+
+<%= stylesheet_link_tag "journal", "data-turbo-track": "reload" %>
+
+<div class="max-w-3xl mx-auto px-4 sm:px-6 py-8 sm:py-12">
+  <div class="mb-6 sm:mb-8">
+    <%= link_to "← Journal", journal_path, class: "text-[#41CFFF] hover:text-[#E58C2E] transition-colors" %>
+  </div>
+
+  <article class="max-w-none">
+    <header class="mb-6 sm:mb-8 pb-6 border-b-2 border-[#3B2C22]/10">
+      <h1 class="text-2xl sm:text-4xl font-bold mb-3 text-[#3B2C22]"><%= @post.title %></h1>
+      <div class="flex flex-wrap items-center gap-3 text-sm text-[#3B2C22]/60">
+        <% if @post.published_on %><time datetime="<%= @post.published_on.iso8601 %>"><%= @post.published_on.strftime("%B %-d, %Y") %></time> · <% end %>
+        <span><%= @post.reading_time %> min read</span>
+      </div>
+      <% if @post.tags.present? %>
+        <div class="journal-tags mt-3">
+          <% @post.tags.each do |tag| %><span class="journal-tag"><%= tag %></span><% end %>
+        </div>
+      <% end %>
+    </header>
+
+    <div class="journal-content text-[#3B2C22]">
+      <%= markdown(@post.body) %>
+    </div>
+  </article>
+</div>

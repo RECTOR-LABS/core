@@ -31,7 +31,7 @@
     Explore:
     <%= link_to "work", works_path %> •
     <%= link_to "labs", "#" %> •
-    <%= link_to "journal", "#" %> •
+    <%= link_to "journal", journal_path %> •
     <%= link_to "cheatsheet", "#" %>
   </div>
 
@@ -182,12 +182,13 @@
   <!-- Writing Section -->
   <section>
     <h2>Writing</h2>
-    <p class="mt-4 mb-2">
-      <strong>Latest article:</strong>
-      <%= link_to "Coming Soon", "#" %>
-    </p>
+    <% if @latest_post %>
+      <p class="mt-4 mb-2">
+        <strong>Latest article:</strong>
+        <%= link_to @latest_post.title, journal_post_path(@latest_post) %>
+      </p>
+    <% end %>
     <p>
-      Journal section powered by Ghost CMS, integrated via API.
       Articles about code, faith, and building for eternity.
     </p>
   </section>
