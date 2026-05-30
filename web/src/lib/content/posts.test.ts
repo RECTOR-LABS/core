@@ -11,9 +11,16 @@ describe("posts", () => {
     expect(published.map((p) => p.slug)).toEqual(["live-post"]);
   });
 
-  it("defaults slug to filename and sorts published newest-first", () => {
-    const { published } = loadPosts(DIR);
-    expect(published[0].slug).toBe("live-post");
+  it("defaults slug to the filename when not set in front matter", () => {
+    const { all } = loadPosts(DIR);
+    expect(all.map((p) => p.slug).sort()).toEqual(["draft-post", "live-post"]);
+  });
+
+  it("orders posts newest-first", () => {
+    const { all } = loadPosts(DIR);
+    // live-post = 2026-05-30, draft-post = 2026-05-29
+    expect(all[0].slug).toBe("live-post");
+    expect(all[1].slug).toBe("draft-post");
   });
 
   it("excludes table rows from reading time (fails if stripping is removed)", () => {
@@ -27,5 +34,11 @@ describe("posts", () => {
     const { find } = loadPosts(DIR);
     expect(find("live-post")?.title).toBe("Live Post");
     expect(find("draft-post")).toBeUndefined();
+  });
+
+  it("recent() respects the limit and returns only published posts", () => {
+    const { recent } = loadPosts(DIR);
+    expect(recent(1)).toHaveLength(1);
+    expect(recent().every((p) => !p.draft)).toBe(true);
   });
 });
