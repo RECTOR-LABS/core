@@ -8,13 +8,15 @@
  *
  * Architectural constraints:
  *   - No React / no next/* imports.
- *   - `fetch` receives `{ next: { revalidate: 3600 } }` for Next.js ISR — not an import.
+ *   - ISR revalidation handled by shared `githubFetch` from ./http (no cast needed).
  *   - Pure selectors are deterministic; they do NOT call Date.now() / new Date().
  *   - time_ago / detailed_time_ago / recently_active? are deliberately out of scope (Phase 3 UI).
  *
  * @see app/services/github_api_service.rb
  * @see app/models/github_repo.rb
  */
+
+import { githubFetch } from "./http";
 
 // ---------------------------------------------------------------------------
 // Public shape
@@ -54,9 +56,6 @@ export const DEFAULT_ACCOUNTS = ["rz1989s", "RECTOR-LABS"] as const;
 
 const API_BASE = "https://api.github.com";
 
-// 1 hour — matches the Rails hourly Solid Queue repo sync (config/recurring.yml)
-const REVALIDATE_SECONDS = 3600;
-
 /**
  * Hard cap on pages fetched per account.
  * 50 × 100 = 5,000 repos — far beyond any real account.
@@ -82,20 +81,6 @@ function buildHeaders(): Record<string, string> {
     headers["Authorization"] = `Bearer ${process.env.GITHUB_TOKEN}`;
   }
   return headers;
-}
-
-/**
- * Single ISR-aware fetch wrapper.
- * Applies shared headers and the Next.js `revalidate` option in one place.
- */
-function githubFetch(
-  url: string,
-  headers: Record<string, string>,
-): Promise<Response> {
-  return fetch(url, {
-    headers,
-    next: { revalidate: REVALIDATE_SECONDS },
-  } as RequestInit & { next: { revalidate: number } });
 }
 
 /**

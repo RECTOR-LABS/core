@@ -9,13 +9,15 @@
  *
  * Architectural constraints:
  *   - No React / no next/* imports.
- *   - `fetch` receives `{ next: { revalidate: 3600 } }` for Next.js ISR — not an import.
+ *   - ISR revalidation handled by shared `githubFetch` from ./http (no cast needed).
  *   - This module is inherently time-dependent (streaks depend on "today").
  *     calculateStreaks accepts an injectable `today: Date` param (defaulting to `new Date()`)
  *     to keep tests deterministic.
  *
  * @see app/services/github_contributions_service.rb
  */
+
+import { githubFetch } from "./http";
 
 // ---------------------------------------------------------------------------
 // Public shapes
@@ -71,9 +73,6 @@ export interface AvailableYear {
 
 const API_URL = "https://github-contributions-api.jogruber.de/v4";
 const USERNAME = "rz1989s";
-
-// 1 hour — matches the Rails hourly Solid Queue repo sync (config/recurring.yml)
-const REVALIDATE_SECONDS = 3600;
 
 // ---------------------------------------------------------------------------
 // Private helpers
@@ -273,13 +272,10 @@ export async function fetchContributions(
   const url = `${API_URL}/${USERNAME}?y=${String(year)}`;
 
   try {
-    const res = await fetch(url, {
-      headers: {
-        Accept: "application/json",
-        "User-Agent": "RECTOR-LABS-CORE",
-      },
-      next: { revalidate: REVALIDATE_SECONDS },
-    } as RequestInit & { next: { revalidate: number } });
+    const res = await githubFetch(url, {
+      Accept: "application/json",
+      "User-Agent": "RECTOR-LABS-CORE",
+    });
 
     if (!res.ok) {
       console.error(
@@ -320,13 +316,10 @@ export async function fetchAvailableYears(): Promise<AvailableYear[]> {
   const url = `${API_URL}/${USERNAME}`;
 
   try {
-    const res = await fetch(url, {
-      headers: {
-        Accept: "application/json",
-        "User-Agent": "RECTOR-LABS-CORE",
-      },
-      next: { revalidate: REVALIDATE_SECONDS },
-    } as RequestInit & { next: { revalidate: number } });
+    const res = await githubFetch(url, {
+      Accept: "application/json",
+      "User-Agent": "RECTOR-LABS-CORE",
+    });
 
     if (!res.ok) {
       console.error(

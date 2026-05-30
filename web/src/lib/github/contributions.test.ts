@@ -161,7 +161,7 @@ describe("fetchContributions — 200 response", () => {
 
 describe("fetchContributions — request headers and ISR revalidate", () => {
   it("passes Accept, User-Agent headers and next.revalidate=3600", async () => {
-    let capturedInit: RequestInit & { next?: { revalidate?: number } } = {};
+    let capturedInit: RequestInit = {};
 
     const fetchMock = vi.fn().mockImplementation((url: string, init: RequestInit) => {
       capturedInit = init;
@@ -179,7 +179,7 @@ describe("fetchContributions — request headers and ISR revalidate", () => {
     const headers = capturedInit.headers as Record<string, string>;
     expect(headers["Accept"]).toBe("application/json");
     expect(headers["User-Agent"]).toBe("RECTOR-LABS-CORE");
-    expect((capturedInit as { next?: { revalidate?: number } }).next?.revalidate).toBe(3600);
+    expect(capturedInit.next?.revalidate).toBe(3600);
   });
 
   it('uses ?y=last query param when year="last"', async () => {
@@ -312,7 +312,7 @@ describe("fetchAvailableYears — 200 response", () => {
   });
 
   it("passes Accept, User-Agent, and next.revalidate=3600", async () => {
-    let capturedInit: RequestInit & { next?: { revalidate?: number } } = {};
+    let capturedInit: RequestInit = {};
 
     const fetchMock = vi.fn().mockImplementation((url: string, init: RequestInit) => {
       capturedInit = init;
@@ -329,7 +329,7 @@ describe("fetchAvailableYears — 200 response", () => {
     const headers = capturedInit.headers as Record<string, string>;
     expect(headers["Accept"]).toBe("application/json");
     expect(headers["User-Agent"]).toBe("RECTOR-LABS-CORE");
-    expect((capturedInit as { next?: { revalidate?: number } }).next?.revalidate).toBe(3600);
+    expect(capturedInit.next?.revalidate).toBe(3600);
   });
 
   it("base URL has no ?y= param", async () => {
