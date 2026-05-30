@@ -7,6 +7,7 @@ import { loadAchievements } from "./achievements";
 // yearRange: dates span 2024-12 → 2026-04, so min=2024 max=2026 → "2024-2026"
 
 const REAL_YAML = path.join(process.cwd(), "data", "achievements.yml");
+const MALFORMED_DATE_YAML = path.join(__dirname, "__fixtures__/achievements-malformed-date.yml");
 
 describe("loadAchievements", () => {
   it("loads and validates the real achievements.yml without throwing", () => {
@@ -161,5 +162,13 @@ describe("loadAchievements", () => {
     const bySlug = Object.fromEntries(all.map((a) => [a.slug, a]));
     // openbudget-id: type=hackathon, place=2nd
     expect(bySlug["openbudget-id"].badgeClass).toBe("achievement-silver");
+  });
+
+  // -------------------------------------------------------------------------
+  // Schema hardening — a malformed date must fail loud at the validation
+  // boundary; otherwise yearRange would silently parse it to NaN.
+  // -------------------------------------------------------------------------
+  it("throws on a malformed date instead of silently producing NaN", () => {
+    expect(() => loadAchievements(MALFORMED_DATE_YAML)).toThrow(/Invalid achievement at index 0/);
   });
 });

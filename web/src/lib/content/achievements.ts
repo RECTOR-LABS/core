@@ -18,7 +18,7 @@ const AchievementSchema = z.object({
   prize_extras: z.string().nullable().default(null),
   event: z.string(),
   event_detail: z.string().nullable().default(null),
-  date: z.string(), // stored as "YYYY-MM" strings in the YAML
+  date: z.string().regex(/^\d{4}-\d{2}$/, "date must be in YYYY-MM format"), // year drives Achievement.year_range
   github_url: z.string().url(),
   repo_name: z.string(),
   description: z.string(),

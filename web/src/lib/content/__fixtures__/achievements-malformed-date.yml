@@ -1,0 +1,14 @@
+# Fixture: one achievement whose `date` is intentionally malformed.
+# Asserts loadAchievements() rejects non-YYYY-MM dates at the zod validation
+# boundary instead of silently parsing them to NaN inside yearRange.
+---
+- slug: malformed-date-entry
+  title: Malformed Date Entry
+  type: bounty
+  place: 1st
+  prize_amount: 100
+  event: Test Event
+  date: "not-a-real-date"
+  github_url: https://github.com/example/repo
+  repo_name: example-repo
+  description: Fixture entry with an intentionally invalid date for validation testing.
