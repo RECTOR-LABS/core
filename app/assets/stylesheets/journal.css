@@ -29,8 +29,10 @@
 .journal-content hr { border: 0; border-top: 1px solid rgba(59, 44, 34, .15); margin: 2rem 0; }
 .journal-content img { max-width: 100%; height: auto; border-radius: .35rem; }
 
-/* Tables — this post is table-heavy */
-.journal-content table { width: 100%; border-collapse: collapse; margin: 0 0 1.5rem; font-size: .95rem; display: block; overflow-x: auto; }
+/* Tables — this post is table-heavy. Break wide reference tables out beyond the
+   prose column (which stays at a readable measure), centered, capped to the viewport
+   so they fit on desktop without horizontal scroll and never exceed the screen. */
+.journal-content table { width: min(70rem, 92vw); border-collapse: collapse; margin: 0 0 1.5rem; font-size: .95rem; position: relative; left: 50%; transform: translateX(-50%); }
 .journal-content thead th { background: rgba(249, 200, 70, .25); text-align: left; font-weight: 600; }
 .journal-content th, .journal-content td { border: 1px solid rgba(59, 44, 34, .15); padding: .55rem .7rem; vertical-align: top; }
 .journal-content tbody tr:nth-child(even) { background: rgba(59, 44, 34, .03); }
