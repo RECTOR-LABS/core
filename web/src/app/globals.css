@@ -549,4 +549,585 @@ body {
       @apply mx-0.5;
     }
   }
+
+  /* Work Listing Page */
+  .container-work {
+    @apply max-w-4xl mx-auto px-4 sm:px-6 py-8 sm:py-12;
+  }
+
+  .back-link {
+    @apply text-sky-blue no-underline transition-colors duration-200;
+  }
+
+  .back-link:hover {
+    @apply text-yellow;
+  }
+
+  .work-header {
+    @apply mb-6 sm:mb-8;
+  }
+
+  .work-header h1 {
+    @apply text-3xl sm:text-4xl font-bold mb-3 text-brown;
+  }
+
+  .work-tagline {
+    @apply text-base sm:text-lg leading-relaxed text-brown/70 mb-0;
+  }
+
+  /* Stats Banner */
+  .work-stats-banner {
+    @apply flex items-center justify-center gap-4 sm:gap-6;
+    @apply py-4 px-6 mb-10 rounded-lg;
+    @apply bg-yellow/10 border-2 border-yellow/30;
+  }
+
+  .work-stat {
+    @apply flex items-baseline gap-1.5;
+  }
+
+  .work-stat-value {
+    @apply text-lg sm:text-xl font-bold text-brown;
+  }
+
+  .work-stat-label {
+    @apply text-sm text-brown/60;
+  }
+
+  .work-stat-divider {
+    @apply text-brown/30;
+  }
+
+  @media (max-width: 640px) {
+    .work-stats-banner {
+      @apply gap-3 px-4;
+    }
+
+    .work-stat-value {
+      @apply text-base;
+    }
+
+    .work-stat-label {
+      @apply text-xs;
+    }
+  }
+
+  /* Work Section */
+  .work-section {
+    @apply mb-12;
+  }
+
+  .work-section-title {
+    @apply flex items-center gap-2 text-xl sm:text-2xl font-semibold mb-6 text-brown;
+  }
+
+  .work-section-icon {
+    @apply text-2xl;
+  }
+
+  .work-grid {
+    @apply space-y-4;
+  }
+
+  /* Work Cards */
+  .work-card {
+    @apply block p-4 sm:p-5 rounded-lg border-2 no-underline;
+    @apply transition-all duration-200;
+  }
+
+  .work-card:hover {
+    transform: translateX(4px);
+  }
+
+  .work-card-winner {
+    @apply bg-cream border-yellow/40;
+  }
+
+  .work-card-winner:hover {
+    @apply border-yellow shadow-md;
+  }
+
+  .work-card-active {
+    @apply bg-cream border-brown/10;
+  }
+
+  .work-card-active:hover {
+    @apply border-sky-blue/50 shadow-md;
+  }
+
+  .work-card-header {
+    @apply flex items-center justify-between gap-2 mb-2;
+  }
+
+  .work-card-badge {
+    @apply inline-flex items-center gap-1 text-xs font-semibold px-2 py-1 rounded-full;
+  }
+
+  .badge-winner {
+    @apply bg-yellow/20 text-orange;
+  }
+
+  .badge-live {
+    @apply bg-green/20 text-green font-semibold;
+    @apply flex items-center gap-1.5;
+  }
+
+  .badge-live .live-pulse {
+    @apply w-2 h-2 rounded-full bg-green;
+    animation: pulse-live 1.5s ease-in-out infinite;
+  }
+
+  .badge-status {
+    @apply bg-brown/10 text-brown/70;
+  }
+
+  .work-card-prize {
+    @apply text-sm font-bold text-green;
+  }
+
+  .work-card-title {
+    @apply text-lg sm:text-xl font-bold text-brown mb-1;
+    @apply transition-colors duration-200;
+  }
+
+  .work-card:hover .work-card-title {
+    @apply text-sky-blue;
+  }
+
+  .work-card-event {
+    @apply text-sm text-brown/50 mb-2;
+  }
+
+  .work-card-summary {
+    @apply text-sm sm:text-base text-brown/70 leading-relaxed mb-3;
+  }
+
+  .work-card-meta {
+    @apply flex items-center gap-3 text-xs text-brown/50;
+  }
+
+  .work-card-tech {
+    @apply font-medium;
+  }
+
+  .work-card-stars {
+    @apply flex items-center gap-1;
+  }
+
+  .work-card-commits {
+    @apply flex items-center gap-1;
+  }
+
+  .work-card-sha {
+    @apply ml-auto;
+  }
+
+  @media (max-width: 640px) {
+    .work-card {
+      @apply p-4;
+    }
+
+    .work-card-header {
+      @apply flex-col items-start gap-1;
+    }
+
+    .work-card-prize {
+      @apply text-xs;
+    }
+
+    .work-card-meta {
+      @apply flex-wrap gap-2;
+    }
+
+    .work-card-sha {
+      @apply hidden;
+    }
+  }
+}
+
+/* Work section: story prose + filter/sort controls (port of Rails works.css) */
+
+/* Main story heading */
+.story-content > h1:first-child {
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: #3B2C22;
+  margin-bottom: 2rem;
+  line-height: 1.2;
+}
+
+/* Section headings */
+.story-content h2 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #3B2C22;
+  margin-top: 3rem;
+  margin-bottom: 1rem;
+}
+
+.story-content h3 {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #3B2C22;
+  margin-top: 2rem;
+  margin-bottom: 0.75rem;
+}
+
+/* Paragraphs - generous spacing for readability */
+.story-content p {
+  margin-bottom: 1.5rem;
+  margin-top: 0;
+  line-height: 1.625;
+  font-size: 1.125rem;
+  text-align: justify;
+  text-align-last: left;
+  hyphens: auto;
+}
+
+/* Bold text in paragraphs - acts as mini section headers */
+.story-content p strong {
+  display: block;
+  font-weight: 600;
+  margin-top: 3rem;
+  margin-bottom: 1rem;
+  font-size: 1.25rem;
+  text-align: left;
+}
+
+/* Links */
+.story-content a {
+  color: #41CFFF;
+  text-decoration: underline;
+  transition: color 0.2s;
+}
+
+.story-content a:hover {
+  color: #E58C2E;
+}
+
+/* Lists - better spacing */
+.story-content ul, .story-content ol {
+  margin-bottom: 2rem;
+  padding-left: 2rem;
+  line-height: 1.875;
+}
+
+.story-content li {
+  margin-bottom: 0.75rem;
+}
+
+/* Horizontal rules - section dividers */
+.story-content hr {
+  border: none;
+  border-top: 2px solid #3B2C22;
+  opacity: 0.1;
+  margin: 3rem 0;
+}
+
+/* Inline code */
+.story-content code {
+  background-color: #3B2C22;
+  color: #FFF7E1;
+  padding: 0.125rem 0.375rem;
+  border-radius: 0.25rem;
+  font-size: 0.875em;
+}
+
+/* Code blocks */
+.story-content pre {
+  background-color: #3B2C22;
+  color: #FFF7E1;
+  padding: 1.25rem;
+  border-radius: 0.5rem;
+  overflow-x: auto;
+  margin-bottom: 2rem;
+  line-height: 1.5;
+}
+
+.story-content pre code {
+  background-color: transparent;
+  padding: 0;
+}
+
+/* Blockquotes */
+.story-content blockquote {
+  border-left: 4px solid #41CFFF;
+  padding-left: 1.5rem;
+  font-style: italic;
+  color: #3B2C22;
+  opacity: 0.8;
+  margin-bottom: 2rem;
+  margin-top: 2rem;
+  font-size: 1.125rem;
+}
+
+/* Footer section - distinct styling */
+.story-content > hr:last-of-type ~ p {
+  font-size: 1rem;
+  line-height: 1.75;
+}
+
+.story-content > hr:last-of-type ~ p strong {
+  display: inline;
+  font-weight: 600;
+  font-size: inherit;
+  margin: 0;
+}
+
+/* Mobile Responsive Styles */
+@media (max-width: 640px) {
+  .story-content > h1:first-child {
+    font-size: 1.75rem;
+  }
+
+  .story-content h2 {
+    font-size: 1.25rem;
+    margin-top: 2rem;
+  }
+
+  .story-content h3 {
+    font-size: 1.1rem;
+    margin-top: 1.5rem;
+  }
+
+  .story-content p {
+    font-size: 1rem;
+    text-align: left;
+    hyphens: none;
+    margin-bottom: 1.25rem;
+  }
+
+  .story-content p strong {
+    font-size: 1.1rem;
+    margin-top: 2rem;
+  }
+
+  .story-content ul, .story-content ol {
+    padding-left: 1.25rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .story-content li {
+    margin-bottom: 0.5rem;
+  }
+
+  .story-content blockquote {
+    padding-left: 1rem;
+    font-size: 1rem;
+    margin-bottom: 1.5rem;
+    margin-top: 1.5rem;
+  }
+
+  .story-content pre {
+    padding: 1rem;
+    font-size: 0.8rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .story-content hr {
+    margin: 2rem 0;
+  }
+}
+
+/* Show More Button */
+.work-show-more {
+  display: flex;
+  justify-content: center;
+  margin-top: 2rem;
+}
+
+.show-more-btn {
+  background-color: transparent;
+  color: #3B2C22;
+  border: 2px solid #3B2C22;
+  padding: 0.75rem 2rem;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.875rem;
+  font-weight: 500;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.show-more-btn:hover {
+  background-color: #3B2C22;
+  color: #FFF7E1;
+}
+
+.show-more-btn:focus {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(59, 44, 34, 0.2);
+}
+
+/* ========================================
+   Filter & Sort Controls
+   ======================================== */
+
+.work-section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.work-counter {
+  font-size: 0.875rem;
+  font-weight: 400;
+  color: #3B2C22;
+  opacity: 0.5;
+  margin-left: 0.75rem;
+}
+
+/* Filter Bar - contains chips and sort */
+.filter-bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+  padding: 1rem;
+  background-color: rgba(59, 44, 34, 0.03);
+  border-radius: 0.5rem;
+}
+
+/* Filter Chips */
+.filter-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.filter-chip {
+  padding: 0.375rem 0.875rem;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: #3B2C22;
+  background-color: transparent;
+  border: 1.5px solid rgba(59, 44, 34, 0.2);
+  border-radius: 9999px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.filter-chip:hover {
+  border-color: #3B2C22;
+  background-color: rgba(59, 44, 34, 0.05);
+}
+
+.filter-chip.active {
+  background-color: #3B2C22;
+  color: #FFF7E1;
+  border-color: #3B2C22;
+}
+
+/* Sort Buttons */
+.sort-buttons {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.sort-label {
+  font-size: 0.75rem;
+  color: #3B2C22;
+  opacity: 0.5;
+  margin-right: 0.5rem;
+}
+
+.sort-btn {
+  padding: 0.375rem 0.625rem;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: #3B2C22;
+  opacity: 0.5;
+  background-color: transparent;
+  border: none;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  border-radius: 0.25rem;
+}
+
+.sort-btn:hover {
+  opacity: 1;
+  background-color: rgba(59, 44, 34, 0.05);
+}
+
+.sort-btn.active {
+  opacity: 1;
+  color: #41CFFF;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+/* Hidden state for filtered cards */
+.work-card.filter-hidden {
+  display: none !important;
+}
+
+/* Hidden state for show-more pagination */
+.work-card.show-more-hidden {
+  display: none !important;
+}
+
+/* No Results Message */
+.no-results {
+  text-align: center;
+  padding: 3rem 1rem;
+  color: #3B2C22;
+  opacity: 0.5;
+}
+
+.no-results.hidden {
+  display: none;
+}
+
+/* Stars and Commits icons in cards */
+.work-card-stars::before {
+  content: "⭐ ";
+}
+
+.work-card-commits::before {
+  content: "⊙ ";
+}
+
+/* Mobile Responsive - Filter & Sort */
+@media (max-width: 640px) {
+  .filter-bar {
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 0.75rem;
+  }
+
+  .filter-chips {
+    width: 100%;
+  }
+
+  .filter-chip {
+    font-size: 0.7rem;
+    padding: 0.3rem 0.65rem;
+  }
+
+  .sort-buttons {
+    width: 100%;
+    justify-content: flex-start;
+    flex-wrap: wrap;
+    margin-top: 0.5rem;
+    padding-top: 0.75rem;
+    border-top: 1px solid rgba(59, 44, 34, 0.1);
+  }
+
+  .sort-btn {
+    font-size: 0.7rem;
+    padding: 0.3rem 0.5rem;
+  }
+
+  .work-counter {
+    display: block;
+    margin-left: 0;
+    margin-top: 0.25rem;
+  }
 }
