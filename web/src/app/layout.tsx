@@ -9,7 +9,11 @@ const jetbrains = localFont({
   variable: "--font-jetbrains",
 });
 
-export const metadata = { title: "RECTOR", description: "Building for Eternity" };
+export const metadata = {
+  metadataBase: new URL("https://rectorspace.com"),
+  title: "RECTOR",
+  description: "Building for Eternity",
+};
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
