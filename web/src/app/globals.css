@@ -9,6 +9,12 @@
   --color-leaf: #A8E063;
   --color-red: #C75A44;
   --font-mono: var(--font-jetbrains, ui-monospace, monospace);
+
+  /* Rails @theme aliases — mirror the names above so the ported homepage
+     @apply utilities (bg-sky-blue, text-orange, bg-green, etc.) resolve. */
+  --color-sky-blue: #41CFFF;
+  --color-orange: #E58C2E;
+  --color-green: #A8E063;
 }
 
 body {
@@ -17,6 +23,29 @@ body {
   font-family: var(--font-mono);
   font-size: 18px;
   line-height: 1.8;
+}
+
+@layer base {
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-mono font-bold text-brown;
+  }
+
+  h1 { @apply text-4xl leading-tight; }
+  h2 { @apply text-3xl leading-tight; }
+  h3 { @apply text-2xl leading-normal; }
+  h4 { @apply text-xl leading-normal; }
+
+  a {
+    @apply text-sky-blue underline transition-colors duration-200;
+  }
+
+  a:hover {
+    @apply text-yellow;
+  }
+
+  code {
+    @apply font-mono;
+  }
 }
 
 /* Journal prose (full port of Rails journal.css → .journal-content rules) */
@@ -64,3 +93,460 @@ body {
 .journal-list-summary { color: rgba(59, 44, 34, .8); line-height: 1.6; margin: 0 0 .5rem; }
 .journal-tags { display: flex; flex-wrap: wrap; gap: .4rem; }
 .journal-tag { font-size: .72rem; padding: .15rem .5rem; border-radius: .35rem; background: rgba(59, 44, 34, .06); color: rgba(59, 44, 34, .75); }
+
+@layer components {
+  .container-homepage {
+    @apply max-w-2xl mx-auto px-4 sm:px-6 py-8 sm:py-12;
+  }
+
+  .container-homepage p {
+    text-align: justify;
+    text-align-last: left;
+  }
+
+  @media (max-width: 640px) {
+    .container-homepage p {
+      text-align: left;
+    }
+  }
+
+  .profile-picture {
+    @apply w-[120px] h-[120px] sm:w-[150px] sm:h-[150px] rounded-full mx-auto mb-6 sm:mb-8;
+    box-shadow: 0 4px 12px rgba(199, 90, 68, 0.2);
+  }
+
+  .section-divider {
+    @apply border-t-2 border-yellow my-8 sm:my-12;
+  }
+
+  /* Introduction Section */
+  .intro-section {
+    @apply text-center mb-6;
+  }
+
+  .intro-greeting {
+    @apply text-2xl sm:text-3xl font-bold text-brown mb-2;
+  }
+
+  .intro-tagline {
+    @apply text-base sm:text-lg text-brown/70 mb-0;
+  }
+
+  /* Quick Nav */
+  .quick-nav {
+    @apply mt-6 text-center text-sm text-brown/60;
+  }
+
+  .quick-nav a {
+    @apply text-sky-blue;
+  }
+
+  /* Achievement Cards */
+  .achievement-card {
+    @apply p-4 rounded-lg border-2 border-brown/10 bg-cream;
+    @apply transition-all duration-200;
+  }
+
+  .achievement-card:hover {
+    @apply border-sky-blue/50 shadow-md;
+    transform: translateX(4px);
+  }
+
+  .achievement-badge {
+    @apply inline-block text-xs font-semibold px-2 py-0.5 rounded-full mb-1;
+  }
+
+  .achievement-gold {
+    @apply bg-yellow/20 text-orange;
+  }
+
+  .achievement-silver {
+    @apply bg-brown/10 text-brown/80;
+  }
+
+  .achievement-bounty {
+    @apply bg-sky-blue/20 text-sky-blue;
+  }
+
+  .achievement-title {
+    @apply text-lg font-bold text-brown mb-0 leading-tight;
+  }
+
+  .achievement-title a {
+    @apply text-brown no-underline;
+  }
+
+  .achievement-title a:hover {
+    @apply text-sky-blue underline;
+  }
+
+  .achievement-event {
+    @apply text-sm text-brown/60 mt-0.5;
+  }
+
+  .achievement-prize {
+    @apply text-sm font-bold text-green whitespace-nowrap;
+  }
+
+  .achievement-desc {
+    @apply text-sm text-brown/70 mt-2 mb-0;
+  }
+
+  @media (max-width: 640px) {
+    .achievement-card .flex {
+      @apply flex-col gap-2;
+    }
+
+    .achievement-prize {
+      @apply self-start;
+    }
+  }
+
+  /* GitHub Contribution Graph */
+  .contribution-graph {
+    @apply pb-2;
+    overflow: visible; /* Allow tooltips to escape on desktop */
+  }
+
+  /* Mobile: horizontal scroll for contribution graph */
+  @media (max-width: 640px) {
+    .contribution-container {
+      @apply -mx-4 px-4;
+      overflow-x: auto;
+      overflow-y: visible;
+    }
+
+    .contribution-graph {
+      min-width: max-content;
+    }
+  }
+
+  .contribution-grid {
+    display: grid;
+    grid-template-rows: repeat(7, 1fr);
+    grid-auto-flow: column;
+    gap: 2px;
+    width: max-content;
+  }
+
+  .contribution-day {
+    @apply w-[10px] h-[10px] rounded-sm;
+    @apply transition-transform duration-100;
+  }
+
+  .contribution-day:hover {
+    transform: scale(1.3);
+  }
+
+  @media (max-width: 640px) {
+    .contribution-day {
+      @apply w-[8px] h-[8px];
+    }
+
+    .contribution-grid {
+      gap: 1px;
+    }
+  }
+
+  /* Contribution levels - warm palette */
+  .contribution-level-0 {
+    @apply bg-brown/10;
+  }
+
+  .contribution-level-1 {
+    background-color: rgba(168, 224, 99, 0.4); /* green 40% */
+  }
+
+  .contribution-level-2 {
+    background-color: rgba(168, 224, 99, 0.6); /* green 60% */
+  }
+
+  .contribution-level-3 {
+    background-color: rgba(168, 224, 99, 0.8); /* green 80% */
+  }
+
+  .contribution-level-4 {
+    @apply bg-green; /* full green */
+  }
+
+  .contribution-legend {
+    @apply flex items-center gap-1 mt-3 text-xs text-brown/60;
+  }
+
+  .contribution-legend-box {
+    @apply w-[10px] h-[10px] rounded-sm;
+  }
+
+  .contribution-stats {
+    @apply flex items-center justify-between mt-4 text-sm;
+  }
+
+  .contribution-total {
+    @apply font-bold text-brown;
+  }
+
+  .contribution-total-number {
+    @apply text-green text-lg;
+  }
+
+  /* Contribution Container - wraps entire graph section */
+  .contribution-container {
+    @apply mt-4;
+  }
+
+  /* Year Tabs - selector above contribution graph */
+  .year-tabs {
+    @apply flex items-center gap-2 mb-4;
+  }
+
+  .year-tab {
+    @apply px-3 py-1.5 text-sm font-medium rounded-lg no-underline;
+    @apply text-brown/60 bg-brown/5 border border-transparent;
+    @apply transition-all duration-200;
+  }
+
+  .year-tab:hover {
+    @apply text-brown bg-brown/10;
+  }
+
+  .year-tab-active {
+    @apply text-cream bg-brown border-brown;
+  }
+
+  .year-tab-active:hover {
+    @apply text-cream bg-brown;
+  }
+
+  /* Streak Badge - top info bar */
+  .streak-badge {
+    @apply flex items-center gap-2 mb-4 text-sm;
+    @apply flex-wrap;
+  }
+
+  .streak-fire {
+    @apply text-base;
+  }
+
+  .streak-current {
+    @apply font-bold text-orange;
+  }
+
+  .streak-separator {
+    @apply text-brown/30;
+  }
+
+  .streak-longest {
+    @apply text-brown/60;
+  }
+
+  .streak-best {
+    @apply text-brown/60;
+  }
+
+  /* Month Labels - positioned above contribution graph */
+  .contribution-months {
+    display: flex;
+    gap: 0;
+    margin-bottom: 4px;
+    overflow-x: auto;
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+    width: max-content;
+  }
+
+  .contribution-months::-webkit-scrollbar {
+    display: none;
+  }
+
+  .month-label {
+    @apply text-[10px] text-brown/50 font-medium;
+    white-space: nowrap;
+    min-width: calc(4.3 * (10px + 2px)); /* ~4.3 weeks per month */
+  }
+
+  /* Busiest Day Highlight */
+  .busiest-day {
+    @apply ring-2 ring-yellow ring-offset-1;
+    box-shadow: 0 0 8px rgba(249, 200, 70, 0.6);
+  }
+
+  /* Tooltip on hover - only for grid cells, not legend */
+  .contribution-grid .contribution-day {
+    position: relative;
+    cursor: pointer;
+  }
+
+  .contribution-grid .contribution-day::after {
+    content: attr(data-count) " contributions on " attr(data-date);
+    position: absolute;
+    bottom: calc(100% + 8px);
+    left: 50%;
+    transform: translateX(-50%);
+    @apply bg-brown text-cream text-[10px] px-2 py-1 rounded whitespace-nowrap;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.15s ease-in-out;
+    z-index: 50;
+  }
+
+  .contribution-grid .contribution-day:hover::after {
+    opacity: 1;
+  }
+
+  /* Hide tooltip for empty days */
+  .contribution-grid .contribution-level-0::after {
+    content: "No contributions on " attr(data-date);
+  }
+
+  /* Cascade Animation - only for grid cells */
+  @keyframes contribution-cascade {
+    0% {
+      opacity: 0;
+      transform: scale(0);
+    }
+    100% {
+      opacity: 1;
+      transform: scale(1);
+    }
+  }
+
+  .contribution-grid .contribution-day {
+    animation: contribution-cascade 0.3s ease-out forwards;
+    opacity: 0;
+  }
+
+  @media (max-width: 640px) {
+    .streak-badge {
+      @apply text-xs gap-1.5;
+    }
+
+    .streak-fire {
+      @apply text-sm;
+    }
+
+    .month-label {
+      @apply text-[8px];
+      min-width: calc(4.3 * (8px + 1px)); /* ~4.3 weeks per month on mobile */
+    }
+
+    .year-tabs {
+      @apply gap-1;
+      flex-wrap: nowrap;
+    }
+
+    .year-tab {
+      @apply px-2 py-1 text-xs;
+      flex-shrink: 0;
+    }
+
+    .contribution-grid .contribution-day::after {
+      @apply text-[8px] px-1.5 py-0.5;
+    }
+
+    .busiest-day {
+      @apply ring-1;
+    }
+  }
+
+  /* Project cards with stats */
+  .project-card {
+    @apply p-3 rounded-lg border border-brown/10 bg-cream/50;
+    @apply transition-all duration-200;
+  }
+
+  .project-card:hover {
+    @apply border-sky-blue/30 bg-cream;
+  }
+
+  .project-stats {
+    @apply flex items-center gap-3 text-xs text-brown/60 mt-2;
+    @apply flex-wrap;
+  }
+
+  .project-stat {
+    @apply flex items-center gap-1;
+  }
+
+  .project-winner-badge {
+    @apply inline-flex items-center gap-1 text-xs font-semibold px-2 py-0.5 rounded-full;
+    @apply bg-yellow/20 text-orange;
+  }
+
+  @media (max-width: 640px) {
+    .project-stats {
+      @apply gap-2;
+    }
+
+    .project-stat.ml-auto {
+      @apply ml-0 w-full mt-1;
+    }
+
+    .contribution-stats {
+      @apply flex-col items-start gap-2;
+    }
+
+    .contribution-legend {
+      @apply mt-1;
+    }
+  }
+
+  /* Compact Activity Bar */
+  .activity-bar {
+    @apply flex items-center gap-2 mt-6 py-3 px-4 rounded-lg;
+    @apply bg-green/10 border border-green/20;
+  }
+
+  .live-pulse {
+    @apply w-2.5 h-2.5 rounded-full bg-green flex-shrink-0;
+    animation: pulse-live 1.5s ease-in-out infinite;
+  }
+
+  .idle-pulse {
+    @apply w-2.5 h-2.5 rounded-full bg-brown/30 flex-shrink-0;
+  }
+
+  @keyframes pulse-live {
+    0%, 100% {
+      opacity: 1;
+      transform: scale(1);
+    }
+    50% {
+      opacity: 0.5;
+      transform: scale(1.2);
+    }
+  }
+
+  .activity-text {
+    @apply text-sm text-brown leading-relaxed;
+  }
+
+  .activity-link {
+    @apply font-semibold text-brown no-underline;
+  }
+
+  .activity-link:hover {
+    @apply text-sky-blue underline;
+  }
+
+  .activity-separator {
+    @apply text-brown/30 mx-1;
+  }
+
+  .activity-time {
+    @apply text-brown/50;
+  }
+
+  @media (max-width: 640px) {
+    .activity-bar {
+      @apply flex-wrap py-2.5 px-3;
+    }
+
+    .activity-text {
+      @apply text-xs leading-normal;
+    }
+
+    .activity-separator {
+      @apply mx-0.5;
+    }
+  }
+}
