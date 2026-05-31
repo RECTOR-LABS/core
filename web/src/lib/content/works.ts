@@ -14,6 +14,7 @@ const Frontmatter = z.object({
   repo_name: z.string().optional(),
   started_at: z.coerce.date().optional(),
   launched_at: z.coerce.date().optional(),
+  created_at: z.coerce.date(),
   featured: z.boolean().default(false),
   technologies: z.array(z.string()).default([]),
   github_stars: z.number().default(0),
@@ -31,6 +32,7 @@ export interface Work {
   repoName?: string;
   startedAt?: Date;
   launchedAt?: Date;
+  createdAt: Date;
   featured: boolean;
   technologies: string[];
   githubStars: number;
@@ -66,6 +68,7 @@ export function loadWorks(dir: string = DEFAULT_DIR) {
         repoName: fm.repo_name,
         startedAt: fm.started_at,
         launchedAt: fm.launched_at,
+        createdAt: fm.created_at,
         featured: fm.featured,
         technologies: fm.technologies,
         githubStars: fm.github_stars,
@@ -74,12 +77,11 @@ export function loadWorks(dir: string = DEFAULT_DIR) {
       };
     })
     .sort((a, b) => {
-      // Newest launch first; works without a launch date sort last.
-      // MIN_SAFE_INTEGER (not -Infinity) keeps a dateless-vs-dateless
-      // comparison at 0 rather than NaN, which would make sort() unstable.
-      const ta = a.launchedAt?.getTime() ?? Number.MIN_SAFE_INTEGER;
-      const tb = b.launchedAt?.getTime() ?? Number.MIN_SAFE_INTEGER;
-      return tb - ta;
+      // Mirror Rails `scope :recent, -> { order(created_at: :desc) }` — the base
+      // order of the /work listing (@works = Work.published.recent). The view's
+      // secondary `.order(launched_at: :desc)` is a no-op given created_at is
+      // unique per row, so created_at DESC alone reproduces prod's order exactly.
+      return b.createdAt.getTime() - a.createdAt.getTime();
     });
 
   const published = all.filter((w) => w.status !== "Draft");

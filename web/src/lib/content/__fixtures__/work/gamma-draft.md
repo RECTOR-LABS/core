@@ -6,6 +6,7 @@ category: Blockchain
 status: Draft
 github_url: https://github.com/RECTOR-LABS/gamma
 launched_at: '2025-12-01'
+created_at: '2026-01-05'
 featured: true
 technologies:
 - Rust

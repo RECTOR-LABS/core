@@ -9,6 +9,7 @@ live_url: https://alpha.rectorspace.com
 repo_name: RECTOR-LABS/alpha
 started_at: '2025-10-01'
 launched_at: '2025-11-15'
+created_at: '2026-01-02'
 featured: true
 technologies:
 - TypeScript

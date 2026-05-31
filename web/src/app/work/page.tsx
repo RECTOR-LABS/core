@@ -73,8 +73,9 @@ export async function generateMetadata(): Promise<Metadata> {
 // ---------------------------------------------------------------------------
 export default async function WorkIndexPage() {
   // ---- Works (file-based) ----
-  // loadWorks() already sorts by launchedAt desc, so the Winner/active splits
-  // preserve that order without re-sorting (mirrors the Rails .order(launched_at: :desc)).
+  // loadWorks() sorts by createdAt desc (mirrors the Rails `recent` scope — the
+  // base order of @works = Work.published.recent), so the Winner/active splits
+  // preserve prod's exact ordering without re-sorting.
   const { published } = loadWorks();
   const winners = published.filter((w) => w.status === "Winner");
   const active = published.filter((w) => w.status !== "Winner");

@@ -10,6 +10,7 @@ live_url: https://openbudget.rectorspace.com
 repo_name: RECTOR-LABS/openbudget-id
 started_at: '2025-10-15'
 launched_at: '2025-10-20'
+created_at: '2026-03-14T07:28:09.385Z'
 featured: true
 technologies:
 - Solana

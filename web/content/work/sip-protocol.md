@@ -9,6 +9,7 @@ github_url: https://github.com/sip-protocol/sip-protocol
 repo_name: sip-protocol/sip-protocol
 started_at: '2025-11-15'
 launched_at: '2025-12-01'
+created_at: '2026-03-14T07:28:09.383Z'
 featured: true
 technologies:
 - TypeScript

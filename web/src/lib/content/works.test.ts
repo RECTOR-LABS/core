@@ -75,14 +75,22 @@ describe("works", () => {
     expect(all.some((w) => w.slug === "alpha")).toBe(false);
   });
 
-  it("sorts all[] by launchedAt descending, works without launchedAt sort last", () => {
-    const { all } = loadWorks(DIR);
-    const dates = all.map((w) => w.launchedAt?.getTime() ?? -Infinity);
-    for (let i = 0; i < dates.length - 1; i++) {
-      expect(dates[i]).toBeGreaterThanOrEqual(dates[i + 1]);
+  it("sorts all[] by createdAt descending (mirrors Rails .recent), independent of launchedAt", () => {
+    const { all, published } = loadWorks(DIR);
+    // all[] is monotonically descending by createdAt
+    const created = all.map((w) => w.createdAt.getTime());
+    for (let i = 0; i < created.length - 1; i++) {
+      expect(created[i]).toBeGreaterThanOrEqual(created[i + 1]);
     }
-    // delta-no-dates has no launchedAt — must be last
-    expect(all[all.length - 1].slug).toBe("delta-no-dates");
+    // Fixtures are crafted so createdAt order is the REVERSE of launchedAt order,
+    // proving the sort key is createdAt (Rails `recent`), not launchedAt:
+    // delta (newest created, no launch date) → beta → alpha (oldest created,
+    // but the newest launched).
+    expect(published.map((w) => w.slug)).toEqual([
+      "delta-no-dates",
+      "beta-project",
+      "alpha-project",
+    ]);
   });
 
   it("maps optional fields correctly — omitted live_url becomes undefined", () => {

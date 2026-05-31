@@ -6,6 +6,7 @@ status: Live
 repo_name: RECTOR-LABS/beta
 started_at: '2025-08-01'
 launched_at: '2025-09-01'
+created_at: '2026-01-03'
 featured: false
 technologies:
 - Ruby

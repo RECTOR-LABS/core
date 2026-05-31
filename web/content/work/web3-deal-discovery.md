@@ -9,6 +9,7 @@ github_url: https://github.com/RECTOR-LABS/web3-deal-discovery-nft-coupons
 repo_name: RECTOR-LABS/web3-deal-discovery-nft-coupons
 started_at: '2025-12-10'
 launched_at: '2025-12-23'
+created_at: '2026-03-14T07:28:09.381Z'
 featured: true
 technologies:
 - Solana

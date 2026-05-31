@@ -10,6 +10,7 @@ live_url: https://rectorspace.com
 repo_name: RECTOR-LABS/core
 started_at: '2025-11-02'
 launched_at: '2025-11-03'
+created_at: '2026-03-14T07:28:09.379Z'
 featured: true
 technologies:
 - Ruby
