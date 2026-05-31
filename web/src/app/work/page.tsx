@@ -52,15 +52,19 @@ function winnerBadge(title: string): WinnerBadge {
 // Metadata
 // ---------------------------------------------------------------------------
 export async function generateMetadata(): Promise<Metadata> {
-  const title = "Work — RECTOR";
-  const description =
-    "Projects I've built, problems I've solved, and stories worth telling.";
+  // Mirror the Rails layout for /work exactly: <title> is
+  // "<PageTitle> • RECTOR • Building for Eternity"; og:title drops the
+  // "• Building for Eternity" suffix. The index view sets no
+  // content_for(:meta_description), so it inherits the site-wide description
+  // (byte-identical to the homepage), NOT the on-page tagline.
+  const { winCount, totalEarnings } = getAchievements();
+  const description = `Full-stack builder. Hackathon hunter. ${winCount} wins, ~$${numberWithDelimiter(totalEarnings)} earned. Building for eternity.`;
 
   return {
-    title,
+    title: "Work • RECTOR • Building for Eternity",
     description,
     alternates: { canonical: "/work" },
-    openGraph: { type: "website", url: "/work", siteName: "RECTOR", title, description },
+    openGraph: { type: "website", url: "/work", siteName: "RECTOR", title: "Work • RECTOR", description },
   };
 }
 

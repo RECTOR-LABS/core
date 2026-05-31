@@ -23,9 +23,11 @@ export async function generateMetadata(
   const work = getWorks().find(slug);
   if (!work) return {};
   return {
-    title: `${work.title} — RECTOR`,
+    // Mirror the Rails layout: <title> appends "• RECTOR • Building for
+    // Eternity"; og:title uses just "<title> • RECTOR".
+    title: `${work.title} • RECTOR • Building for Eternity`,
     description: work.summary,
-    openGraph: { type: "article", title: work.title, description: work.summary },
+    openGraph: { type: "article", title: `${work.title} • RECTOR`, description: work.summary },
   };
 }
 
