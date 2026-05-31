@@ -146,18 +146,17 @@ export function FilterSort({ works }: FilterSortProps) {
   }, []);
 
   // -------------------------------------------------------------------------
-  // updateURL — Stimulus calls this after every toggleFilter / setSort.
-  // Derived from state so it stays in lockstep: tech= only when non-empty,
-  // sort= only when not the "date" default, then history.replaceState.
-  // A ref skips the initial mount run so we don't clobber a URL we haven't
-  // read yet (and avoids a setState-in-effect mount gate).
+  // updateURL — Stimulus calls this from toggleFilter / setSort, NOT from
+  // connect(). We mirror that exactly: the URL is written only AFTER a user
+  // action (userActed), never on mount — so an incoming ?tech=/?sort= URL is
+  // preserved verbatim (the mount read sets state but must not rewrite the URL,
+  // which would re-encode it, e.g. the tech-list comma → %2C).
+  // Derived from state: tech= only when non-empty, sort= only when not the
+  // "date" default, then history.replaceState.
   // -------------------------------------------------------------------------
-  const didSkipFirstWrite = useRef(false);
+  const userActed = useRef(false);
   useEffect(() => {
-    if (!didSkipFirstWrite.current) {
-      didSkipFirstWrite.current = true;
-      return;
-    }
+    if (!userActed.current) return;
     const params = new URLSearchParams();
     if (selectedTechs.length > 0) params.set("tech", selectedTechs.join(","));
     if (sortBy !== "date") params.set("sort", sortBy);
@@ -190,6 +189,7 @@ export function FilterSort({ works }: FilterSortProps) {
   // Any filter change resets show-more to collapsed (filter-sort:filtered ->
   // show-more#handleFilter, which sets expanded = false).
   function toggleFilter(tech: string) {
+    userActed.current = true;
     if (tech === "all") {
       setSelectedTechs([]);
     } else {
@@ -211,6 +211,7 @@ export function FilterSort({ works }: FilterSortProps) {
   // event wired to show-more#handleFilter (expanded -> false). So changing the
   // sort collapses an expanded list, exactly like changing the filter does.
   function setSort(value: SortBy) {
+    userActed.current = true;
     setSortBy(value);
     setExpanded(false);
   }

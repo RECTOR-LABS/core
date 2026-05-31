@@ -480,6 +480,15 @@ describe("FilterSort island", () => {
       expect(sortBtn("Latest").className).toContain("active");
       expect(titles(visibleCards())).toEqual(["Bravo", "Charlie", "Alpha"]);
     });
+
+    it("preserves the URL on mount — the write effect's skip run must not clobber it", () => {
+      window.history.replaceState({}, "", "/work?tech=rust,python&sort=stars");
+      render(<FilterSort works={sortFixtures} />);
+      // Mount reads state from the URL; the write effect skips its first run, so the
+      // incoming params survive untouched (a silent regression if effect order broke).
+      expect(window.location.search).toContain("tech=rust,python");
+      expect(window.location.search).toContain("sort=stars");
+    });
   });
 
   describe("URL sync on change", () => {
