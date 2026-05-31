@@ -22,9 +22,11 @@ export async function generateMetadata(
   const post = getPosts().find(slug);
   if (!post) return {};
   return {
-    title: `${post.title} — RECTOR`,
+    // Mirror the Rails layout (see work/[slug]/page.tsx): <title> appends
+    // "• RECTOR • Building for Eternity"; og:title uses just "<title> • RECTOR".
+    title: `${post.title} • RECTOR • Building for Eternity`,
     description: post.summary,
-    openGraph: { type: "article", title: post.title, description: post.summary },
+    openGraph: { type: "article", title: `${post.title} • RECTOR`, description: post.summary },
   };
 }
 

@@ -1,9 +1,16 @@
 import Link from "next/link";
 import { loadPosts } from "@/lib/content/posts";
 
+// Mirror the Rails layout for /journal exactly (see work/page.tsx): <title> is
+// "<PageTitle> • RECTOR • Building for Eternity"; og:title drops the
+// "• Building for Eternity" suffix. Description ported 1:1 from the Rails
+// journal index meta (NOT a Phase-1 rewrite) to keep prod parity.
+const description = "Notes and writings on what I'm building and learning.";
+
 export const metadata = {
-  title: "Journal — RECTOR",
-  description: "Writings on building, security, and the craft.",
+  title: "Journal • RECTOR • Building for Eternity",
+  description,
+  openGraph: { type: "website", title: "Journal • RECTOR", description },
 };
 
 export default function JournalIndex() {
