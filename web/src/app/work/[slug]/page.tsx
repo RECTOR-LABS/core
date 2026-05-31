@@ -111,9 +111,7 @@ export default async function WorkStory(
             )}
           </div>
         </header>
-        <div className="story-content text-[#3B2C22]">
-          <Markdown>{work.body}</Markdown>
-        </div>
+        <Markdown className="story-content text-[#3B2C22]">{work.body}</Markdown>
       </article>
     </div>
   );
