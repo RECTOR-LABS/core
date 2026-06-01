@@ -1131,3 +1131,87 @@ body {
     margin-top: 0.25rem;
   }
 }
+
+/* ========================================
+   Version Footer — Deployment Info
+   (port of Rails application.css lines 146–198; visual must match exactly)
+
+   Quirks reproduced verbatim from the Rails source — do NOT "fix":
+     - .version-label has a rule but no matching element in the markup
+     - .version-commits has a markup element but no CSS rule
+   ======================================== */
+
+.version-footer {
+  position: fixed;
+  bottom: 1rem;
+  right: 1rem;
+  z-index: 50;
+}
+
+.version-info {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background-color: rgba(59, 44, 34, 0.9); /* brown @ 90% */
+  color: var(--color-cream);
+  padding: 0.5rem 0.75rem;
+  border-radius: 0.5rem;
+  backdrop-filter: blur(4px); /* backdrop-blur-sm */
+  -webkit-backdrop-filter: blur(4px);
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1),
+    0 4px 6px -4px rgba(0, 0, 0, 0.1); /* shadow-lg */
+  font-size: 0.75rem;
+  font-family: var(--font-mono);
+}
+
+.version-label {
+  color: rgba(249, 200, 70, 0.8); /* yellow @ 80% */
+  font-weight: 500;
+}
+
+.version-link {
+  display: flex;
+  align-items: center;
+  gap: 0.375rem;
+  text-decoration: none;
+  color: rgba(255, 247, 225, 0.9); /* cream @ 90% */
+  transition: color 0.2s;
+}
+
+.version-link:hover {
+  color: var(--color-sky-blue);
+}
+
+.version-icon {
+  flex-shrink: 0;
+  opacity: 0.75;
+}
+
+.version-branch {
+  color: var(--color-green);
+  font-weight: 500;
+}
+
+.version-sha {
+  color: rgba(255, 247, 225, 0.9); /* cream @ 90% */
+}
+
+.version-separator {
+  color: rgba(255, 247, 225, 0.4); /* cream @ 40% */
+}
+
+@media (max-width: 640px) {
+  .version-footer {
+    bottom: 0.5rem;
+    right: 0.5rem;
+  }
+
+  .version-info {
+    padding: 0.375rem 0.5rem;
+    font-size: 10px;
+  }
+
+  .version-label {
+    display: none;
+  }
+}

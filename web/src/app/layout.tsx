@@ -1,5 +1,7 @@
 import localFont from "next/font/local";
 import "./globals.css";
+import { VersionFooter } from "@/components/VersionFooter";
+import { versionView } from "@/lib/version";
 
 const jetbrains = localFont({
   src: [
@@ -18,7 +20,10 @@ export const metadata = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en" className={jetbrains.variable}>
-      <body>{children}</body>
+      <body>
+        {children}
+        <VersionFooter {...versionView()} />
+      </body>
     </html>
   );
 }

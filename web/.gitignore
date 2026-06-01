@@ -36,6 +36,9 @@ yarn-error.log*
 # vercel
 .vercel
 
+# build-time version stamp (written by scripts/gen-version.mjs)
+/.version.json
+
 # typescript
 *.tsbuildinfo
 next-env.d.ts
