@@ -70,13 +70,12 @@ export function Typing({
       }
     }
 
-    if (delay > 0) {
-      setTimeout(() => {
-        if (!cancelled) type();
-      }, delay);
-    } else {
-      type();
-    }
+    // Always schedule via setTimeout — even when delay === 0 — so the first
+    // character types one tick later, matching the Stimulus source (which wraps
+    // the initial type() in setTimeout(fn, delayValue) unconditionally).
+    setTimeout(() => {
+      if (!cancelled) type();
+    }, delay);
 
     return () => {
       cancelled = true;

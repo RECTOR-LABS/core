@@ -20,11 +20,14 @@ afterEach(() => {
 
 describe("Typing island", () => {
   describe("initial state on mount", () => {
-    it("clears the text immediately and starts typing", () => {
-      // Stimulus clears textTarget.textContent on connect() then starts type()
-      // First char is typed synchronously (same as BootSequence pattern)
+    it("clears the text immediately and starts typing on the next tick", () => {
+      // Stimulus clears textTarget.textContent on connect() then schedules the
+      // initial type() via setTimeout(fn, delay) — so at render the text is
+      // cleared ("") and the first char appears one tick later (even at delay=0).
       const { container } = render(<Typing text="Hello" speed={50} delay={0} />);
       const textEl = container.querySelector<HTMLElement>("[data-text]")!;
+      expect(textEl.textContent).toBe("");
+      act(() => vi.advanceTimersByTime(0));
       expect(textEl.textContent).toBe("H");
     });
 
@@ -44,10 +47,12 @@ describe("Typing island", () => {
       expect(textEl.textContent).toBe("H");
     });
 
-    it("default delay is 0 (starts immediately)", () => {
+    it("default delay is 0 (first char on the next tick)", () => {
       const { container } = render(<Typing text="AB" />);
       const textEl = container.querySelector<HTMLElement>("[data-text]")!;
-      // With delay=0, first char typed sync on mount
+      // delay defaults to 0, but the initial type() is still setTimeout-scheduled
+      expect(textEl.textContent).toBe("");
+      act(() => vi.advanceTimersByTime(0));
       expect(textEl.textContent).toBe("A");
     });
   });
@@ -57,7 +62,8 @@ describe("Typing island", () => {
       const { container } = render(<Typing text="ABC" speed={30} />);
       const textEl = container.querySelector<HTMLElement>("[data-text]")!;
 
-      // Char A: sync at mount
+      // Char A: after the initial setTimeout(0) tick
+      act(() => vi.advanceTimersByTime(0));
       expect(textEl.textContent).toBe("A");
 
       // Char B: after 30ms
@@ -81,7 +87,7 @@ describe("Typing island", () => {
       const { container } = render(<Typing text="AB" />);
       const textEl = container.querySelector<HTMLElement>("[data-text]")!;
 
-      // A is typed sync; B after 50ms
+      // advancing 50ms fires the initial 0-tick (A) and the 50ms tick (B)
       act(() => vi.advanceTimersByTime(50));
       expect(textEl.textContent).toBe("AB");
     });
@@ -117,16 +123,17 @@ describe("Typing island", () => {
     });
 
     it("loop=true: text resets and begins retyping after 2000ms pause", () => {
-      // text="AB", speed=50: A typed sync at render; B at +50ms; loop pause +2000ms;
-      // reset + A typed sync → text="A" at +2050ms (B of second cycle at +2100ms)
-      // Use NO act() wrapper for the advance — avoids the separate-act() fake-timer issue.
+      // speed=50, initial type() is setTimeout(0): A@t=0, B@t=50. The loop check runs
+      // on the NEXT type() call (t=100), which schedules the 2000ms pause → reset +
+      // retype begins at t=2100. Bare advanceTimersByTime (no act) chains the queued
+      // timers reliably for this ref-mutating island.
       const { container } = render(<Typing text="AB" speed={50} loop={true} />);
       const textEl = container.querySelector<HTMLElement>("[data-text]")!;
-      expect(textEl.textContent).toBe("A");
 
-      // Advance 2100ms (past B + loop pause + A reset, before second B)
-      vi.advanceTimersByTime(2100);
-      // After 2100ms: second cycle started, "A" re-typed sync, "B" not yet (needs 50ms more)
+      vi.advanceTimersByTime(50); // t=50: first full pass complete
+      expect(textEl.textContent).toBe("AB");
+
+      vi.advanceTimersByTime(2070); // t=2120: reset fired (@2100) → first char of retype, before its 2nd char (@2150)
       expect(textEl.textContent).toBe("A");
     });
 
@@ -147,7 +154,8 @@ describe("Typing island", () => {
       const { container, unmount } = render(<Typing text="Hello" speed={50} />);
       const textEl = container.querySelector<HTMLElement>("[data-text]")!;
 
-      // Text is mid-typed
+      // Text is mid-typed (first char after the initial tick)
+      act(() => vi.advanceTimersByTime(0));
       expect(textEl.textContent).toBe("H");
 
       unmount();
@@ -161,9 +169,10 @@ describe("Typing island", () => {
       expect(() => render(<Typing text="" />)).not.toThrow();
     });
 
-    it("handles single-char text (one sync char, no timers needed)", () => {
+    it("handles single-char text (one char after the initial tick)", () => {
       const { container } = render(<Typing text="X" speed={50} />);
       const textEl = container.querySelector<HTMLElement>("[data-text]")!;
+      act(() => vi.advanceTimersByTime(0));
       expect(textEl.textContent).toBe("X");
     });
 
