@@ -38,7 +38,7 @@ body {
        (.version-link:focus-visible below).
    No border-radius here on purpose: the outline already follows each element's
    own radius, and setting it would square off rounded controls (e.g. pill chips)
-   on focus. (Matches the existing .journal-list-link:focus-visible.) */
+   on focus. (This baseline replaces the former .journal-list-link:focus-visible rule.) */
 a:focus-visible,
 button:focus-visible,
 input:focus-visible,
