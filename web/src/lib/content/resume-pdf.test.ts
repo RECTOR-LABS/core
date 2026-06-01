@@ -203,6 +203,21 @@ describe("buildPdfExpEntries", () => {
     expect(result).toHaveLength(1);
     expect(result[0].bullets).toEqual([]);
   });
+
+  it("filters bullets independently for EACH entry (multi-entry)", () => {
+    const a = makeExp({
+      title: "Role A",
+      bullets: [makeBullet("A-keep", true, true), makeBullet("A-skip", false, true)],
+    });
+    const b = makeExp({
+      title: "Role B",
+      bullets: [makeBullet("B-skip", false, true), makeBullet("B-keep", true, true)],
+    });
+    const result = buildPdfExpEntries([a, b]);
+    expect(result).toHaveLength(2);
+    expect(result[0].bullets).toEqual(["A-keep"]);
+    expect(result[1].bullets).toEqual(["B-keep"]);
+  });
 });
 
 // ---------------------------------------------------------------------------
