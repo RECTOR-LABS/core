@@ -187,6 +187,11 @@ export function ModernArbital({
                   data-bar
                   data-target-width={tech.width}
                   style={{ width: tech.width }}
+                  role="progressbar"
+                  aria-valuemin={0}
+                  aria-valuemax={100}
+                  aria-valuenow={tech.level}
+                  aria-label={tech.name}
                 />
               </div>
               <span className="tech-percent">{tech.level}%</span>

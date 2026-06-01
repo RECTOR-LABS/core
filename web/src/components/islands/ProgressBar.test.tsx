@@ -349,6 +349,36 @@ describe("ProgressBar island", () => {
     });
   });
 
+  describe("ARIA progressbar semantics (bars mode)", () => {
+    it("gives each bar role=progressbar with min/max 0..100 and valuenow parsed from width", () => {
+      const { container } = render(
+        <ProgressBar bars={[bar("75%", "Rust"), bar("50%", "Python")]} />,
+      );
+      const barEls = Array.from(container.querySelectorAll<HTMLElement>("[data-bar]"));
+
+      expect(barEls[0].getAttribute("role")).toBe("progressbar");
+      expect(barEls[0].getAttribute("aria-valuemin")).toBe("0");
+      expect(barEls[0].getAttribute("aria-valuemax")).toBe("100");
+      expect(barEls[0].getAttribute("aria-valuenow")).toBe("75");
+      expect(barEls[0].getAttribute("aria-label")).toBe("Rust");
+
+      expect(barEls[1].getAttribute("aria-valuenow")).toBe("50");
+      expect(barEls[1].getAttribute("aria-label")).toBe("Python");
+    });
+
+    it("omits aria-valuenow when the width does not parse to a number", () => {
+      const { container } = render(<ProgressBar bars={[bar("auto", "Mystery")]} />);
+      const barEl = container.querySelector<HTMLElement>("[data-bar]")!;
+
+      expect(barEl.getAttribute("role")).toBe("progressbar");
+      expect(barEl.hasAttribute("aria-valuenow")).toBe(false);
+      // min/max + label are still present even with no numeric value
+      expect(barEl.getAttribute("aria-valuemin")).toBe("0");
+      expect(barEl.getAttribute("aria-valuemax")).toBe("100");
+      expect(barEl.getAttribute("aria-label")).toBe("Mystery");
+    });
+  });
+
   describe("edge cases", () => {
     it("renders with no bars without throwing", () => {
       expect(() => render(<ProgressBar bars={[]} />)).not.toThrow();

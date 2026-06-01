@@ -131,15 +131,25 @@ export function ProgressBar({
     <div ref={wrapperRef} className={className}>
       {children !== undefined
         ? children
-        : (bars ?? []).map((b, i) => (
-            <div
-              key={i}
-              data-bar
-              data-target-width={b.width}
-              style={{ width: b.width }}
-              aria-label={b.label}
-            />
-          ))}
+        : (bars ?? []).map((b, i) => {
+            // Parse the numeric percent for aria-valuenow ("75%" -> 75). Omit the
+            // attribute entirely when the width isn't numeric (e.g. "auto") so we
+            // never emit aria-valuenow="NaN".
+            const valueNow = Number.parseInt(b.width, 10);
+            return (
+              <div
+                key={i}
+                data-bar
+                data-target-width={b.width}
+                style={{ width: b.width }}
+                role="progressbar"
+                aria-valuemin={0}
+                aria-valuemax={100}
+                aria-valuenow={Number.isNaN(valueNow) ? undefined : valueNow}
+                aria-label={b.label}
+              />
+            );
+          })}
     </div>
   );
 }

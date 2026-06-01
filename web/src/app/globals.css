@@ -25,6 +25,22 @@ body {
   line-height: 1.8;
 }
 
+/* a11y keyboard-focus baseline — a single visible focus ring for every
+   interactive element across all sections. `:focus-visible` shows it only for
+   keyboard navigation (not mouse clicks). Sky blue (#41CFFF) is high-contrast on
+   both the cream site background and the dark /apply theme backgrounds, so one
+   rule covers everything (matches the existing .journal-list-link:focus-visible). */
+a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible,
+[tabindex]:not([tabindex="-1"]):focus-visible {
+  outline: 2px solid var(--color-sky);
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+
 /* a11y reduced-motion safety net — applies site-wide (homepage, work, journal,
    /apply). Defense-in-depth: the animation islands also JS-guard on
    matchMedia("(prefers-reduced-motion: reduce)") and jump straight to their
@@ -106,7 +122,7 @@ body {
 .journal-list-link { text-decoration: none; }
 .journal-list-title { font-size: 1.4rem; font-weight: 700; color: var(--color-brown); margin: 0 0 .35rem; transition: color .15s; }
 .journal-list-link:hover .journal-list-title { color: var(--color-sky); }
-.journal-list-link:focus-visible { outline: 2px solid var(--color-sky); outline-offset: 2px; border-radius: 2px; }
+/* keyboard focus ring is provided by the global a:focus-visible baseline (identical outline) */
 .journal-list-meta { font-size: .85rem; color: rgba(59, 44, 34, .75); margin-bottom: .5rem; }
 .journal-list-summary { color: rgba(59, 44, 34, .8); line-height: 1.6; margin: 0 0 .5rem; }
 .journal-tags { display: flex; flex-wrap: wrap; gap: .4rem; }
@@ -972,9 +988,11 @@ body {
   color: #FFF7E1;
 }
 
-.show-more-btn:focus {
-  outline: none;
-  box-shadow: 0 0 0 3px rgba(59, 44, 34, 0.2);
+/* keyboard-only focus ring (consistent with the global :focus-visible baseline);
+   mouse clicks show no ring */
+.show-more-btn:focus-visible {
+  outline: 2px solid var(--color-sky);
+  outline-offset: 2px;
 }
 
 /* ========================================

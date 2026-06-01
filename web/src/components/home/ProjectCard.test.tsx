@@ -127,4 +127,14 @@ describe("ProjectCard", () => {
     const { container } = render(<ProjectCard repo={baseRepo} now={NOW} />);
     expect(container.firstChild).toHaveClass("project-card");
   });
+
+  it("marks every decorative stat icon as aria-hidden", () => {
+    // baseRepo has stars + forks + commits set, so all three icon SVGs render.
+    const { container } = render(<ProjectCard repo={baseRepo} now={NOW} />);
+    const svgs = Array.from(container.querySelectorAll("svg"));
+    expect(svgs.length).toBe(3);
+    for (const svg of svgs) {
+      expect(svg.getAttribute("aria-hidden")).toBe("true");
+    }
+  });
 });
