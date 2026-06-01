@@ -118,7 +118,8 @@ export function ThemeSwitcher({ targetRef, initialTheme = "retro" }: ThemeSwitch
     if (!wrapper) return;
     const rafId = applyTheme(wrapper, theme);
     return () => {
-      cancelAnimationFrame(rafId);
+      // rafId is 0 when no [data-theme] container matched (nothing scheduled).
+      if (rafId) cancelAnimationFrame(rafId);
     };
   }, [theme, targetRef]);
 

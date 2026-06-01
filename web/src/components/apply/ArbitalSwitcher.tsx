@@ -12,10 +12,12 @@ import { ThemeSwitcher } from "@/components/islands/ThemeSwitcher";
 // [data-theme] containers. The retro/modern markup is server-rendered and passed
 // in as props, so only this thin shell ships the ref + client island.
 //
-// The wrapper class STARTS at "retro-terminal" and the modern container starts
-// hidden (inline display:none) — this matches prod's initial SSR DOM exactly
-// (the live page server-renders the retro container visible and
-// `<div data-theme="modern" style="display: none;">`), so there is no flash.
+// The wrapper class STARTS at "modern-dark" and the RETRO container starts hidden
+// (inline display:none). Prod sets data-theme-switcher-theme-value="modern", so a
+// first-time visitor with no saved pref ends up on MODERN after the Stimulus
+// controller runs (prod SSR-renders retro, then flips → a flash). We server-render
+// modern directly: same default end-state as prod, without the flash. A returning
+// visitor whose saved pref is "retro" gets flipped to retro on mount (matching prod).
 //
 // Why a wrapper div (not document.body): see the ThemeSwitcher `targetRef`
 // docblock — Next shares one <body> across routes and never resets it on client
@@ -34,13 +36,13 @@ export function ArbitalSwitcher({ retro, modern }: ArbitalSwitcherProps) {
   const wrapperRef = useRef<HTMLDivElement>(null);
 
   return (
-    <div ref={wrapperRef} className="retro-terminal">
-      <ThemeSwitcher targetRef={wrapperRef} initialTheme="retro" />
+    <div ref={wrapperRef} className="modern-dark">
+      <ThemeSwitcher targetRef={wrapperRef} initialTheme="modern" />
 
-      <div data-theme="retro">{retro}</div>
-      <div data-theme="modern" style={{ display: "none" }}>
-        {modern}
+      <div data-theme="retro" style={{ display: "none" }}>
+        {retro}
       </div>
+      <div data-theme="modern">{modern}</div>
     </div>
   );
 }

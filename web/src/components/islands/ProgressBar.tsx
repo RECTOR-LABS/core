@@ -105,6 +105,12 @@ export function ProgressBar({
       timerIds.forEach(clearTimeout);
       observer.disconnect();
     };
+    // `children` is intentionally NOT a dependency. Both modes assume a STATIC bar
+    // set for the component's lifetime (the arbital tech bars come from a build-time
+    // techBars() result that never changes at runtime). The animation is one-time
+    // (the observer disconnects after the first intersection), so re-running on a
+    // children change would only re-trigger it. To support a CHANGING children set,
+    // add `children` here AND re-arm the observer.
   }, [bars, delay, duration]);
 
   return (
