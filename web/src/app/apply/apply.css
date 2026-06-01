@@ -7,6 +7,17 @@
      4. Inline <style> from app/views/apply/arbital.html.erb
    =========================================== */
 
+/* a11y — keyboard-focus ring color override for the DARK apply themes.
+   The global baseline (globals.css) uses a dark brown ring (great on the cream
+   site + the light .superteam-page CV) but brown is invisible on these dark
+   backgrounds, so flip just the outline COLOR back to sky (#41CFFF) here.
+   Scoped to the two dark wrappers only — .superteam-page is light and keeps the
+   brown ring. Outline width/offset stay inherited from the global baseline. */
+.retro-terminal :focus-visible,
+.modern-dark :focus-visible {
+  outline-color: var(--color-sky);
+}
+
 /* ============================================================
    SECTION 1: RETRO TERMINAL CV - CRT Monitor Aesthetic
    Arbital Application Page

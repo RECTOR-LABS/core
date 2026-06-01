@@ -27,18 +27,26 @@ body {
 
 /* a11y keyboard-focus baseline — a single visible focus ring for every
    interactive element across all sections. `:focus-visible` shows it only for
-   keyboard navigation (not mouse clicks). Sky blue (#41CFFF) is high-contrast on
-   both the cream site background and the dark /apply theme backgrounds, so one
-   rule covers everything (matches the existing .journal-list-link:focus-visible). */
+   keyboard navigation (not mouse clicks). The ring is theme-aware to clear
+   WCAG 1.4.11 (>=3:1) on every surface:
+     • Light surfaces (~95% of the site: homepage, /work, /journal, the
+       .superteam-page apply CV) use a dark brown ring — #3B2C22 on cream ~12:1.
+     • The dark /apply themes (.retro-terminal, .modern-dark) flip the ring back
+       to sky (#41CFFF) — see the scoped override in app/apply/apply.css — since
+       brown would be invisible on them.
+     • The version-footer links sit on a brown pill, so they take a cream ring
+       (.version-link:focus-visible below).
+   No border-radius here on purpose: the outline already follows each element's
+   own radius, and setting it would square off rounded controls (e.g. pill chips)
+   on focus. (Matches the existing .journal-list-link:focus-visible.) */
 a:focus-visible,
 button:focus-visible,
 input:focus-visible,
 select:focus-visible,
 textarea:focus-visible,
 [tabindex]:not([tabindex="-1"]):focus-visible {
-  outline: 2px solid var(--color-sky);
+  outline: 2px solid var(--color-brown);
   outline-offset: 2px;
-  border-radius: 2px;
 }
 
 /* a11y reduced-motion safety net — applies site-wide (homepage, work, journal,
@@ -988,12 +996,8 @@ textarea:focus-visible,
   color: #FFF7E1;
 }
 
-/* keyboard-only focus ring (consistent with the global :focus-visible baseline);
-   mouse clicks show no ring */
-.show-more-btn:focus-visible {
-  outline: 2px solid var(--color-sky);
-  outline-offset: 2px;
-}
+/* keyboard focus ring is provided by the global button:focus-visible baseline
+   (brown on the cream /work page — the only place this button renders) */
 
 /* ========================================
    Filter & Sort Controls
@@ -1216,6 +1220,14 @@ textarea:focus-visible,
 
 .version-link:hover {
   color: var(--color-sky-blue);
+}
+
+/* These links sit on the brown .version-info pill, where the global brown ring
+   would be invisible — flip to cream (#FFF7E1 on brown ~12:1). The reduced
+   offset keeps the ring on the pill rather than bleeding onto the page behind. */
+.version-link:focus-visible {
+  outline-color: var(--color-cream);
+  outline-offset: 1px;
 }
 
 .version-icon {
