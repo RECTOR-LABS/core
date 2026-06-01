@@ -14,8 +14,22 @@ interface BarConfig {
 }
 
 interface ProgressBarProps {
-  /** Bar configurations — each becomes one animated bar element. */
-  bars: BarConfig[];
+  /**
+   * Bar configurations — each becomes one bare animated bar element.
+   * Optional: omit when supplying `children` that already contain the
+   * `[data-bar]` elements (with `data-target-width` set) wrapped in custom row
+   * markup (e.g. the arbital `.tech-item` rows with name + percent columns).
+   */
+  bars?: BarConfig[];
+  /**
+   * Custom markup to render inside the observed wrapper. When provided, it is
+   * rendered as-is and `bars` is ignored. The animation logic finds every
+   * `[data-bar]` DESCENDANT, resets it to 0%, and animates it to its own
+   * `data-target-width` — faithful to the Stimulus controller, which animated
+   * pre-existing `[data-bar]` targets authored in the .erb rather than rendering
+   * them. Each `[data-bar]` must carry `data-target-width` (e.g. "85%").
+   */
+  children?: React.ReactNode;
   /** Stagger delay between each bar in ms. Default: 100 (matches Stimulus). */
   delay?: number;
   /** CSS transition duration in ms. Default: 1000 (matches Stimulus). */
@@ -37,6 +51,7 @@ interface ProgressBarProps {
 
 export function ProgressBar({
   bars,
+  children,
   delay = 100,
   duration = 1000,
   className,
@@ -51,7 +66,8 @@ export function ProgressBar({
       wrapper.querySelectorAll<HTMLElement>("[data-bar]"),
     );
 
-    // Store target widths and reset to 0% — mirrors Stimulus connect()
+    // Reset every bar to 0% — mirrors Stimulus connect(). Each bar's target is
+    // read back from its own `data-target-width` when it animates.
     barEls.forEach((bar) => {
       bar.style.width = "0%";
     });
@@ -93,15 +109,17 @@ export function ProgressBar({
 
   return (
     <div ref={wrapperRef} className={className}>
-      {bars.map((b, i) => (
-        <div
-          key={i}
-          data-bar
-          data-target-width={b.width}
-          style={{ width: b.width }}
-          aria-label={b.label}
-        />
-      ))}
+      {children !== undefined
+        ? children
+        : (bars ?? []).map((b, i) => (
+            <div
+              key={i}
+              data-bar
+              data-target-width={b.width}
+              style={{ width: b.width }}
+              aria-label={b.label}
+            />
+          ))}
     </div>
   );
 }

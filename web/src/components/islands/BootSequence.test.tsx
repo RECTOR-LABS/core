@@ -226,4 +226,64 @@ describe("BootSequence island", () => {
       expect(content!.style.opacity).toBe("1");
     });
   });
+
+  // The arbital retro page needs the lines wrapped in a `.boot-header` element
+  // (whose border/opacity must NOT bleed onto the revealed content) and each
+  // line tagged `.bios-line`. These opt-in props enable that without disturbing
+  // the typing/observer logic (which queries `[data-line]`/`[data-content]`
+  // descendants, so the extra nesting is transparent to it).
+  describe("headerClassName + lineClassName (arbital boot-header)", () => {
+    it("wraps the lines in a single header element, with content OUTSIDE it", () => {
+      const { container } = render(
+        <BootSequence
+          lines={["A", "B"]}
+          headerClassName="boot-header"
+          content={<p>BODY</p>}
+        />,
+      );
+      const header = container.querySelector(".boot-header")!;
+      expect(header).not.toBeNull();
+      // both lines live inside the header
+      expect(header.querySelectorAll("[data-line]")).toHaveLength(2);
+      // the content lives OUTSIDE the header (so .boot-header styles can't bleed)
+      const content = getContent(container)!;
+      expect(header.contains(content)).toBe(false);
+    });
+
+    it("applies lineClassName to every line", () => {
+      const { container } = render(
+        <BootSequence lines={["A", "B"]} lineClassName="bios-line" />,
+      );
+      const lines = getLines(container);
+      expect(lines).toHaveLength(2);
+      for (const line of lines) {
+        expect(line.classList.contains("bios-line")).toBe(true);
+      }
+    });
+
+    it("still types and reveals normally with the header wrapper present", () => {
+      const { container } = render(
+        <BootSequence
+          lines={["A"]}
+          headerClassName="boot-header"
+          lineClassName="bios-line"
+          charSpeed={10}
+          lineDelay={50}
+          content={<p>BODY</p>}
+        />,
+      );
+      act(() => vi.runAllTimers());
+      // line typed, content revealed
+      expect(getLines(container)[0].textContent).toBe("A");
+      expect(getContent(container)!.style.opacity).toBe("1");
+    });
+
+    it("keeps lines as direct children when headerClassName is omitted (default)", () => {
+      const { container } = render(<BootSequence lines={["A"]} />);
+      expect(container.querySelector(".boot-header")).toBeNull();
+      // line is a direct child of the outer wrapper
+      const wrapper = container.firstElementChild!;
+      expect(wrapper.querySelector(":scope > [data-line]")).not.toBeNull();
+    });
+  });
 });

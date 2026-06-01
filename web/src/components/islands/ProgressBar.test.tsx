@@ -298,4 +298,67 @@ describe("ProgressBar island", () => {
       expect(container.firstElementChild?.className).toContain("stack-bars");
     });
   });
+
+  // The arbital tech lists supply their own `.tech-item` row markup (name +
+  // percent columns around each bar). In children mode the island renders that
+  // markup verbatim and only animates the `[data-bar]` descendants from their
+  // own `data-target-width` — faithful to the Stimulus controller, which never
+  // rendered the bars (it animated pre-authored targets in the .erb).
+  describe("children mode (custom row markup)", () => {
+    it("renders provided children and ignores `bars`", () => {
+      const { container } = render(
+        <ProgressBar>
+          <div className="tech-item">
+            <span className="tech-name">Rust</span>
+            <div className="tech-bar-container">
+              <div className="tech-bar" data-bar data-target-width="85%" style={{ width: "85%" }} />
+            </div>
+            <span className="tech-level">85%</span>
+          </div>
+        </ProgressBar>,
+      );
+      expect(container.querySelector(".tech-name")?.textContent).toBe("Rust");
+      expect(container.querySelector(".tech-level")?.textContent).toBe("85%");
+    });
+
+    it("resets each nested bar to 0% on mount", () => {
+      const { container } = render(
+        <ProgressBar>
+          <div className="tech-item">
+            <div className="tech-bar" data-bar data-target-width="85%" style={{ width: "85%" }} />
+          </div>
+          <div className="tech-item">
+            <div className="tech-bar" data-bar data-target-width="50%" style={{ width: "50%" }} />
+          </div>
+        </ProgressBar>,
+      );
+      for (const b of container.querySelectorAll<HTMLElement>("[data-bar]")) {
+        expect(b.style.width).toBe("0%");
+      }
+    });
+
+    it("animates each nested bar to its own data-target-width on intersection", () => {
+      const { container } = render(
+        <ProgressBar delay={100} duration={1000}>
+          <div className="tech-item">
+            <div className="tech-bar" data-bar data-target-width="85%" style={{ width: "85%" }} />
+          </div>
+          <div className="tech-item">
+            <div className="tech-bar" data-bar data-target-width="50%" style={{ width: "50%" }} />
+          </div>
+        </ProgressBar>,
+      );
+      const root = container.firstElementChild as HTMLElement;
+      const bars = Array.from(container.querySelectorAll<HTMLElement>("[data-bar]"));
+
+      act(() => {
+        triggerIntersection(root, true);
+        flushTimers();
+      });
+
+      expect(bars[0].style.width).toBe("85%");
+      expect(bars[0].style.transition).toBe("width 1000ms ease-out");
+      expect(bars[1].style.width).toBe("50%");
+    });
+  });
 });

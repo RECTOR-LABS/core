@@ -17,6 +17,16 @@ interface BootSequenceProps {
   content?: React.ReactNode;
   /** Optional className forwarded to the wrapper div. */
   className?: string;
+  /**
+   * Optional className for an inner wrapper around just the lines (NOT the
+   * content). Lets the arbital retro page reproduce the `.boot-header` element,
+   * which carries its own border/opacity that must NOT bleed onto the revealed
+   * content. When omitted, the lines are direct children of the outer wrapper
+   * (unchanged default behaviour).
+   */
+  headerClassName?: string;
+  /** Optional className applied to each `[data-line]` (e.g. "bios-line"). */
+  lineClassName?: string;
 }
 
 // ---------------------------------------------------------------------------
@@ -36,6 +46,8 @@ export function BootSequence({
   lineDelay = 400,
   content,
   className,
+  headerClassName,
+  lineClassName,
 }: BootSequenceProps) {
   const wrapperRef = useRef<HTMLDivElement>(null);
 
@@ -109,13 +121,19 @@ export function BootSequence({
     };
   }, [lines, charSpeed, lineDelay]);
 
+  const lineEls = lines.map((line, i) => (
+    <div key={i} data-line data-original-text={line} className={lineClassName}>
+      {line}
+    </div>
+  ));
+
   return (
     <div ref={wrapperRef} className={className}>
-      {lines.map((line, i) => (
-        <div key={i} data-line data-original-text={line}>
-          {line}
-        </div>
-      ))}
+      {headerClassName !== undefined ? (
+        <div className={headerClassName}>{lineEls}</div>
+      ) : (
+        lineEls
+      )}
       {content !== undefined && (
         <div data-content>{content}</div>
       )}

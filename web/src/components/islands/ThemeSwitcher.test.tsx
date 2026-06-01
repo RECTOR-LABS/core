@@ -1,11 +1,17 @@
 import { describe, it, expect, beforeEach, afterEach, vi } from "vitest";
+import { StrictMode, useRef } from "react";
 import { render, fireEvent, act } from "@testing-library/react";
 import { ThemeSwitcher } from "./ThemeSwitcher";
 
 // ---------------------------------------------------------------------------
-// Setup — clean localStorage + body classes between tests.
-// The Stimulus controller touches document.body.classList and localStorage,
-// which persist between tests in jsdom.
+// Setup — clean localStorage + stub rAF/cancelAnimationFrame between tests.
+//
+// NOTE (Next adaptation): the island now toggles a page-local WRAPPER element
+// (passed via `targetRef`) instead of `document.body`. Rationale lives in the
+// ThemeSwitcher `targetRef` docblock: Next shares one <body> across all routes
+// and never resets it on client navigation, so a body-class toggle would flash
+// on SSR and leak the dark theme onto /, /work, /journal. These tests therefore
+// assert the WRAPPER's class/containers/labels, not the body's.
 // ---------------------------------------------------------------------------
 
 /** rAF callbacks queued during the test. */
@@ -15,7 +21,6 @@ const cancelledRafIds: Set<number> = new Set();
 
 beforeEach(() => {
   localStorage.clear();
-  document.body.className = "";
 
   rafCallbacks = [];
   cancelledRafIds.clear();
@@ -43,7 +48,6 @@ beforeEach(() => {
 afterEach(() => {
   vi.unstubAllGlobals();
   localStorage.clear();
-  document.body.className = "";
 });
 
 /** Flush all queued rAF callbacks with the given timestamp. */
@@ -54,19 +58,47 @@ function flushRaf(t = 0) {
 }
 
 // ---------------------------------------------------------------------------
-// Helpers
+// Harness — reproduces the switcher page shape: a themed wrapper holding the
+// ThemeSwitcher (controller), a [data-toggle] button + [data-label] span, and
+// the two [data-theme] containers. The wrapper starts at `wrapperClass`.
 // ---------------------------------------------------------------------------
 
-function renderThemeSwitcher(initialTheme?: "retro" | "modern") {
-  return render(<ThemeSwitcher initialTheme={initialTheme} />);
+function Harness({
+  initialTheme,
+  wrapperClass = "retro-terminal",
+}: {
+  initialTheme?: "retro" | "modern";
+  wrapperClass?: string;
+}) {
+  const ref = useRef<HTMLDivElement>(null);
+  return (
+    <div ref={ref} className={wrapperClass} data-testid="wrapper">
+      <ThemeSwitcher targetRef={ref} initialTheme={initialTheme} />
+      <button type="button" data-toggle>
+        <span data-label>SWITCH TO MODERN</span>
+      </button>
+      <div data-theme="retro" data-testid="retro-container">
+        Retro
+      </div>
+      <div data-theme="modern" data-testid="modern-container" style={{ display: "none" }}>
+        Modern
+      </div>
+    </div>
+  );
 }
 
-function getToggleButton(container: HTMLElement): HTMLElement {
-  return container.querySelector<HTMLElement>("[data-toggle]")!;
-}
-
-function getLabelEl(container: HTMLElement): HTMLElement | null {
-  return container.querySelector<HTMLElement>("[data-label]");
+function renderHarness(
+  opts: { initialTheme?: "retro" | "modern"; wrapperClass?: string } = {},
+) {
+  const result = render(
+    <Harness initialTheme={opts.initialTheme} wrapperClass={opts.wrapperClass} />,
+  );
+  const wrapper = result.getByTestId("wrapper");
+  const toggle = wrapper.querySelector<HTMLElement>("[data-toggle]")!;
+  const label = wrapper.querySelector<HTMLElement>("[data-label]")!;
+  const retro = result.getByTestId("retro-container");
+  const modern = result.getByTestId("modern-container");
+  return { ...result, wrapper, toggle, label, retro, modern };
 }
 
 // ---------------------------------------------------------------------------
@@ -75,159 +107,131 @@ function getLabelEl(container: HTMLElement): HTMLElement | null {
 
 describe("ThemeSwitcher island", () => {
   describe("initial state — default theme retro", () => {
-    it("adds retro-terminal class to body on mount (default theme)", () => {
-      renderThemeSwitcher();
-      expect(document.body.classList.contains("retro-terminal")).toBe(true);
+    it("keeps retro-terminal on the WRAPPER on mount (default theme)", () => {
+      const { wrapper } = renderHarness();
+      expect(wrapper.classList.contains("retro-terminal")).toBe(true);
+      expect(wrapper.classList.contains("modern-dark")).toBe(false);
+    });
+
+    it("does NOT touch document.body (no theme class leaks to the shared body)", () => {
+      renderHarness();
+      expect(document.body.classList.contains("retro-terminal")).toBe(false);
       expect(document.body.classList.contains("modern-dark")).toBe(false);
     });
 
-    it("shows label for switching to modern (current = retro)", () => {
-      const { container } = renderThemeSwitcher();
-      const label = getLabelEl(container);
-      // When retro is active, label shows "SWITCH TO MODERN"
-      expect(label?.textContent).toBe("SWITCH TO MODERN");
+    it("sets the label to 'SWITCH TO MODERN' when retro is active", () => {
+      const { label } = renderHarness();
+      expect(label.textContent).toBe("SWITCH TO MODERN");
     });
 
-    it("loads saved preference from localStorage (modern)", () => {
+    it("loads saved preference from localStorage (modern) onto the wrapper", () => {
       localStorage.setItem("arbital-cv-theme", "modern");
-      renderThemeSwitcher();
-      expect(document.body.classList.contains("modern-dark")).toBe(true);
-      expect(document.body.classList.contains("retro-terminal")).toBe(false);
+      const { wrapper } = renderHarness();
+      expect(wrapper.classList.contains("modern-dark")).toBe(true);
+      expect(wrapper.classList.contains("retro-terminal")).toBe(false);
     });
 
     it("loads saved preference from localStorage (retro)", () => {
       localStorage.setItem("arbital-cv-theme", "retro");
-      renderThemeSwitcher();
-      expect(document.body.classList.contains("retro-terminal")).toBe(true);
+      const { wrapper } = renderHarness();
+      expect(wrapper.classList.contains("retro-terminal")).toBe(true);
     });
 
     it("defaults to retro if no localStorage value", () => {
-      renderThemeSwitcher();
-      expect(document.body.classList.contains("retro-terminal")).toBe(true);
+      const { wrapper } = renderHarness();
+      expect(wrapper.classList.contains("retro-terminal")).toBe(true);
     });
   });
 
   describe("initialTheme prop override", () => {
     it("starts in modern when initialTheme=modern passed", () => {
-      renderThemeSwitcher("modern");
-      expect(document.body.classList.contains("modern-dark")).toBe(true);
+      // Wrapper starts at modern-dark so the prop and SSR class agree.
+      const { wrapper } = renderHarness({ initialTheme: "modern", wrapperClass: "modern-dark" });
+      expect(wrapper.classList.contains("modern-dark")).toBe(true);
     });
 
     it("localStorage overrides initialTheme prop (saved wins)", () => {
       localStorage.setItem("arbital-cv-theme", "modern");
-      renderThemeSwitcher("retro");
+      const { wrapper } = renderHarness({ initialTheme: "retro" });
       // localStorage takes precedence, matching Stimulus's connect() logic
-      expect(document.body.classList.contains("modern-dark")).toBe(true);
+      expect(wrapper.classList.contains("modern-dark")).toBe(true);
     });
   });
 
   describe("toggle behavior", () => {
-    it("switches from retro to modern on toggle click", () => {
-      const { container } = renderThemeSwitcher();
+    it("switches the wrapper from retro to modern on toggle click", () => {
+      const { wrapper, toggle } = renderHarness();
 
-      // Start: retro-terminal
-      expect(document.body.classList.contains("retro-terminal")).toBe(true);
+      expect(wrapper.classList.contains("retro-terminal")).toBe(true);
+      fireEvent.click(toggle);
 
-      fireEvent.click(getToggleButton(container));
-
-      // After toggle: modern-dark
-      expect(document.body.classList.contains("modern-dark")).toBe(true);
-      expect(document.body.classList.contains("retro-terminal")).toBe(false);
+      expect(wrapper.classList.contains("modern-dark")).toBe(true);
+      expect(wrapper.classList.contains("retro-terminal")).toBe(false);
     });
 
-    it("switches from modern to retro on second toggle click", () => {
-      const { container } = renderThemeSwitcher();
+    it("switches back to retro on a second toggle click", () => {
+      const { wrapper, toggle } = renderHarness();
 
-      fireEvent.click(getToggleButton(container)); // retro → modern
-      fireEvent.click(getToggleButton(container)); // modern → retro
+      fireEvent.click(toggle); // retro → modern
+      fireEvent.click(toggle); // modern → retro
 
-      expect(document.body.classList.contains("retro-terminal")).toBe(true);
-      expect(document.body.classList.contains("modern-dark")).toBe(false);
+      expect(wrapper.classList.contains("retro-terminal")).toBe(true);
+      expect(wrapper.classList.contains("modern-dark")).toBe(false);
     });
 
-    it("updates label to SWITCH TO RETRO when switching to modern", () => {
-      const { container } = renderThemeSwitcher();
-      const label = getLabelEl(container);
-
-      fireEvent.click(getToggleButton(container));
-
-      expect(label?.textContent).toBe("SWITCH TO RETRO");
+    it("updates the label to SWITCH TO RETRO when switching to modern", () => {
+      const { toggle, label } = renderHarness();
+      fireEvent.click(toggle);
+      expect(label.textContent).toBe("SWITCH TO RETRO");
     });
 
-    it("updates label back to SWITCH TO MODERN when switching back to retro", () => {
-      const { container } = renderThemeSwitcher();
-      const label = getLabelEl(container);
-
-      fireEvent.click(getToggleButton(container)); // → modern
-      fireEvent.click(getToggleButton(container)); // → retro
-
-      expect(label?.textContent).toBe("SWITCH TO MODERN");
+    it("updates the label back to SWITCH TO MODERN when switching back to retro", () => {
+      const { toggle, label } = renderHarness();
+      fireEvent.click(toggle); // → modern
+      fireEvent.click(toggle); // → retro
+      expect(label.textContent).toBe("SWITCH TO MODERN");
     });
 
     it("persists theme to localStorage on toggle", () => {
-      const { container } = renderThemeSwitcher();
-
-      fireEvent.click(getToggleButton(container));
-
+      const { toggle } = renderHarness();
+      fireEvent.click(toggle);
       expect(localStorage.getItem("arbital-cv-theme")).toBe("modern");
     });
 
     it("persists retro back to localStorage on second toggle", () => {
-      const { container } = renderThemeSwitcher();
-
-      fireEvent.click(getToggleButton(container)); // retro → modern
-      fireEvent.click(getToggleButton(container)); // modern → retro
-
+      const { toggle } = renderHarness();
+      fireEvent.click(toggle); // retro → modern
+      fireEvent.click(toggle); // modern → retro
       expect(localStorage.getItem("arbital-cv-theme")).toBe("retro");
     });
   });
 
-  describe("data-theme container visibility", () => {
-    it("shows retro container and hides modern container on retro theme", () => {
-      // Render with a retro and a modern container in the DOM
-      document.body.innerHTML = `
-        <div data-theme="retro" id="retro-section">Retro</div>
-        <div data-theme="modern" id="modern-section">Modern</div>
-      `;
-      renderThemeSwitcher(); // default: retro
-
-      const retroEl = document.getElementById("retro-section") as HTMLElement;
-      const modernEl = document.getElementById("modern-section") as HTMLElement;
-
-      // Retro visible, modern hidden
-      expect(retroEl.style.display).toBe("block");
-      expect(modernEl.style.display).toBe("none");
+  describe("data-theme container visibility (scoped to the wrapper)", () => {
+    it("shows the retro container and hides the modern container on retro theme", () => {
+      const { retro, modern } = renderHarness(); // default: retro
+      expect(retro.style.display).toBe("block");
+      expect(modern.style.display).toBe("none");
     });
 
-    it("shows modern container and hides retro container on modern theme", () => {
-      document.body.innerHTML = `
-        <div data-theme="retro" id="retro-section">Retro</div>
-        <div data-theme="modern" id="modern-section">Modern</div>
-      `;
-      const { container } = renderThemeSwitcher();
-      document.body.appendChild(container);
-
-      fireEvent.click(getToggleButton(container));
-
-      const retroEl = document.getElementById("retro-section") as HTMLElement;
-      const modernEl = document.getElementById("modern-section") as HTMLElement;
-
-      expect(modernEl.style.display).toBe("block");
-      expect(retroEl.style.display).toBe("none");
+    it("shows the modern container and hides the retro container after toggle", () => {
+      const { toggle, retro, modern } = renderHarness();
+      fireEvent.click(toggle);
+      expect(modern.style.display).toBe("block");
+      expect(retro.style.display).toBe("none");
     });
   });
 
   describe("localStorage key", () => {
     it("uses the exact key 'arbital-cv-theme'", () => {
-      const { container } = renderThemeSwitcher();
-      fireEvent.click(getToggleButton(container));
+      const { toggle } = renderHarness();
+      fireEvent.click(toggle);
       expect(localStorage.getItem("arbital-cv-theme")).not.toBeNull();
     });
   });
 
   describe("cleanup — rAF cancellation", () => {
     it("cancels the pending rAF when unmounted before the frame fires", () => {
-      const { unmount } = renderThemeSwitcher();
+      const { unmount } = renderHarness();
       // applyTheme queues a rAF for setting opacity; unmount before it fires
       expect(rafCallbacks.length).toBeGreaterThan(0);
       unmount();
@@ -235,32 +239,45 @@ describe("ThemeSwitcher island", () => {
       expect(cancelledRafIds.size).toBeGreaterThan(0);
     });
 
-    it("still applies opacity=1 on the next frame when NOT unmounted", () => {
-      document.body.innerHTML = `<div data-theme="retro" id="ts-test"></div>`;
-      renderThemeSwitcher("retro");
-      const el = document.getElementById("ts-test") as HTMLElement;
-      // Opacity starts at 0 (set synchronously by applyTheme)
-      expect(el.style.opacity).toBe("0");
+    it("applies opacity=1 to the visible container on the next frame when NOT unmounted", () => {
+      const { retro } = renderHarness({ initialTheme: "retro" });
+      // Opacity starts at 0 (set synchronously by applyTheme on the visible container)
+      expect(retro.style.opacity).toBe("0");
       // Flush the queued rAF → opacity should become "1"
       act(() => flushRaf());
-      expect(el.style.opacity).toBe("1");
+      expect(retro.style.opacity).toBe("1");
     });
 
-    it("cancels previous rAF when theme changes rapidly (no orphaned frame)", () => {
-      document.body.innerHTML = `
-        <div data-theme="retro" id="r"></div>
-        <div data-theme="modern" id="m"></div>
-      `;
-      const { container } = renderThemeSwitcher("retro");
+    it("cancels the previous rAF when the theme changes rapidly (no orphaned frame)", () => {
+      const { toggle } = renderHarness({ initialTheme: "retro" });
 
       // First applyTheme (on mount) queued a rAF
-      const idsAfterMount = rafCallbacks.length;
-      expect(idsAfterMount).toBeGreaterThan(0);
+      expect(rafCallbacks.length).toBeGreaterThan(0);
 
-      // Toggle rapidly — old rAF should be cancelled before new one fires
-      act(() => fireEvent.click(getToggleButton(container)));
-      // At least one rAF must have been cancelled by the effect cleanup
+      // Toggle rapidly — old rAF should be cancelled before the new one fires
+      act(() => fireEvent.click(toggle));
       expect(cancelledRafIds.size).toBeGreaterThan(0);
+    });
+  });
+
+  describe("StrictMode double-mount guard", () => {
+    it("reads localStorage exactly once under StrictMode (ref-guarded mount effect)", () => {
+      localStorage.setItem("arbital-cv-theme", "modern");
+      const getItem = vi.spyOn(Storage.prototype, "getItem");
+      // StrictMode double-invokes the mount effect (mount → cleanup → mount).
+      // The didLoadPref ref must collapse those into a single localStorage read.
+      const { getByTestId } = render(
+        <StrictMode>
+          <Harness />
+        </StrictMode>,
+      );
+      const themeReads = getItem.mock.calls.filter(
+        (c) => c[0] === "arbital-cv-theme",
+      ).length;
+      expect(themeReads).toBe(1);
+      // And the saved theme was still applied to the wrapper.
+      expect(getByTestId("wrapper").classList.contains("modern-dark")).toBe(true);
+      getItem.mockRestore();
     });
   });
 });
