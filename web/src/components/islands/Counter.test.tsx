@@ -45,10 +45,14 @@ function flushRaf(advanceMs = 0) {
   for (const cb of cbs) cb(rafTime);
 }
 
+/** Ids cancelled via cancelAnimationFrame. */
+const cancelledRafIds: Set<number> = new Set();
+
 beforeEach(() => {
   observers.length = 0;
   rafCallbacks = [];
   rafTime = 0;
+  cancelledRafIds.clear();
 
   class MockIntersectionObserver {
     callback: IOCallback;
@@ -72,7 +76,20 @@ beforeEach(() => {
     "requestAnimationFrame",
     vi.fn((cb: FrameRequestCallback) => {
       rafCallbacks.push(cb as (t: number) => void);
-      return rafCallbacks.length;
+      return rafCallbacks.length; // 1-based id (index + 1)
+    }),
+  );
+
+  vi.stubGlobal(
+    "cancelAnimationFrame",
+    vi.fn((id: number) => {
+      cancelledRafIds.add(id);
+      // Remove the corresponding callback from the queue so flushRaf skips it.
+      // rAF ids are 1-based (returned as rafCallbacks.length at push time).
+      const idx = id - 1;
+      if (idx >= 0 && idx < rafCallbacks.length) {
+        rafCallbacks.splice(idx, 1);
+      }
     }),
   );
 
@@ -230,6 +247,47 @@ describe("Counter island", () => {
       expect(observers[0].targets.size).toBe(1);
       unmount();
       expect(observers[0].targets.size).toBe(0);
+    });
+
+    it("cancels in-flight rAF chain on unmount (no rAF leak)", () => {
+      const { container, unmount } = render(
+        <Counter number={1000} display="DONE" duration={1000} />,
+      );
+      const el = container.firstElementChild as HTMLElement;
+
+      // Start the animation
+      act(() => triggerIntersection(el, true));
+      // First frame fires (t=0, progress=0, current=0)
+      act(() => flushRaf(0));
+      expect(el.textContent).toBe("0");
+
+      // Unmount while animation is still running (elapsed 0 of 1000ms)
+      unmount();
+
+      // After unmount, cancelAnimationFrame should have been called
+      expect(cancelledRafIds.size).toBeGreaterThan(0);
+
+      // Advance the rAF clock — text on the detached element must NOT advance
+      const textBeforeAdvance = el.textContent;
+      act(() => flushRaf(500));
+      act(() => flushRaf(500));
+      // The chain is stopped: text is unchanged (still at the pre-unmount value)
+      expect(el.textContent).toBe(textBeforeAdvance);
+    });
+
+    it("stops rAF chain when effect re-runs (prop change mid-animation)", () => {
+      const { container, rerender } = render(
+        <Counter number={1000} display="DONE" duration={1000} />,
+      );
+      const el = container.firstElementChild as HTMLElement;
+
+      act(() => triggerIntersection(el, true));
+      act(() => flushRaf(0)); // first frame
+      // Change a prop mid-animation — effect cleanup should cancel the old rAF
+      act(() => rerender(<Counter number={2000} display="DONE" duration={1000} />));
+
+      const cancelCountAfterRerender = cancelledRafIds.size;
+      expect(cancelCountAfterRerender).toBeGreaterThan(0);
     });
   });
 });

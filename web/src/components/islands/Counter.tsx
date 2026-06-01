@@ -36,10 +36,15 @@ export function Counter({ number = 0, display = "", duration = 1500 }: CounterPr
 
     animated.current = false;
 
+    let cancelled = false;
+    let rafId = 0;
+
     function animate() {
       const start = performance.now();
 
       const step = (timestamp: number) => {
+        if (cancelled) return;
+
         const elapsed = timestamp - start;
         const progress = Math.min(elapsed / duration, 1);
         // Cubic ease-out — identical to Stimulus: 1 - Math.pow(1 - progress, 3)
@@ -49,13 +54,13 @@ export function Counter({ number = 0, display = "", duration = 1500 }: CounterPr
         el!.textContent = current.toLocaleString();
 
         if (progress < 1) {
-          requestAnimationFrame(step);
+          rafId = requestAnimationFrame(step);
         } else if (display) {
           el!.textContent = display;
         }
       };
 
-      requestAnimationFrame(step);
+      rafId = requestAnimationFrame(step);
     }
 
     const observer = new IntersectionObserver(
@@ -73,6 +78,8 @@ export function Counter({ number = 0, display = "", duration = 1500 }: CounterPr
     observer.observe(el);
 
     return () => {
+      cancelled = true;
+      cancelAnimationFrame(rafId);
       observer.disconnect();
     };
   }, [number, display, duration]);

@@ -1,5 +1,5 @@
-import { describe, it, expect, beforeEach, afterEach } from "vitest";
-import { render, fireEvent } from "@testing-library/react";
+import { describe, it, expect, beforeEach, afterEach, vi } from "vitest";
+import { render, fireEvent, act } from "@testing-library/react";
 import { ThemeSwitcher } from "./ThemeSwitcher";
 
 // ---------------------------------------------------------------------------
@@ -8,15 +8,50 @@ import { ThemeSwitcher } from "./ThemeSwitcher";
 // which persist between tests in jsdom.
 // ---------------------------------------------------------------------------
 
+/** rAF callbacks queued during the test. */
+let rafCallbacks: Array<(t: number) => void> = [];
+/** Ids cancelled via cancelAnimationFrame. */
+const cancelledRafIds: Set<number> = new Set();
+
 beforeEach(() => {
+  localStorage.clear();
+  document.body.className = "";
+
+  rafCallbacks = [];
+  cancelledRafIds.clear();
+
+  vi.stubGlobal(
+    "requestAnimationFrame",
+    vi.fn((cb: FrameRequestCallback) => {
+      rafCallbacks.push(cb as (t: number) => void);
+      return rafCallbacks.length; // 1-based id
+    }),
+  );
+
+  vi.stubGlobal(
+    "cancelAnimationFrame",
+    vi.fn((id: number) => {
+      cancelledRafIds.add(id);
+      const idx = id - 1;
+      if (idx >= 0 && idx < rafCallbacks.length) {
+        rafCallbacks.splice(idx, 1);
+      }
+    }),
+  );
+});
+
+afterEach(() => {
+  vi.unstubAllGlobals();
   localStorage.clear();
   document.body.className = "";
 });
 
-afterEach(() => {
-  localStorage.clear();
-  document.body.className = "";
-});
+/** Flush all queued rAF callbacks with the given timestamp. */
+function flushRaf(t = 0) {
+  const cbs = [...rafCallbacks];
+  rafCallbacks = [];
+  for (const cb of cbs) cb(t);
+}
 
 // ---------------------------------------------------------------------------
 // Helpers
@@ -187,6 +222,45 @@ describe("ThemeSwitcher island", () => {
       const { container } = renderThemeSwitcher();
       fireEvent.click(getToggleButton(container));
       expect(localStorage.getItem("arbital-cv-theme")).not.toBeNull();
+    });
+  });
+
+  describe("cleanup — rAF cancellation", () => {
+    it("cancels the pending rAF when unmounted before the frame fires", () => {
+      const { unmount } = renderThemeSwitcher();
+      // applyTheme queues a rAF for setting opacity; unmount before it fires
+      expect(rafCallbacks.length).toBeGreaterThan(0);
+      unmount();
+      // Cleanup must have cancelled the in-flight rAF
+      expect(cancelledRafIds.size).toBeGreaterThan(0);
+    });
+
+    it("still applies opacity=1 on the next frame when NOT unmounted", () => {
+      document.body.innerHTML = `<div data-theme="retro" id="ts-test"></div>`;
+      renderThemeSwitcher("retro");
+      const el = document.getElementById("ts-test") as HTMLElement;
+      // Opacity starts at 0 (set synchronously by applyTheme)
+      expect(el.style.opacity).toBe("0");
+      // Flush the queued rAF → opacity should become "1"
+      act(() => flushRaf());
+      expect(el.style.opacity).toBe("1");
+    });
+
+    it("cancels previous rAF when theme changes rapidly (no orphaned frame)", () => {
+      document.body.innerHTML = `
+        <div data-theme="retro" id="r"></div>
+        <div data-theme="modern" id="m"></div>
+      `;
+      const { container } = renderThemeSwitcher("retro");
+
+      // First applyTheme (on mount) queued a rAF
+      const idsAfterMount = rafCallbacks.length;
+      expect(idsAfterMount).toBeGreaterThan(0);
+
+      // Toggle rapidly — old rAF should be cancelled before new one fires
+      act(() => fireEvent.click(getToggleButton(container)));
+      // At least one rAF must have been cancelled by the effect cleanup
+      expect(cancelledRafIds.size).toBeGreaterThan(0);
     });
   });
 });

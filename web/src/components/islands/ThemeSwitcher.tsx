@@ -24,9 +24,12 @@ interface ThemeSwitcherProps {
 // ---------------------------------------------------------------------------
 // Pure helper — applies theme to document.body and [data-theme] containers.
 // Mirrors Stimulus's applyTheme() exactly.
+//
+// Returns the rAF handle for the opacity transition so callers can cancel it
+// on cleanup (prevents mutations on detached nodes after unmount).
 // ---------------------------------------------------------------------------
 
-function applyTheme(theme: Theme) {
+function applyTheme(theme: Theme): number {
   const body = document.body;
   const isRetro = theme === "retro";
 
@@ -34,12 +37,14 @@ function applyTheme(theme: Theme) {
   body.classList.remove("retro-terminal", "modern-dark");
   body.classList.add(isRetro ? "retro-terminal" : "modern-dark");
 
+  let rafId = 0;
+
   // Toggle container visibility with smooth transition
   document.querySelectorAll<HTMLElement>("[data-theme]").forEach((el) => {
     if (el.dataset.theme === theme) {
       el.style.display = "block";
       el.style.opacity = "0";
-      requestAnimationFrame(() => {
+      rafId = requestAnimationFrame(() => {
         el.style.transition = "opacity 0.3s ease";
         el.style.opacity = "1";
       });
@@ -47,6 +52,8 @@ function applyTheme(theme: Theme) {
       el.style.display = "none";
     }
   });
+
+  return rafId;
 }
 
 // ---------------------------------------------------------------------------
@@ -78,9 +85,13 @@ export function ThemeSwitcher({ initialTheme = "retro", className }: ThemeSwitch
     }
   }, []);
 
-  // Whenever theme changes: apply to document
+  // Whenever theme changes: apply to document, capture the rAF handle so we
+  // can cancel it on cleanup (prevents opacity mutation on detached nodes).
   useEffect(() => {
-    applyTheme(theme);
+    const rafId = applyTheme(theme);
+    return () => {
+      cancelAnimationFrame(rafId);
+    };
   }, [theme]);
 
   const toggle = useCallback(() => {

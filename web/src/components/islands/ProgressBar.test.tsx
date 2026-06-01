@@ -33,10 +33,14 @@ function triggerIntersection(element: Element, isIntersecting = true) {
 // setTimeout mock — captures timers for manual flushing
 const timers: Array<{ id: number; fn: () => void; delay: number }> = [];
 let timerIdCounter = 1;
+/** Ids cleared via clearTimeout. */
+const clearedTimerIds: Set<number> = new Set();
 
 function flushTimers() {
-  // Sort by delay then execute all
-  const toRun = [...timers].sort((a, b) => a.delay - b.delay);
+  // Sort by delay then execute all non-cleared timers
+  const toRun = [...timers]
+    .filter((t) => !clearedTimerIds.has(t.id))
+    .sort((a, b) => a.delay - b.delay);
   timers.length = 0;
   for (const t of toRun) t.fn();
 }
@@ -45,6 +49,7 @@ beforeEach(() => {
   observers.length = 0;
   timers.length = 0;
   timerIdCounter = 1;
+  clearedTimerIds.clear();
 
   class MockIntersectionObserver {
     callback: IOCallback;
@@ -70,6 +75,13 @@ beforeEach(() => {
       const id = timerIdCounter++;
       timers.push({ id, fn, delay });
       return id;
+    }),
+  );
+
+  vi.stubGlobal(
+    "clearTimeout",
+    vi.fn((id: number) => {
+      clearedTimerIds.add(id);
     }),
   );
 });
@@ -229,6 +241,48 @@ describe("ProgressBar island", () => {
       expect(observers[0].targets.size).toBe(1);
       unmount();
       expect(observers[0].targets.size).toBe(0);
+    });
+
+    it("clears all staggered timers on unmount (no stagger leak)", () => {
+      const { container, unmount } = render(
+        <ProgressBar bars={[bar("80%"), bar("60%"), bar("40%")]} delay={100} />,
+      );
+      const root = container.firstElementChild as HTMLElement;
+      const barEls = Array.from(container.querySelectorAll<HTMLElement>("[data-bar]"));
+
+      // Trigger intersection — queues 3 staggered timers
+      act(() => triggerIntersection(root, true));
+      expect(timers.length).toBe(3);
+
+      // Unmount BEFORE flushing timers (mid-stagger)
+      unmount();
+
+      // Every queued timer id should have been cleared
+      expect(clearedTimerIds.size).toBeGreaterThanOrEqual(3);
+
+      // Now flush — bars should NOT have received their target widths
+      act(() => flushTimers());
+      for (const barEl of barEls) {
+        // Still at 0% — the timers were cleared before they could mutate the DOM
+        expect(barEl.style.width).toBe("0%");
+      }
+    });
+
+    it("clears staggered timers on effect re-run (prop change mid-stagger)", () => {
+      const { container, rerender } = render(
+        <ProgressBar bars={[bar("80%"), bar("60%")]} delay={100} />,
+      );
+      const root = container.firstElementChild as HTMLElement;
+
+      act(() => triggerIntersection(root, true));
+      // 2 timers queued, not yet flushed
+      expect(timers.length).toBe(2);
+
+      // Change props — triggers effect cleanup then re-run
+      act(() => rerender(<ProgressBar bars={[bar("50%"), bar("30%")]} delay={100} />));
+
+      // Cleanup should have cleared the original timers
+      expect(clearedTimerIds.size).toBeGreaterThanOrEqual(2);
     });
   });
 

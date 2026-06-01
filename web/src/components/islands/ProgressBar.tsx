@@ -56,12 +56,17 @@ export function ProgressBar({
       bar.style.width = "0%";
     });
 
+    let cancelled = false;
+    const timerIds: ReturnType<typeof setTimeout>[] = [];
+
     function animateBars() {
       barEls.forEach((bar, index) => {
-        setTimeout(() => {
+        const id = setTimeout(() => {
+          if (cancelled) return;
           bar.style.transition = `width ${duration}ms ease-out`;
           bar.style.width = bar.dataset.targetWidth ?? "0%";
         }, index * delay);
+        timerIds.push(id);
       });
     }
 
@@ -80,6 +85,8 @@ export function ProgressBar({
     observer.observe(wrapper);
 
     return () => {
+      cancelled = true;
+      timerIds.forEach(clearTimeout);
       observer.disconnect();
     };
   }, [bars, delay, duration]);
