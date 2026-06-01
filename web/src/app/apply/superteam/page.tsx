@@ -1,3 +1,4 @@
+import { cache } from "react";
 import type { Metadata } from "next";
 
 import { loadResume } from "@/lib/content/resume";
@@ -12,6 +13,10 @@ import {
 
 import { ScrollReveal } from "@/components/islands/ScrollReveal";
 import { Counter } from "@/components/islands/Counter";
+
+// Dedupe the YAML read+parse across generateMetadata and the page body within a
+// single render pass (mirrors the cache() pattern used by the work routes).
+const getResume = cache(() => loadResume());
 
 // ---------------------------------------------------------------------------
 // Static SSG RSC. All data comes from local YAML (resume.yml + achievements.yml)
@@ -41,7 +46,7 @@ import { Counter } from "@/components/islands/Counter";
 // `robots`, so the layout value survives).
 // ---------------------------------------------------------------------------
 export function generateMetadata(): Metadata {
-  const resume = loadResume();
+  const resume = getResume();
   return {
     title: "RECTOR | Superteam Application",
     openGraph: {
@@ -56,7 +61,7 @@ export function generateMetadata(): Metadata {
 // Page
 // ---------------------------------------------------------------------------
 export default function SuperteamPage() {
-  const resume = loadResume();
+  const resume = getResume();
   const { all: achievements, totalEarnings, winCount } = loadAchievements();
 
   const stats = buildStats(
@@ -258,7 +263,9 @@ export default function SuperteamPage() {
         </section>
 
         <footer className="superteam-footer">
-          <p>Built with Rails 8 · rectorspace.com/apply/superteam</p>
+          {/* Tech attribution updated for the migrated stack — the Rails source
+              read "Built with Rails 8"; this page is now served by Next.js. */}
+          <p>Built with Next.js · rectorspace.com/apply/superteam</p>
           <p>{buildDate}</p>
         </footer>
       </div>
