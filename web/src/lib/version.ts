@@ -34,11 +34,34 @@ export {
 } from "./version-view";
 export type { VersionView, VersionHidden, VersionInput } from "./version-view";
 
-interface VersionFile {
+export interface VersionFile {
   sha?: string | null;
   branch?: string | null;
   commitCount?: number | null;
   buildTime?: string | null;
+}
+
+/**
+ * Parse raw `.version.json` contents into a VersionFile.
+ *
+ * Pure + total: `JSON.parse` accepts more than objects (the literal `null`, a
+ * number, a string, an array all parse successfully), so guard the result to a
+ * plain object and fall back to `{}` on any non-object value or parse error.
+ * This is what lets readVersionFile honor its "never throws" contract — a torn
+ * write or a hand-corrupted file degrades to nulls instead of throwing
+ * `Cannot read properties of null` during the layout's build-time render.
+ */
+export function parseVersionFile(raw: string | null | undefined): VersionFile {
+  if (raw == null) return {};
+  let parsed: unknown;
+  try {
+    parsed = JSON.parse(raw);
+  } catch {
+    return {};
+  }
+  return parsed != null && typeof parsed === "object" && !Array.isArray(parsed)
+    ? (parsed as VersionFile)
+    : {};
 }
 
 /**
@@ -50,7 +73,7 @@ interface VersionFile {
 function readVersionFile(): VersionFile {
   try {
     const file = path.join(process.cwd(), ".version.json");
-    return JSON.parse(readFileSync(file, "utf8")) as VersionFile;
+    return parseVersionFile(readFileSync(file, "utf8"));
   } catch {
     return {};
   }
