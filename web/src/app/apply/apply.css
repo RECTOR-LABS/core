@@ -1825,11 +1825,16 @@
   }
 }
 
-/* Smooth theme transition */
-body {
+/* Smooth theme transition — scoped to the apply wrappers (NOT bare `body`/`[data-theme]`):
+   Next/React keeps this stylesheet loaded across client-side navigations, so bare rules
+   would leak into /, /work, /journal. The arbital switcher toggles the wrapper class
+   (.retro-terminal <-> .modern-dark), so the transition belongs on the wrapper. */
+.retro-terminal,
+.modern-dark {
   transition: background-color 0.3s ease;
 }
 
-[data-theme] {
+.retro-terminal [data-theme],
+.modern-dark [data-theme] {
   transition: opacity 0.3s ease;
 }
