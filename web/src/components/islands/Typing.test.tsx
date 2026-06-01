@@ -164,6 +164,35 @@ describe("Typing island", () => {
     });
   });
 
+  describe("prefers-reduced-motion", () => {
+    afterEach(() => {
+      vi.restoreAllMocks();
+    });
+
+    it("shows the full text immediately with no typing animation", () => {
+      vi.spyOn(window, "matchMedia").mockReturnValue({
+        matches: true,
+        media: "(prefers-reduced-motion: reduce)",
+        onchange: null,
+        addListener: () => {},
+        removeListener: () => {},
+        addEventListener: () => {},
+        removeEventListener: () => {},
+        dispatchEvent: () => false,
+      } as MediaQueryList);
+
+      const { container } = render(<Typing text="Hello World" speed={50} />);
+      const textEl = container.querySelector<HTMLElement>("[data-text]")!;
+
+      // Full text is present immediately — no timers advanced.
+      expect(textEl.textContent).toBe("Hello World");
+
+      // And it stays put: no typing loop was scheduled.
+      act(() => vi.runAllTimers());
+      expect(textEl.textContent).toBe("Hello World");
+    });
+  });
+
   describe("edge cases", () => {
     it("handles empty text without throwing", () => {
       expect(() => render(<Typing text="" />)).not.toThrow();

@@ -286,6 +286,69 @@ describe("ProgressBar island", () => {
     });
   });
 
+  describe("prefers-reduced-motion", () => {
+    afterEach(() => {
+      vi.restoreAllMocks();
+    });
+
+    function mockReduced() {
+      vi.spyOn(window, "matchMedia").mockReturnValue({
+        matches: true,
+        media: "(prefers-reduced-motion: reduce)",
+        onchange: null,
+        addListener: () => {},
+        removeListener: () => {},
+        addEventListener: () => {},
+        removeEventListener: () => {},
+        dispatchEvent: () => false,
+      } as MediaQueryList);
+    }
+
+    it("bars mode: leaves each bar at its target width (never 0%), no observer or timers", () => {
+      mockReduced();
+
+      const { container } = render(
+        <ProgressBar bars={[bar("75%"), bar("50%"), bar("30%")]} />,
+      );
+      const barEls = Array.from(container.querySelectorAll<HTMLElement>("[data-bar]"));
+
+      expect(barEls[0].style.width).toBe("75%");
+      expect(barEls[1].style.width).toBe("50%");
+      expect(barEls[2].style.width).toBe("30%");
+      for (const b of barEls) {
+        expect(b.style.width).not.toBe("0%");
+      }
+
+      // No reset/animation machinery was set up.
+      expect(observers.length).toBe(0);
+      expect(timers.length).toBe(0);
+    });
+
+    it("children mode: sets each nested bar to its data-target-width immediately", () => {
+      mockReduced();
+
+      const { container } = render(
+        <ProgressBar>
+          <div className="tech-item">
+            <div className="tech-bar" data-bar data-target-width="85%" style={{ width: "85%" }} />
+          </div>
+          <div className="tech-item">
+            <div className="tech-bar" data-bar data-target-width="50%" style={{ width: "50%" }} />
+          </div>
+        </ProgressBar>,
+      );
+      const bars = Array.from(container.querySelectorAll<HTMLElement>("[data-bar]"));
+
+      expect(bars[0].style.width).toBe("85%");
+      expect(bars[1].style.width).toBe("50%");
+      for (const b of bars) {
+        expect(b.style.width).not.toBe("0%");
+      }
+      expect(observers.length).toBe(0);
+      expect(timers.length).toBe(0);
+    });
+  });
+
   describe("edge cases", () => {
     it("renders with no bars without throwing", () => {
       expect(() => render(<ProgressBar bars={[]} />)).not.toThrow();

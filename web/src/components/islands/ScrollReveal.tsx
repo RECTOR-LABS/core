@@ -43,6 +43,21 @@ export function ScrollReveal({
 
     const items = Array.from(wrapper.children) as HTMLElement[];
 
+    // a11y: when the user prefers reduced motion, reveal every item in its final
+    // visible state immediately and skip the observer entirely. (Skipping ONLY
+    // the observer would leave items at opacity:0 forever — they must be shown.)
+    const reduced =
+      typeof window !== "undefined" &&
+      window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (reduced) {
+      items.forEach((item) => {
+        item.style.opacity = "1";
+        item.style.transform = "none";
+        item.style.transition = "none";
+      });
+      return;
+    }
+
     // Set initial state — identical to Stimulus connect()
     items.forEach((item, index) => {
       item.style.opacity = "0";

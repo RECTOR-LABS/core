@@ -34,6 +34,16 @@ export function Counter({ number = 0, display = "", duration = 1500 }: CounterPr
     const el = elRef.current;
     if (!el) return;
 
+    // a11y: when the user prefers reduced motion, jump straight to the final
+    // value — skip the count-up animation, the observer and rAF entirely.
+    const reduced =
+      typeof window !== "undefined" &&
+      window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (reduced) {
+      el.textContent = display !== "" ? display : number.toLocaleString();
+      return;
+    }
+
     animated.current = false;
 
     let cancelled = false;

@@ -60,6 +60,22 @@ export function BootSequence({
     );
     const contentEl = wrapper.querySelector<HTMLElement>("[data-content]");
 
+    // a11y: when the user prefers reduced motion, skip the boot typing and show
+    // every line + the content in their final visible state immediately. Each
+    // line's text is already present in JSX ({line}) so we only reveal it.
+    const reduced =
+      typeof window !== "undefined" &&
+      window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (reduced) {
+      lineEls.forEach((el) => {
+        el.style.opacity = "1";
+      });
+      if (contentEl) {
+        contentEl.style.opacity = "1";
+      }
+      return;
+    }
+
     // Store original text and clear — mirrors Stimulus connect()
     const originalTexts = lineEls.map((el) => {
       const text = el.dataset.originalText ?? el.textContent ?? "";

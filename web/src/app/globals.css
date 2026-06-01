@@ -25,6 +25,24 @@ body {
   line-height: 1.8;
 }
 
+/* a11y reduced-motion safety net — applies site-wide (homepage, work, journal,
+   /apply). Defense-in-depth: the animation islands also JS-guard on
+   matchMedia("(prefers-reduced-motion: reduce)") and jump straight to their
+   end-state, but this neutralises any remaining CSS transitions/keyframes
+   (e.g. the contribution-cascade and pulse-live animations) for users who opt
+   out of motion. Left unlayered with !important so it wins over Tailwind
+   utilities. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
 @layer base {
   h1, h2, h3, h4, h5, h6 {
     @apply font-mono font-bold text-brown;

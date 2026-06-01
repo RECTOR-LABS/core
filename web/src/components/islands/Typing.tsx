@@ -49,6 +49,17 @@ export function Typing({
     if (!textEl) return;
 
     originalText.current = text;
+
+    // a11y: when the user prefers reduced motion, skip the typing animation and
+    // show the final text immediately (the span renders empty in JSX).
+    const reduced =
+      typeof window !== "undefined" &&
+      window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (reduced) {
+      textEl.textContent = text;
+      return;
+    }
+
     textEl.textContent = "";
 
     let cancelled = false;

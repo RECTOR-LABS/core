@@ -241,6 +241,50 @@ describe("Counter island", () => {
     });
   });
 
+  describe("prefers-reduced-motion", () => {
+    afterEach(() => {
+      vi.restoreAllMocks();
+    });
+
+    function mockReduced() {
+      vi.spyOn(window, "matchMedia").mockReturnValue({
+        matches: true,
+        media: "(prefers-reduced-motion: reduce)",
+        onchange: null,
+        addListener: () => {},
+        removeListener: () => {},
+        addEventListener: () => {},
+        removeEventListener: () => {},
+        dispatchEvent: () => false,
+      } as MediaQueryList);
+    }
+
+    it("shows the display string immediately with no observer or rAF", () => {
+      mockReduced();
+
+      const { container } = render(
+        <Counter number={31050} display="$31,050+" duration={1500} />,
+      );
+      const el = container.firstElementChild as HTMLElement;
+
+      // Final display value shown immediately — no intersection fired, no rAF.
+      expect(el.textContent).toBe("$31,050+");
+      expect(observers.length).toBe(0);
+      expect(rafCallbacks.length).toBe(0);
+    });
+
+    it("shows the localized target number immediately when display is empty", () => {
+      mockReduced();
+
+      const { container } = render(<Counter number={1234} display="" />);
+      const el = container.firstElementChild as HTMLElement;
+
+      expect(el.textContent).toBe((1234).toLocaleString());
+      expect(observers.length).toBe(0);
+      expect(rafCallbacks.length).toBe(0);
+    });
+  });
+
   describe("cleanup", () => {
     it("disconnects observer on unmount", () => {
       const { unmount } = render(<Counter number={100} />);

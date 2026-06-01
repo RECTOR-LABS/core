@@ -227,6 +227,46 @@ describe("ScrollReveal island", () => {
     });
   });
 
+  describe("prefers-reduced-motion", () => {
+    afterEach(() => {
+      vi.restoreAllMocks();
+    });
+
+    it("reveals every child immediately (opacity 1, no hidden transform, no transition) and never observes", () => {
+      vi.spyOn(window, "matchMedia").mockReturnValue({
+        matches: true,
+        media: "(prefers-reduced-motion: reduce)",
+        onchange: null,
+        addListener: () => {},
+        removeListener: () => {},
+        addEventListener: () => {},
+        removeEventListener: () => {},
+        dispatchEvent: () => false,
+      } as MediaQueryList);
+
+      const { container } = render(
+        <ScrollReveal>
+          <div>A</div>
+          <div>B</div>
+          <div>C</div>
+        </ScrollReveal>,
+      );
+      const items = Array.from(container.firstElementChild!.children) as HTMLElement[];
+
+      for (const item of items) {
+        expect(item.style.opacity).toBe("1");
+        // Must NOT be left in the hidden start-state.
+        expect(item.style.transform).not.toBe("translateY(20px)");
+        expect(item.style.transform).toBe("none");
+        // The 0.6s reveal transition must NOT be applied.
+        expect(item.style.transition).toBe("none");
+      }
+
+      // No IntersectionObserver was created — nothing to reveal-on-scroll.
+      expect(observers.length).toBe(0);
+    });
+  });
+
   describe("edge cases", () => {
     it("renders with no children without throwing", () => {
       expect(() => render(<ScrollReveal />)).not.toThrow();

@@ -66,6 +66,20 @@ export function ProgressBar({
       wrapper.querySelectorAll<HTMLElement>("[data-bar]"),
     );
 
+    // a11y: when the user prefers reduced motion, show every bar at its final
+    // target width immediately — no 0% reset, no transition, no observer/timers.
+    // (`data-target-width` is authored in JSX for both modes; fall back to the
+    // already-applied inline width if it is somehow absent.)
+    const reduced =
+      typeof window !== "undefined" &&
+      window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (reduced) {
+      barEls.forEach((bar) => {
+        bar.style.width = bar.dataset.targetWidth ?? bar.style.width;
+      });
+      return;
+    }
+
     // Reset every bar to 0% — mirrors Stimulus connect(). Each bar's target is
     // read back from its own `data-target-width` when it animates.
     barEls.forEach((bar) => {

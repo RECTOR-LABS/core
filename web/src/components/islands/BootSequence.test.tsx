@@ -210,6 +210,50 @@ describe("BootSequence island", () => {
     });
   });
 
+  describe("prefers-reduced-motion", () => {
+    afterEach(() => {
+      vi.restoreAllMocks();
+    });
+
+    it("reveals every line (full text + opacity 1) and the content immediately, no typing", () => {
+      vi.spyOn(window, "matchMedia").mockReturnValue({
+        matches: true,
+        media: "(prefers-reduced-motion: reduce)",
+        onchange: null,
+        addListener: () => {},
+        removeListener: () => {},
+        addEventListener: () => {},
+        removeEventListener: () => {},
+        dispatchEvent: () => false,
+      } as MediaQueryList);
+
+      const { container } = render(
+        <BootSequence
+          lines={["BIOS v1.0", "Loading...", "OK"]}
+          content={<div>MAIN CONTENT</div>}
+        />,
+      );
+      const lines = getLines(container);
+      const content = getContent(container)!;
+
+      // Every line shows its full text AND is visible — no timers advanced.
+      expect(lines[0].textContent).toBe("BIOS v1.0");
+      expect(lines[1].textContent).toBe("Loading...");
+      expect(lines[2].textContent).toBe("OK");
+      for (const line of lines) {
+        expect(line.style.opacity).toBe("1");
+      }
+
+      // Content is revealed immediately too.
+      expect(content.style.opacity).toBe("1");
+
+      // No typing/line timers were scheduled — state is stable.
+      act(() => vi.runAllTimers());
+      expect(lines[2].textContent).toBe("OK");
+      expect(content.style.opacity).toBe("1");
+    });
+  });
+
   describe("edge cases", () => {
     it("renders with empty lines array without throwing", () => {
       expect(() =>
