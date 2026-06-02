@@ -4,79 +4,23 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Repository Overview
 
-**RECTOR LABS CORE** is a Rails 8 monolithic application serving the complete rectorspace.com ecosystem. This is the single source of truth for all platform sections.
+**RECTOR LABS CORE** is the **Next.js 16** application serving the complete rectorspace.com ecosystem — the single source of truth for every platform section.
 
-**Current Status:** Live in production with Homepage and Work sections. Built in one weekend (Nov 2-3, 2025), deployed with CI/CD.
+**Current Status:** Live in production on **Vercel**. Migrated from a Rails 8 monolith to Next.js 16 (App Router, SSG/ISR, no database) in **June 2026**; the Rails app remains in git history prior to that migration.
 
-**Tech Stack:** Ruby on Rails 8 (fullstack, hybrid) + Tailwind CSS v4
+**Tech Stack:** Next.js 16.2.6 (App Router) · React 19.2 · TypeScript · Tailwind CSS v4 (CSS-first `@theme`) · Vitest · self-hosted JetBrains Mono. No database — all content is file-based (markdown + YAML), committed to git.
 
 ---
 
-## RECTOR's Achievements (YAML-Driven)
+## ⚠️ This is NOT the Next.js you may know
 
-**Source of Truth:** `config/achievements.yml`
+See `AGENTS.md`: this Next version has breaking changes from older releases — APIs, conventions, and file structure may differ from training data. **Read the relevant guide in `node_modules/next/dist/docs/` before writing any Next-specific code** (metadata, route handlers, `ImageResponse`, caching, params). Key specifics already established in this codebase:
 
-Achievements are managed via a YAML file. Homepage, meta tags, and totals auto-calculate.
-
-**To add a new achievement:**
-1. Edit `config/achievements.yml`
-2. Add entry at the top (newest first)
-3. Deploy - everything auto-updates
-
-**Auto-calculated fields:**
-- `Achievement.total_earnings` → sum of all prize amounts
-- `Achievement.win_count` → total count
-- `Achievement.year_range` → "2024-2026" from dates
-- `Achievement.winner_projects` → hash for project badges
-
-**Architecture:**
-```
-config/achievements.yml          # Single source of truth
-app/models/achievement.rb        # PORO - loads YAML, queries, calculates
-app/helpers/achievements_helper.rb  # Formatting helpers
-app/views/pages/_achievement_card.html.erb  # Reusable card partial
-```
-
-**Project Details:**
-
-1. **Web3 Deal Discovery** (`RECTOR-LABS/web3-deal-discovery-nft-coupons`)
-   - NFT coupons on Solana — "Groupon meets DeFi"
-   - Escrow-based resale marketplace (industry-first)
-   - Stack: Solana Anchor + Next.js 15 + Supabase + Tailwind v4
-
-2. **SIP Protocol** (`sip-protocol/sip-protocol`)
-   - Privacy layer for cross-chain transactions via NEAR Intents + Zcash
-   - Stealth addresses, Pedersen commitments, ZK proofs
-   - Stack: Next.js 14 + pnpm monorepo + noble/curves
-
-3. **OpenBudget.ID** (`openbudget-garuda-spark`)
-   - Government spending transparency on Solana for Indonesia
-   - Ministries publish on-chain, citizens verify immutably
-   - Stack: Solana Anchor + Next.js 14 + PostgreSQL
-
-4. **Saros SDK Docs** (`rz1989s/saros-docs`)
-   - Comprehensive Docusaurus documentation for Saros Finance SDKs
-   - Interactive API Explorer, 15+ tutorials, production examples
-   - Live: https://saros-docs.rectorspace.com
-
-5. **SOLIS** (`RECTOR-LABS/solis`)
-   - Solana Onchain & Landscape Intelligence Signal
-   - 4-layer signal fusion (social, developer, DeFi, market) with Z-score anomaly detection
-   - LLM narrative clustering + build idea generation, autonomous daily reports
-   - Stack: TypeScript + Next.js 15 + Claude Haiku (OpenRouter) + Recharts
-   - Live: https://solis.rectorspace.com
-
-6. **pNode Pulse** (`RECTOR-LABS/pnode-pulse`)
-   - Real-time analytics for Xandeum's decentralized pNode storage network
-   - TimescaleDB time-series, health scoring, 200+ nodes tracked
-   - Stack: Next.js 14 + TypeScript + tRPC + TimescaleDB + Redis
-   - Live: https://pulse.rectorspace.com
-
-7. **Solana Security Audit** (`RECTOR-LABS/solana-security-audit`)
-   - 1st place ($1,500 USDG) out of 116 submissions on Superteam Earn
-   - Systematic audit of 14 open-source Solana repos, 13 vulnerabilities found across 7 repos
-   - Submitted: Anchor CPI Return Data Spoofing (CVSSv3 7.5) — framework-level impact
-   - Stack: Rust + Anchor + Solana CLI
+- RSC by default; client islands need `"use client"`.
+- Dynamic route `params` is an **awaited Promise** (`const { slug } = await params`).
+- Metadata merges layout → page (auto-derives `og:title` from `title`).
+- Tailwind v4 is **CSS-first** (`@theme` in `src/app/globals.css`), no `tailwind.config.js`.
+- `process.cwd()` at build/runtime is the **repo root** (file loaders read `content/`, `data/`, `public/` from there).
 
 ---
 
@@ -86,19 +30,15 @@ Single domain `rectorspace.com` with route-based sections:
 
 | Section | Route | Purpose | Status |
 |---------|-------|---------|--------|
-| Homepage | / | Identity hub & landing | ✅ Live |
-| Work | /work | Story-driven project showcase | ✅ Live |
-| Labs | /labs | Experiments & learning projects | 📋 Planned |
-| Journal | /journal | Blog & writings (native file-based markdown) | ✅ Live |
-| Cheatsheet | /cheatsheet | Dev reference & notes | 📋 Planned |
-| Dakwa | /dakwa | Islamic da'wah content | 📋 Planned |
-| Quran | /quran | Quranic resources & tools | 📋 Planned |
+| Homepage | `/` | Identity hub & landing | ✅ Live |
+| Work | `/work`, `/work/:slug` | Story-driven project showcase | ✅ Live |
+| Journal | `/journal`, `/journal/:slug` | File-based markdown blog | ✅ Live |
+| Apply | `/apply/*` | Targeted CVs (noindex) | ✅ Live |
+| Labs | `/labs` | Experiments & learning | 📋 Planned |
+| Cheatsheet | `/cheatsheet` | Dev reference | 📋 Planned |
+| Dakwa / Quran | `/dakwa`, `/quran` | Da'wah & Quranic content | 📋 Planned |
 
-**Architecture Decision:**
-- Rails monolith for unified codebase, shared authentication, single deployment
-- Route-based sections instead of separate apps/subdomains
-- Work (story-driven narratives) separate from Labs (experiments/learning)
-- Journal section uses native file-based markdown (no external CMS)
+New sections follow the same **file-based content + PORO-style loader** pattern (mirror `src/lib/content/posts.ts` over `content/<section>/*.md`); deploy = publish.
 
 ---
 
@@ -106,402 +46,113 @@ Single domain `rectorspace.com` with route-based sections:
 
 ```
 core/
-├── .github/workflows/       # GitHub Actions (Claude Code integration)
-├── app/
-│   ├── controllers/
-│   │   ├── pages_controller.rb       # Homepage (✅ implemented)
-│   │   └── works_controller.rb       # Work section (✅ implemented)
-│   ├── models/
-│   │   ├── achievement.rb            # PORO for YAML achievements (✅ implemented)
-│   │   ├── github_repo.rb            # GitHub repository cache (✅ implemented)
-│   │   └── work.rb                   # Work/project stories (✅ implemented)
-│   ├── views/
-│   │   ├── layouts/application.html.erb
-│   │   ├── pages/home.html.erb       # Homepage view (✅ implemented)
-│   │   └── works/
-│   │       ├── index.html.erb        # Work listing (✅ implemented)
-│   │       └── show.html.erb         # Story page with custom CSS (✅ implemented)
-│   ├── helpers/
-│   │   ├── achievements_helper.rb    # Achievement summary formatting (✅ implemented)
-│   │   └── works_helper.rb           # Markdown rendering (✅ implemented)
-│   ├── jobs/
-│   │   └── sync_github_repos_job.rb  # Hourly GitHub sync (✅ implemented)
-│   └── services/
-│       ├── github_api_service.rb     # GitHub API client (✅ implemented)
-│       └── tech_stack_parser.rb      # Language parser (✅ implemented)
-├── config/
-│   ├── achievements.yml              # Single source of truth for achievements (✅ implemented)
-│   ├── routes.rb                     # Routes for /, /work (✅ configured)
-│   └── recurring.yml                 # Solid Queue job schedule
-├── db/
-│   ├── migrate/                      # Database migrations
-│   ├── schema.rb                     # Current schema
-│   └── seeds.rb                      # Database seeds with CORE story (✅ implemented)
-├── lib/tasks/
-│   └── github.rake                   # Manual sync tasks (✅ implemented)
-├── assets/images/                    # Brand assets (3 logo variants + profile)
-├── docs/                             # Documentation
-│   ├── DESIGN_SYSTEM.md
-│   ├── PIXEL_ART_RESOURCES.md
-│   └── RAILS_INITIALIZATION_PLAN.md
-├── .env                              # Environment variables (gitignored)
-└── .env.example                      # Template for setup
+├── src/
+│   ├── app/                       # App Router routes
+│   │   ├── layout.tsx             # root metadata (metadataBase=SITE_URL) + fonts + VersionFooter
+│   │   ├── page.tsx               # Homepage (RSC + ISR, revalidate 3600)
+│   │   ├── globals.css            # Tailwind v4 @theme tokens + all component CSS
+│   │   ├── og-image.png/route.ts  # OG image Route Handler (Satori) → /og-image.png
+│   │   ├── sitemap.ts             # sitemap.xml (indexable routes; excludes /apply)
+│   │   ├── robots.ts              # robots.txt (allow all, sitemap ref)
+│   │   ├── work/                  # /work index + /work/[slug] (SSG)
+│   │   ├── journal/               # /journal index + /journal/[slug] (SSG)
+│   │   └── apply/                 # /apply/* CVs (noindex; dark themes via apply.css)
+│   ├── lib/
+│   │   ├── site.ts                # SITE_URL = https://rectorspace.com (single source)
+│   │   ├── seo.ts                 # pageMetadata() — shared title/canonical/og/twitter
+│   │   ├── og/render.tsx          # Satori OG composition (used by the route handler)
+│   │   ├── content/               # file loaders: posts, works, achievements, resume, arbital, superteam
+│   │   ├── github/                # repos, contributions, tech-stack (needs GITHUB_TOKEN)
+│   │   ├── version.ts             # build-time version stamp (footer)
+│   │   └── format.ts, repo-time.ts, …
+│   └── components/
+│       ├── home/                  # AchievementCard, ProjectCard, TechStackBar, …
+│       ├── islands/               # "use client" islands: ContributionGraph, FilterSort, Counter, …
+│       └── VersionFooter.tsx, Markdown.tsx
+├── content/
+│   ├── work/*.md                  # project stories (front matter + markdown)
+│   └── journal/*.md               # blog posts (front matter + markdown)
+├── data/
+│   ├── achievements.yml           # awards/wins (totals auto-calculated)
+│   └── resume.yml                 # CV data for /apply pages + resume PDF
+├── public/{fonts,images,*.svg}    # self-hosted WOFF2 fonts, profile/OG assets
+├── scripts/
+│   ├── gen-version.mjs            # npm prebuild → .version.json (gitignored)
+│   └── generate-resume-pdf.mjs    # npm run resume:pdf
+├── next.config.ts                 # experimental.inlineCss (cuts render-blocking CSS)
+├── AGENTS.md                      # the "non-standard Next" warning
+└── docs/                          # DESIGN_SYSTEM.md, etc. (docs/superpowers/ is gitignored)
 ```
 
-**Branches:** `main` (default; push to `main` deploys to production) | feature branches (`feat/*`, `fix/*`, `docs/*`, `chore/*`, `refactor/*`) → PR into `main`
+---
+
+## Data Layer (file-based, no DB)
+
+- **Content:** `content/work/*.md` and `content/journal/*.md` — YAML front matter + markdown body, loaded by `src/lib/content/{works,posts}.ts` (`loadWorks()`/`loadPosts()` → `{ all, published, recent(), find() }`). Drafts excluded from listings + 404 on show. To publish: add a file, commit, deploy.
+- **Achievements:** `data/achievements.yml` → `src/lib/content/achievements.ts` (`loadAchievements()` → `winCount`, `totalEarnings`, etc.). Drives the homepage, OG image, and `/apply` stats.
+- **Resume / CVs:** `data/resume.yml` → `src/lib/content/resume.ts` + the `/apply/*` pages. `npm run resume:pdf` renders the PDF.
+
+---
+
+## SEO & Metadata (prod parity is load-bearing)
+
+- **`src/lib/seo.ts` — `pageMetadata({ title?, description, path, ogType? })`** is the single source for every indexable route's `<title>` (suffix `• RECTOR • Building for Eternity`), `canonical`, `og:url`, `og:image`, and `twitter` card. Pass **relative** paths — `metadataBase` (from `SITE_URL`) absolutizes them. Do NOT hand-roll metadata in routes or re-hardcode the suffix.
+- **OG image:** served at **`/og-image.png`** by a Route Handler (`src/app/og-image.png/route.ts`, `force-static`) rendering `src/lib/og/render.tsx` (Satori). The path is fixed for parity — already-shared social cards reference `https://rectorspace.com/og-image.png`; do not rename it.
+- **`sitemap.ts` / `robots.ts`** enumerate indexable routes (excluding noindex `/apply/*`). `robots.ts` intentionally has **no `Disallow: /apply`** (the noindex meta + sitemap-exclusion is the right mechanism; disallowing would hide the noindex from crawlers).
 
 ---
 
 ## Design System
 
-**Complete specification:** See `docs/DESIGN_SYSTEM.md`
+**Spec:** `docs/DESIGN_SYSTEM.md`. Tokens live in `src/app/globals.css` (`@theme`).
 
-**Color Palette (NFT-inspired warm theme):**
-- Primary: Sky Blue `#41CFFF` (links), Warm Yellow `#F9C846` (accents)
-- Base: Soft Cream `#FFF7E1` (background), Deep Brown `#3B2C22` (text)
-- Supporting: Clay Orange `#E58C2E`, Leaf Green `#A8E063`, Muted Red `#C75A44`
-
-**Typography:** JetBrains Mono (full stack - headings, body, code)
-- Weights: 400 (body), 500 (emphasis), 600 (subheadings), 700 (headings)
-- Size: 18px body (monospace needs larger size for readability)
-- Line height: 1.75-1.875 (generous for comfort)
-
-**Layout Philosophy:**
-- DHH.dk inspired: Minimal navigation, letter-style narrative, embedded links
-- Basecamp inspired: Generous whitespace, conversational tone, calm spacing
-- No navbar/footer/sidebar - links integrated naturally in text
-- Profile picture (NFT): 150px rounded circle, centered, subtle shadow
-
-**Visual Style:**
-- Light/warm theme only (no dark mode)
-- Pixel art graphics from Kenney.nl/itch.io (see `docs/PIXEL_ART_RESOURCES.md`)
-- Clean, minimal, content-focused
-- Anonymous identity via NFT profile picture
-
----
-
-## Rails Development Workflow
-
-**Prerequisites:**
-- Ruby 3.3+ (use rbenv or asdf)
-- Rails 8
-- PostgreSQL (recommended) or SQLite (development)
-- Node.js 18+ (for asset pipeline)
-
-**Common Commands:**
-```bash
-# Start development server
-bin/rails server
-# or use foreman (runs web + css watcher)
-bin/dev
-
-# Run console
-bin/rails console
-
-# Database setup
-bin/rails db:create db:migrate db:seed
-
-# GitHub integration
-bin/rails github:sync           # Manually sync repos from GitHub
-bin/rails github:tech_stack     # Show tech stack summary
-
-# Run tests
-bin/rails test
-
-# Generate scaffolds
-bin/rails generate controller Portfolio index show
-bin/rails generate model Project title:string description:text
-```
-
-**Running the App:**
-```bash
-# First time setup
-bundle install
-cp .env.example .env          # Then add your GitHub token
-bin/rails db:setup
-bin/rails github:sync         # Initial sync of repos
-
-# Start server
-bin/rails server
-# Visit http://localhost:3000
-```
-
----
-
-## Deployment
-
-**Architecture:** Docker on shared VPS (reclabs3, 151.245.137.75)
-
-```
-GitHub push → Actions build → GHCR image → SSH → docker compose pull → up -d → image prune -f
-```
-
-**Containers** (docker-compose.yml):
-| Service | Image | Port |
-|---------|-------|------|
-| postgres | postgres:16 | 127.0.0.1:5435:5432 |
-| web | ghcr.io/rector-labs/core:latest | 8000:80 |
-| solidqueue | ghcr.io/rector-labs/core:latest | — |
-
-- Puma runs behind Thruster (port 80 inside container)
-- nginx reverse proxies `rectorspace.com` → `127.0.0.1:8000`
-- `db:prepare` runs automatically on container start (entrypoint)
-- Solid Queue runs as a separate container (`bundle exec rake solid_queue:start`)
-
-**VPS User:** `core` (SSH alias: `core`)
-
-**GitHub Secrets:** `VPS_HOST`, `VPS_USER`, `VPS_SSH_KEY`, `VPS_APP_PATH`
-
-**Environment Variables** (VPS `~/core/.env`):
-- `SECRET_KEY_BASE` — Rails secret
-- `CORE_DATABASE_PASSWORD` — PostgreSQL password
-- `GITHUB_TOKEN` — GitHub API access for repo sync
-
-**Security:** Never commit `.env`. DB port bound to localhost only.
-
----
-
-## External Integrations
-
-**Journal Section:**
-- Native file-based blog (no external CMS) — content lives in git
-- Posts are markdown files in `content/journal/*.md` with YAML front matter
-- Rendered via the `Post` PORO + shared `markdown()` helper (Redcarpet); deploy = publish
-
-**Work Section:**
-- Story-driven project pages (narrative format, not traditional portfolio)
-- GitHub repository metadata integration
-- Custom `/work:story` slash command for generating stories
-- Markdown rendering via Redcarpet gem
-- Custom CSS for readability (justified text, generous spacing)
-
-**Quran Section:**
-- Integrate Quran API (quran.com API or similar)
-- Tafsir, translations, recitations
-
----
-
-## Philosophy
-
-**"Building for Eternity"** - Integrating dunya (technical excellence, portfolio) with akhirah (da'wah platforms: dakwa, quran).
-
-**Islamic Values:**
-- **Ihsan (Excellence):** 100% working standard, quality over urgency
-- **Amanah (Trust):** Treat code as sacred responsibility, document thoroughly
-- **Avoid Israf (Waste):** Efficient, clean code, minimal dependencies
-
-**Islamic Expressions (1-2 per interaction):** Bismillah (beginning), Alhamdulillah (success), InshaAllah (future), MashaAllah (admiration). See `~/.claude/CLAUDE.md`.
-
----
-
-## Best Practices
-
-**For Claude Code:**
-1. Read this CLAUDE.md first, check branch (`git branch`), understand Rails conventions
-2. Follow Rails MVC patterns and conventions
-3. Survey docs before creating new `.md` files - propose organization first
-4. Branch from `main` with a typed prefix (`feat/`, `fix/`, `docs/`, `chore/`, `refactor/`) and open a PR into `main`
-5. Update this CLAUDE.md if architecture changes
-6. Use Rails generators when appropriate
-7. Write tests for new features (RSpec or Minitest)
-
-**Commit Format:** `<type>: <description>` (feat/fix/docs/refactor/chore/test)
-
----
-
-## Quick Commands
-
-**Development:**
-```bash
-bin/rails server          # Start dev server (port 3000)
-bin/rails console         # Interactive console
-bin/rails routes          # Show all routes
-bin/rails db:migrate      # Run migrations
-bin/rails test            # Run test suite
-```
-
-**Troubleshooting:**
-```bash
-# Reset database: bin/rails db:reset
-# Clear cache: bin/rails tmp:clear
-# Bundle issues: bundle install --full-index
-# Asset issues: bin/rails assets:clobber && bin/rails assets:precompile
-```
+- **Palette:** Soft Cream `#FFF7E1` (bg), Deep Brown `#3B2C22` (text), Sky `#41CFFF`, Warm Yellow `#F9C846`, Clay `#E58C2E`, Leaf Green `#A8E063`, Muted Red `#C75A44`. Light/warm theme only (the `/apply` arbital pages have their own dark themes in `apply.css`).
+- **WCAG AA text tokens (surface-scoped — important):** readable text on the cream/light surfaces uses darkened tokens — `--color-link #0D7390` (links, 5.07:1), `--color-green-deep #3C6A12` (green stat text), `--color-clay-deep #8A4A12` (gold/winner/bounty/streak badge text), and muted text at `brown/70+`. The **bright** `--color-sky` / `--color-green` / `--color-clay` are kept for **decorative fills** (backgrounds, borders, contribution cells, rings), the **dark `/apply` themes**, and the OG image. When adding readable text, use the `-deep`/`link` tokens to keep accessibility at 100; never darken the shared bright tokens (it would break the fills + dark themes).
+- **Type:** JetBrains Mono, self-hosted WOFF2 (`display:swap`, monospace fallback). Deliberately NOT `next/font/google` (de-Googling). The OG renderer reads the `.ttf` files (Satori can't parse WOFF2) — keep both.
 
 ---
 
 ## GitHub Integration
 
-**Implemented Features (Homepage):**
-- Dynamic project showcase from GitHub API
-- Automatic caching with PostgreSQL database
-- Hourly background sync via Solid Queue
-- Tech stack parser with language categorization
-- Manual sync via rake tasks
+`src/lib/github/{repos,contributions,tech-stack}.ts` fetch live repo/contribution data for the homepage (ISR, hourly `revalidate`). Requires a `GITHUB_TOKEN` env var (read-only `public_repo`); without it the calls degrade gracefully to empty (repo cards render "No projects found"). The **production Vercel project must have a valid `GITHUB_TOKEN`**.
 
-**Architecture:**
-```
-GitHub API → GithubApiService → GithubRepo (model/cache) → PagesController → Homepage View
-                ↓
-           SyncGithubReposJob (hourly)
-                ↓
-           TechStackParser (categorizes languages)
-```
+---
 
-**Data Flow:**
-1. `SyncGithubReposJob` runs every hour (configured in `config/recurring.yml`)
-2. Fetches repos from `rz1989s` (personal) and `RECTOR-LABS` (organization)
-3. Stores in `github_repos` table with metadata (name, description, language, pushed_at, etc.)
-4. `TechStackParser` analyzes all non-fork repos and categorizes by language
-5. Homepage displays 6 latest repos + tech stack summary
+## Deployment (Vercel)
 
-**Current Stats:**
-- 35 total repositories cached (24 personal + 11 organization)
-- 18 non-fork repositories
-- Primary stack: TypeScript (44.4%), Shell (16.7%), JavaScript, Rust, Python
-- Categories: blockchain, web, backend, infra, data, systems
+- Hosted on **Vercel** (project under the `rectors-projects` team). Production deploys from `main`; PRs get preview deployments.
+- **ISR:** homepage + `/work` index `revalidate = 3600` (hourly), matching the old Rails GitHub-sync cadence. Work/journal slug pages are SSG via `generateStaticParams`.
+- **Env:** `GITHUB_TOKEN` (required for repo cards). `VERCEL_ENV` gates the version footer (production-only).
+- `next.config.ts` enables `experimental.inlineCss` (inlines route CSS to cut render-blocking; re-verify after any Next upgrade).
 
-**Environment Variables:**
+---
+
+## Development Workflow
+
 ```bash
-# .env (gitignored)
-GITHUB_TOKEN=ghp_xxx...   # Personal access token
+npm install
+npm run dev            # dev server (Turbopack)
+npm run build          # production build  (set GITHUB_TOKEN for repo data)
+npm run start          # serve the production build
+npm run test           # vitest (run once)
+npm run test:watch
+npx tsc --noEmit       # typecheck
+npm run lint           # eslint
+npm run resume:pdf     # render the resume PDF
 ```
 
-**Benefits:**
-- Rate limit: 5,000 requests/hour (vs 60 without token)
-- Scope: `public_repo` (read-only public repositories)
+**Branches:** `main` (deploys to Vercel production) ← PRs from typed feature branches (`feat/`, `fix/`, `docs/`, `chore/`, `refactor/`).
 
-**Manual Commands:**
-```bash
-bin/rails github:sync          # Sync repos now
-bin/rails github:tech_stack    # Show tech stack summary
-```
+**Commit format:** `<type>: <description>` (feat/fix/docs/refactor/chore/test). One focused change per commit.
 
 ---
 
-## Work Section (Story-Driven Projects)
+## Philosophy
 
-**Implemented Features:**
-- Story-driven project narratives (not traditional portfolio format)
-- Individual project pages at `/work/:slug`
-- Markdown content with Redcarpet rendering
-- Custom CSS for optimal readability (justified text, 2rem paragraph spacing)
-- GitHub repository metadata integration
-
-**Database Schema:**
-```ruby
-create_table "works" do |t|
-  t.string :title          # Project title
-  t.string :slug           # URL-friendly identifier
-  t.string :github_url     # GitHub repository URL
-  t.string :live_url       # Live deployment URL
-  t.string :repo_name      # "owner/repo" format
-  t.text :story            # Full markdown narrative
-  t.text :summary          # One-liner for listing
-  t.string :category       # Project category
-  t.string :status         # "Live", "In Progress", "Archived"
-  t.date :started_at       # Project start date
-  t.date :launched_at      # Launch date
-  t.boolean :featured      # Highlight on homepage
-  t.integer :github_stars  # GitHub stars count
-  t.integer :github_forks  # GitHub forks count
-  t.json :technologies     # Tech stack array
-  t.timestamps
-end
-```
-
-**Custom Slash Command: `/work:story`**
-- Location: `~/.claude/commands/work/story.md`
-- Purpose: Generate story-driven narratives from GitHub repos
-- Features:
-  - Duplicate detection (checks existing stories)
-  - GitHub repo metadata fetching
-  - AI-generated narrative in conversational tone
-  - Proper markdown formatting with blank lines
-  - Automatic database update (local + production)
-- Usage: `/work:story <github-url>`
-- Example: `/work:story https://github.com/RECTOR-LABS/core`
-
-**Story Formatting Guidelines:**
-- Blank lines between ALL paragraphs (critical for Redcarpet)
-- Bold text (`**Section**`) for section headers
-- Conversational, narrative tone (not corporate)
-- Technical details woven into story
-- Focus on "why" and "what I learned"
-- 800-1200 words typical length
-
-**Markdown Rendering:**
-- Gem: Redcarpet
-- Config: `hard_wrap: false` (respects markdown paragraph rules)
-- Features: autolink, tables, fenced code blocks, strikethrough
-- Output: `html_safe` rendered content
-
-**Current Stories:**
-1. **CORE** - Rails 8 monolith story (1,185 words)
-   - URL: https://rectorspace.com/work/core
-   - Slug: `core`
-   - Status: Live
-
-**Work Section Routes:**
-```ruby
-resources :works, only: [:index, :show]
-# GET /work          - List all work projects
-# GET /work/:slug    - Individual project story
-```
+**"Building for Eternity"** — integrating dunya (technical excellence) with akhirah (the planned da'wah sections). Values: **Ihsan** (100%-working standard, edge cases + a11y + perf), **Amanah** (code as trust, documented thoroughly), avoid **Israf** (lean, minimal dependencies).
 
 ---
 
-## Journal Section (File-Based Blog)
+**Maintainer:** RECTOR | **Updated:** 2026-06-02 | **Version:** 4.0 (Next.js on Vercel)
 
-**Implemented Features:**
-- Native file-based blog at `/journal` (no Ghost CMS — content lives in git, PR-reviewable)
-- Posts are markdown files with YAML front matter in `content/journal/*.md`
-- Rendered via the shared `markdown()` helper (Redcarpet); drafts excluded from the index and 404 on show
-- Warm cream theme with dedicated prose + table styling (`journal.css`)
-
-**Front Matter:**
-```yaml
----
-title: Post Title
-slug: optional-slug        # defaults to the filename without .md
-date: 2026-05-30
-summary: One-line excerpt (listing + meta description)
-tags: [tag1, tag2]
-draft: false               # drafts excluded from index and 404 on show
----
-```
-
-**Architecture:**
-```
-content/journal/*.md                    # source of truth (one file per post)
-app/models/post.rb                      # PORO: all/published/recent/find, reading_time
-app/controllers/journal_controller.rb   # index + show (drafts/unknown -> 404)
-app/views/journal/index.html.erb        # post listing
-app/views/journal/show.html.erb         # article (OG article meta)
-app/assets/stylesheets/journal.css      # prose + table styling
-app/helpers/markdown_helper.rb          # shared markdown() (also used by Work)
-```
-
-**Routes:**
-```ruby
-get "journal", to: "journal#index", as: :journal
-get "journal/:slug", to: "journal#show", as: :journal_post
-```
-
-**To add a post:** create `content/journal/<slug>.md` with front matter + markdown body, commit, deploy. The homepage "Latest article" and the `/journal` index update automatically.
-
----
-
-## Resources
-
-**Docs:** [Rails Guides](https://guides.rubyonrails.org) | [Tailwind CSS](https://tailwindcss.com/docs) | [Redcarpet](https://github.com/vmg/redcarpet)
-
-**Links:** [@rz1989s](https://github.com/rz1989s) | [RECTOR-LABS](https://github.com/RECTOR-LABS) | [rectorspace.com](https://rectorspace.com)
-
-**Maintainer:** RECTOR | **Updated:** 2026-05-30 | **Version:** 3.2 (Journal Section Live)
-
----
-
-**May Allah bless this work and make it beneficial. Aamiin.**
-
-**RECTOR LABS** | Building for Eternity | 2025
+**May Allah bless this work and make it beneficial. Aamiin.** — **RECTOR LABS** | Building for Eternity

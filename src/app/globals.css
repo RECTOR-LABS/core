@@ -1,0 +1,1307 @@
+@import "tailwindcss";
+
+@theme {
+  --color-sky: #41CFFF;
+  --color-yellow: #F9C846;
+  --color-cream: #FFF7E1;
+  --color-brown: #3B2C22;
+  --color-clay: #E58C2E;
+  --color-leaf: #A8E063;
+  --color-red: #C75A44;
+  --font-mono: var(--font-jetbrains, ui-monospace, monospace);
+
+  /* Rails @theme aliases — mirror the names above so the ported homepage
+     @apply utilities (bg-sky-blue, text-orange, bg-green, etc.) resolve. */
+  --color-sky-blue: #41CFFF;
+  --color-orange: #E58C2E;
+  --color-green: #A8E063;
+
+  /* Link TEXT color for LIGHT/cream surfaces — a darkened cyan that meets
+     WCAG AA (≥4.5:1). The brand sky (#41CFFF) is only 1.69:1 on cream, far
+     below the 4.5:1 text minimum, so readable links on light backgrounds use
+     this instead. #0D7390 is 5.07:1 on cream #FFF7E1 (verified via the WCAG
+     relative-luminance formula) and keeps the brand's sky/cyan character
+     (hue ~193°, the same family as #41CFFF at 195°).
+     IMPORTANT: --color-sky / --color-sky-blue intentionally STAY #41CFFF —
+     they are correct (good contrast) on the dark /apply themes and as
+     decorative borders/background tints/rings on light surfaces, and they
+     drive the OG image. Only readable link text on cream switches to this. */
+  --color-link: #0D7390;
+
+  /* Dark-green TEXT color for LIGHT/cream surfaces — a leaf-green-derived dark
+     olive-green that meets WCAG AA (≥4.5:1) as readable TEXT. The brand leaf
+     (#A8E063) is only 1.45:1 on cream, so green STAT numbers (prizes, the
+     contribution total, the live-badge label) use this instead.
+     #3C6A12 is 6.02:1 on cream #FFF7E1 and 5.57:1 on the green/20 live-badge
+     tint (#EEF2C8) — both verified via the WCAG relative-luminance formula.
+     It stays in the leaf family (HSL hue ~91°, vs leaf's ~87°), just darker
+     and more saturated, so the palette still reads green not grey.
+     IMPORTANT: --color-green / --color-leaf intentionally STAY #A8E063 — they
+     are correct as the contribution-graph cells, bg-green/* tints, green
+     borders, and the live-pulse dot (all decorative fills, not readable text). */
+  --color-green-deep: #3C6A12;
+
+  /* Dark-clay TEXT color for the gold/winner badges on their bg-yellow/20 tint
+     (#FEEEC2). The brand clay (#E58C2E) is only 2.24:1 on that tint, so the
+     badge LABEL text uses this darkened clay instead. #8A4A12 is 5.94:1 on the
+     yellow/20 badge tint and 6.40:1 on cream — both verified. It stays in the
+     clay/amber family (HSL hue ~28°, vs clay's ~31°), keeping the warm badge
+     character rather than flattening to plain brown.
+     IMPORTANT: --color-clay / --color-orange intentionally STAY #E58C2E — they
+     remain correct as the badge BACKGROUND tints' source colour and elsewhere
+     as decorative fills/borders; only the badge label text darkens. */
+  --color-clay-deep: #8A4A12;
+}
+
+body {
+  background: var(--color-cream);
+  color: var(--color-brown);
+  font-family: var(--font-mono);
+  font-size: 18px;
+  line-height: 1.8;
+}
+
+/* a11y keyboard-focus baseline — a single visible focus ring for every
+   interactive element across all sections. `:focus-visible` shows it only for
+   keyboard navigation (not mouse clicks). The ring is theme-aware to clear
+   WCAG 1.4.11 (>=3:1) on every surface:
+     • Light surfaces (~95% of the site: homepage, /work, /journal, the
+       .superteam-page apply CV) use a dark brown ring — #3B2C22 on cream ~12:1.
+     • The dark /apply themes (.retro-terminal, .modern-dark) flip the ring back
+       to sky (#41CFFF) — see the scoped override in app/apply/apply.css — since
+       brown would be invisible on them.
+     • The version-footer links sit on a brown pill, so they take a cream ring
+       (.version-link:focus-visible below).
+   No border-radius here on purpose: the outline already follows each element's
+   own radius, and setting it would square off rounded controls (e.g. pill chips)
+   on focus. (This baseline replaces the former .journal-list-link:focus-visible rule.) */
+a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible,
+[tabindex]:not([tabindex="-1"]):focus-visible {
+  outline: 2px solid var(--color-brown);
+  outline-offset: 2px;
+}
+
+/* a11y reduced-motion safety net — applies site-wide (homepage, work, journal,
+   /apply). Defense-in-depth: the animation islands also JS-guard on
+   matchMedia("(prefers-reduced-motion: reduce)") and jump straight to their
+   end-state, but this neutralises any remaining CSS transitions/keyframes
+   (e.g. the contribution-cascade and pulse-live animations) for users who opt
+   out of motion. Left unlayered with !important so it wins over Tailwind
+   utilities. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+@layer base {
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-mono font-bold text-brown;
+  }
+
+  h1 { @apply text-4xl leading-tight; }
+  h2 { @apply text-3xl leading-tight; }
+  h3 { @apply text-2xl leading-normal; }
+  h4 { @apply text-xl leading-normal; }
+
+  a {
+    @apply text-link underline transition-colors duration-200;
+  }
+
+  a:hover {
+    @apply text-yellow;
+  }
+
+  code {
+    @apply font-mono;
+  }
+}
+
+/* Journal prose (full port of Rails journal.css → .journal-content rules) */
+.prose-journal { font-size: 1.0625rem; line-height: 1.8; }
+.prose-journal h1 { font-size: 2rem; font-weight: 700; margin: 2.5rem 0 1rem; color: var(--color-brown); }
+.prose-journal h2 { font-size: 1.6rem; font-weight: 700; margin: 2.25rem 0 .9rem; color: var(--color-brown); }
+.prose-journal h3 { font-size: 1.25rem; font-weight: 600; margin: 1.75rem 0 .6rem; color: var(--color-brown); }
+.prose-journal p { margin: 0 0 1.25rem; }
+.prose-journal a { color: var(--color-link); text-decoration: underline; text-underline-offset: 2px; }
+.prose-journal a:hover { color: var(--color-clay); }
+.prose-journal ul,
+.prose-journal ol { margin: 0 0 1.25rem 1.25rem; }
+.prose-journal li { margin: .35rem 0; }
+.prose-journal blockquote { border-left: 3px solid var(--color-yellow); padding-left: 1rem; margin: 1.25rem 0; color: rgba(59, 44, 34, .8); }
+.prose-journal code { background: rgba(59, 44, 34, .07); padding: .1rem .35rem; border-radius: .25rem; font-size: .9em; }
+.prose-journal pre { background: var(--color-brown); color: var(--color-cream); padding: 1rem; border-radius: .5rem; overflow-x: auto; margin: 0 0 1.25rem; }
+.prose-journal pre code { background: transparent; padding: 0; color: inherit; }
+.prose-journal hr { border: 0; border-top: 1px solid rgba(59, 44, 34, .15); margin: 2rem 0; }
+.prose-journal img { max-width: 100%; height: auto; border-radius: .35rem; }
+
+/* Tables — wide reference tables break out beyond the prose column, centered,
+   capped to the viewport so they never exceed the screen width (no horizontal scroll). */
+.prose-journal table {
+  width: min(70rem, 92vw);
+  border-collapse: collapse;
+  margin: 0 0 1.5rem;
+  font-size: .95rem;
+  position: relative;
+  left: 50%;
+  transform: translateX(-50%);
+}
+.prose-journal thead th { background: rgba(249, 200, 70, .25); text-align: left; font-weight: 600; }
+.prose-journal th,
+.prose-journal td { border: 1px solid rgba(59, 44, 34, .15); padding: .55rem .7rem; vertical-align: top; }
+.prose-journal tbody tr:nth-child(even) { background: rgba(59, 44, 34, .03); }
+
+/* Journal listing chrome (port of Rails .journal-list-* and .journal-tag rules) */
+.journal-list { list-style: none; padding: 0; margin: 0; }
+.journal-list-item { padding: 1.5rem 0; border-bottom: 1px solid rgba(59, 44, 34, .1); }
+.journal-list-link { text-decoration: none; }
+.journal-list-title { font-size: 1.4rem; font-weight: 700; color: var(--color-brown); margin: 0 0 .35rem; transition: color .15s; }
+.journal-list-link:hover .journal-list-title { color: var(--color-link); }
+/* keyboard focus ring is provided by the global a:focus-visible baseline (identical outline) */
+.journal-list-meta { font-size: .85rem; color: rgba(59, 44, 34, .75); margin-bottom: .5rem; }
+.journal-list-summary { color: rgba(59, 44, 34, .8); line-height: 1.6; margin: 0 0 .5rem; }
+.journal-tags { display: flex; flex-wrap: wrap; gap: .4rem; }
+.journal-tag { font-size: .72rem; padding: .15rem .5rem; border-radius: .35rem; background: rgba(59, 44, 34, .06); color: rgba(59, 44, 34, .75); }
+
+@layer components {
+  .container-homepage {
+    @apply max-w-2xl mx-auto px-4 sm:px-6 py-8 sm:py-12;
+  }
+
+  .container-homepage p {
+    text-align: justify;
+    text-align-last: left;
+  }
+
+  @media (max-width: 640px) {
+    .container-homepage p {
+      text-align: left;
+    }
+  }
+
+  .profile-picture {
+    @apply w-[120px] h-[120px] sm:w-[150px] sm:h-[150px] rounded-full mx-auto mb-6 sm:mb-8;
+    box-shadow: 0 4px 12px rgba(199, 90, 68, 0.2);
+  }
+
+  .section-divider {
+    @apply border-t-2 border-yellow my-8 sm:my-12;
+  }
+
+  /* Introduction Section */
+  .intro-section {
+    @apply text-center mb-6;
+  }
+
+  .intro-greeting {
+    @apply text-2xl sm:text-3xl font-bold text-brown mb-2;
+  }
+
+  .intro-tagline {
+    @apply text-base sm:text-lg text-brown/70 mb-0;
+  }
+
+  /* Quick Nav */
+  .quick-nav {
+    @apply mt-6 text-center text-sm text-brown/70;
+  }
+
+  .quick-nav a {
+    @apply text-link;
+  }
+
+  /* Achievement Cards */
+  .achievement-card {
+    @apply p-4 rounded-lg border-2 border-brown/10 bg-cream;
+    @apply transition-all duration-200;
+  }
+
+  .achievement-card:hover {
+    @apply border-sky-blue/50 shadow-md;
+    transform: translateX(4px);
+  }
+
+  .achievement-badge {
+    @apply inline-block text-xs font-semibold px-2 py-0.5 rounded-full mb-1;
+  }
+
+  .achievement-gold {
+    @apply bg-yellow/20 text-clay-deep;
+  }
+
+  .achievement-silver {
+    @apply bg-brown/10 text-brown/80;
+  }
+
+  .achievement-bounty {
+    /* text-link on bg-sky-blue/20 = 4.51:1 (AA pass, the tightest badge margin). */
+    @apply bg-sky-blue/20 text-link;
+  }
+
+  .achievement-title {
+    @apply text-lg font-bold text-brown mb-0 leading-tight;
+  }
+
+  .achievement-title a {
+    @apply text-brown no-underline;
+  }
+
+  .achievement-title a:hover {
+    @apply text-link underline;
+  }
+
+  .achievement-event {
+    @apply text-sm text-brown/70 mt-0.5;
+  }
+
+  .achievement-prize {
+    @apply text-sm font-bold text-green-deep whitespace-nowrap;
+  }
+
+  .achievement-desc {
+    @apply text-sm text-brown/70 mt-2 mb-0;
+  }
+
+  @media (max-width: 640px) {
+    .achievement-card .flex {
+      @apply flex-col gap-2;
+    }
+
+    .achievement-prize {
+      @apply self-start;
+    }
+  }
+
+  /* GitHub Contribution Graph */
+  .contribution-graph {
+    @apply pb-2;
+    overflow: visible; /* Allow tooltips to escape on desktop */
+  }
+
+  /* Mobile: horizontal scroll for contribution graph */
+  @media (max-width: 640px) {
+    .contribution-container {
+      @apply -mx-4 px-4;
+      overflow-x: auto;
+      overflow-y: visible;
+    }
+
+    .contribution-graph {
+      min-width: max-content;
+    }
+  }
+
+  .contribution-grid {
+    display: grid;
+    grid-template-rows: repeat(7, 1fr);
+    grid-auto-flow: column;
+    gap: 2px;
+    width: max-content;
+  }
+
+  .contribution-day {
+    @apply w-[10px] h-[10px] rounded-sm;
+    @apply transition-transform duration-100;
+  }
+
+  .contribution-day:hover {
+    transform: scale(1.3);
+  }
+
+  @media (max-width: 640px) {
+    .contribution-day {
+      @apply w-[8px] h-[8px];
+    }
+
+    .contribution-grid {
+      gap: 1px;
+    }
+  }
+
+  /* Contribution levels - warm palette */
+  .contribution-level-0 {
+    @apply bg-brown/10;
+  }
+
+  .contribution-level-1 {
+    background-color: rgba(168, 224, 99, 0.4); /* green 40% */
+  }
+
+  .contribution-level-2 {
+    background-color: rgba(168, 224, 99, 0.6); /* green 60% */
+  }
+
+  .contribution-level-3 {
+    background-color: rgba(168, 224, 99, 0.8); /* green 80% */
+  }
+
+  .contribution-level-4 {
+    @apply bg-green; /* full green */
+  }
+
+  .contribution-legend {
+    @apply flex items-center gap-1 mt-3 text-xs text-brown/70;
+  }
+
+  .contribution-legend-box {
+    @apply w-[10px] h-[10px] rounded-sm;
+  }
+
+  .contribution-stats {
+    @apply flex items-center justify-between mt-4 text-sm;
+  }
+
+  .contribution-total {
+    @apply font-bold text-brown;
+  }
+
+  .contribution-total-number {
+    @apply text-green-deep text-lg;
+  }
+
+  /* Contribution Container - wraps entire graph section */
+  .contribution-container {
+    @apply mt-4;
+  }
+
+  /* Year Tabs - selector above contribution graph */
+  .year-tabs {
+    @apply flex items-center gap-2 mb-4;
+  }
+
+  .year-tab {
+    @apply px-3 py-1.5 text-sm font-medium rounded-lg no-underline;
+    @apply text-brown/70 bg-brown/5 border border-transparent;
+    @apply transition-all duration-200;
+  }
+
+  .year-tab:hover {
+    @apply text-brown bg-brown/10;
+  }
+
+  .year-tab-active {
+    @apply text-cream bg-brown border-brown;
+  }
+
+  .year-tab-active:hover {
+    @apply text-cream bg-brown;
+  }
+
+  /* Streak Badge - top info bar */
+  .streak-badge {
+    @apply flex items-center gap-2 mb-4 text-sm;
+    @apply flex-wrap;
+  }
+
+  .streak-fire {
+    @apply text-base;
+  }
+
+  .streak-current {
+    /* clay-deep (6.40:1 on cream), not the brand clay #E58C2E (2.42:1) — this
+       renders the readable "N-day streak" phrase, so it needs AA contrast. */
+    @apply font-bold text-clay-deep;
+  }
+
+  .streak-separator {
+    @apply text-brown/30;
+  }
+
+  .streak-longest {
+    @apply text-brown/70;
+  }
+
+  .streak-best {
+    @apply text-brown/70;
+  }
+
+  /* Month Labels - positioned above contribution graph */
+  .contribution-months {
+    display: flex;
+    gap: 0;
+    margin-bottom: 4px;
+    overflow-x: auto;
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+    width: max-content;
+  }
+
+  .contribution-months::-webkit-scrollbar {
+    display: none;
+  }
+
+  .month-label {
+    @apply text-[10px] text-brown/70 font-medium;
+    white-space: nowrap;
+    min-width: calc(4.3 * (10px + 2px)); /* ~4.3 weeks per month */
+  }
+
+  /* Busiest Day Highlight */
+  .busiest-day {
+    @apply ring-2 ring-yellow ring-offset-1;
+    box-shadow: 0 0 8px rgba(249, 200, 70, 0.6);
+  }
+
+  /* Tooltip on hover - only for grid cells, not legend */
+  .contribution-grid .contribution-day {
+    position: relative;
+    cursor: pointer;
+  }
+
+  .contribution-grid .contribution-day::after {
+    content: attr(data-count) " contributions on " attr(data-date);
+    position: absolute;
+    bottom: calc(100% + 8px);
+    left: 50%;
+    transform: translateX(-50%);
+    @apply bg-brown text-cream text-[10px] px-2 py-1 rounded whitespace-nowrap;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.15s ease-in-out;
+    z-index: 50;
+  }
+
+  .contribution-grid .contribution-day:hover::after {
+    opacity: 1;
+  }
+
+  /* Hide tooltip for empty days */
+  .contribution-grid .contribution-level-0::after {
+    content: "No contributions on " attr(data-date);
+  }
+
+  /* Cascade Animation - only for grid cells */
+  @keyframes contribution-cascade {
+    0% {
+      opacity: 0;
+      transform: scale(0);
+    }
+    100% {
+      opacity: 1;
+      transform: scale(1);
+    }
+  }
+
+  .contribution-grid .contribution-day {
+    animation: contribution-cascade 0.3s ease-out forwards;
+    opacity: 0;
+  }
+
+  @media (max-width: 640px) {
+    .streak-badge {
+      @apply text-xs gap-1.5;
+    }
+
+    .streak-fire {
+      @apply text-sm;
+    }
+
+    .month-label {
+      @apply text-[8px];
+      min-width: calc(4.3 * (8px + 1px)); /* ~4.3 weeks per month on mobile */
+    }
+
+    .year-tabs {
+      @apply gap-1;
+      flex-wrap: nowrap;
+    }
+
+    .year-tab {
+      @apply px-2 py-1 text-xs;
+      flex-shrink: 0;
+    }
+
+    .contribution-grid .contribution-day::after {
+      @apply text-[8px] px-1.5 py-0.5;
+    }
+
+    .busiest-day {
+      @apply ring-1;
+    }
+  }
+
+  /* Project cards with stats */
+  .project-card {
+    @apply p-3 rounded-lg border border-brown/10 bg-cream/50;
+    @apply transition-all duration-200;
+  }
+
+  .project-card:hover {
+    @apply border-sky-blue/30 bg-cream;
+  }
+
+  .project-stats {
+    @apply flex items-center gap-3 text-xs text-brown/70 mt-2;
+    @apply flex-wrap;
+  }
+
+  .project-stat {
+    @apply flex items-center gap-1;
+  }
+
+  .project-winner-badge {
+    @apply inline-flex items-center gap-1 text-xs font-semibold px-2 py-0.5 rounded-full;
+    @apply bg-yellow/20 text-clay-deep;
+  }
+
+  @media (max-width: 640px) {
+    .project-stats {
+      @apply gap-2;
+    }
+
+    .project-stat.ml-auto {
+      @apply ml-0 w-full mt-1;
+    }
+
+    .contribution-stats {
+      @apply flex-col items-start gap-2;
+    }
+
+    .contribution-legend {
+      @apply mt-1;
+    }
+  }
+
+  /* Compact Activity Bar */
+  .activity-bar {
+    @apply flex items-center gap-2 mt-6 py-3 px-4 rounded-lg;
+    @apply bg-green/10 border border-green/20;
+  }
+
+  .live-pulse {
+    @apply w-2.5 h-2.5 rounded-full bg-green flex-shrink-0;
+    animation: pulse-live 1.5s ease-in-out infinite;
+  }
+
+  .idle-pulse {
+    @apply w-2.5 h-2.5 rounded-full bg-brown/30 flex-shrink-0;
+  }
+
+  @keyframes pulse-live {
+    0%, 100% {
+      opacity: 1;
+      transform: scale(1);
+    }
+    50% {
+      opacity: 0.5;
+      transform: scale(1.2);
+    }
+  }
+
+  .activity-text {
+    @apply text-sm text-brown leading-relaxed;
+  }
+
+  .activity-link {
+    @apply font-semibold text-brown no-underline;
+  }
+
+  .activity-link:hover {
+    @apply text-link underline;
+  }
+
+  .activity-separator {
+    @apply text-brown/30 mx-1;
+  }
+
+  .activity-time {
+    @apply text-brown/70;
+  }
+
+  @media (max-width: 640px) {
+    .activity-bar {
+      @apply flex-wrap py-2.5 px-3;
+    }
+
+    .activity-text {
+      @apply text-xs leading-normal;
+    }
+
+    .activity-separator {
+      @apply mx-0.5;
+    }
+  }
+
+  /* Work Listing Page */
+  .container-work {
+    @apply max-w-4xl mx-auto px-4 sm:px-6 py-8 sm:py-12;
+  }
+
+  .back-link {
+    @apply text-link no-underline transition-colors duration-200;
+  }
+
+  .back-link:hover {
+    @apply text-yellow;
+  }
+
+  .work-header {
+    @apply mb-6 sm:mb-8;
+  }
+
+  .work-header h1 {
+    @apply text-3xl sm:text-4xl font-bold mb-3 text-brown;
+  }
+
+  .work-tagline {
+    @apply text-base sm:text-lg leading-relaxed text-brown/70 mb-0;
+  }
+
+  /* Stats Banner */
+  .work-stats-banner {
+    @apply flex items-center justify-center gap-4 sm:gap-6;
+    @apply py-4 px-6 mb-10 rounded-lg;
+    @apply bg-yellow/10 border-2 border-yellow/30;
+  }
+
+  .work-stat {
+    @apply flex items-baseline gap-1.5;
+  }
+
+  .work-stat-value {
+    @apply text-lg sm:text-xl font-bold text-brown;
+  }
+
+  .work-stat-label {
+    @apply text-sm text-brown/70;
+  }
+
+  .work-stat-divider {
+    @apply text-brown/30;
+  }
+
+  @media (max-width: 640px) {
+    .work-stats-banner {
+      @apply gap-3 px-4;
+    }
+
+    .work-stat-value {
+      @apply text-base;
+    }
+
+    .work-stat-label {
+      @apply text-xs;
+    }
+  }
+
+  /* Work Section */
+  .work-section {
+    @apply mb-12;
+  }
+
+  .work-section-title {
+    @apply flex items-center gap-2 text-xl sm:text-2xl font-semibold mb-6 text-brown;
+  }
+
+  .work-section-icon {
+    @apply text-2xl;
+  }
+
+  .work-grid {
+    @apply space-y-4;
+  }
+
+  /* Work Cards */
+  .work-card {
+    @apply block p-4 sm:p-5 rounded-lg border-2 no-underline;
+    @apply transition-all duration-200;
+  }
+
+  .work-card:hover {
+    transform: translateX(4px);
+  }
+
+  .work-card-winner {
+    @apply bg-cream border-yellow/40;
+  }
+
+  .work-card-winner:hover {
+    @apply border-yellow shadow-md;
+  }
+
+  .work-card-active {
+    @apply bg-cream border-brown/10;
+  }
+
+  .work-card-active:hover {
+    @apply border-sky-blue/50 shadow-md;
+  }
+
+  .work-card-header {
+    @apply flex items-center justify-between gap-2 mb-2;
+  }
+
+  .work-card-badge {
+    @apply inline-flex items-center gap-1 text-xs font-semibold px-2 py-1 rounded-full;
+  }
+
+  .badge-winner {
+    @apply bg-yellow/20 text-clay-deep;
+  }
+
+  .badge-live {
+    @apply bg-green/20 text-green-deep font-semibold;
+    @apply flex items-center gap-1.5;
+  }
+
+  .badge-live .live-pulse {
+    @apply w-2 h-2 rounded-full bg-green;
+    animation: pulse-live 1.5s ease-in-out infinite;
+  }
+
+  .badge-status {
+    @apply bg-brown/10 text-brown/70;
+  }
+
+  .work-card-prize {
+    @apply text-sm font-bold text-green-deep;
+  }
+
+  .work-card-title {
+    @apply text-lg sm:text-xl font-bold text-brown mb-1;
+    @apply transition-colors duration-200;
+  }
+
+  .work-card:hover .work-card-title {
+    @apply text-link;
+  }
+
+  .work-card-event {
+    @apply text-sm text-brown/70 mb-2;
+  }
+
+  .work-card-summary {
+    @apply text-sm sm:text-base text-brown/70 leading-relaxed mb-3;
+  }
+
+  .work-card-meta {
+    @apply flex items-center gap-3 text-xs text-brown/70;
+  }
+
+  .work-card-tech {
+    @apply font-medium;
+  }
+
+  .work-card-stars {
+    @apply flex items-center gap-1;
+  }
+
+  .work-card-commits {
+    @apply flex items-center gap-1;
+  }
+
+  .work-card-sha {
+    @apply ml-auto;
+  }
+
+  @media (max-width: 640px) {
+    .work-card {
+      @apply p-4;
+    }
+
+    .work-card-header {
+      @apply flex-col items-start gap-1;
+    }
+
+    .work-card-prize {
+      @apply text-xs;
+    }
+
+    .work-card-meta {
+      @apply flex-wrap gap-2;
+    }
+
+    .work-card-sha {
+      @apply hidden;
+    }
+  }
+}
+
+/* Work section: story prose + filter/sort controls (port of Rails works.css) */
+
+/* Main story heading */
+.story-content > h1:first-child {
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: #3B2C22;
+  margin-bottom: 2rem;
+  line-height: 1.2;
+}
+
+/* Section headings */
+.story-content h2 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #3B2C22;
+  margin-top: 3rem;
+  margin-bottom: 1rem;
+}
+
+.story-content h3 {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #3B2C22;
+  margin-top: 2rem;
+  margin-bottom: 0.75rem;
+}
+
+/* Paragraphs - generous spacing for readability */
+.story-content p {
+  margin-bottom: 1.5rem;
+  margin-top: 0;
+  line-height: 1.625;
+  font-size: 1.125rem;
+  text-align: justify;
+  text-align-last: left;
+  hyphens: auto;
+}
+
+/* Bold text in paragraphs - acts as mini section headers */
+.story-content p strong {
+  display: block;
+  font-weight: 600;
+  margin-top: 3rem;
+  margin-bottom: 1rem;
+  font-size: 1.25rem;
+  text-align: left;
+}
+
+/* Links — resting color uses --color-link (AA on cream); the brand sky #41CFFF
+   would only be 1.69:1 here. Hover stays clay (#E58C2E). */
+.story-content a {
+  color: var(--color-link);
+  text-decoration: underline;
+  transition: color 0.2s;
+}
+
+.story-content a:hover {
+  color: #E58C2E;
+}
+
+/* Lists - better spacing */
+.story-content ul, .story-content ol {
+  margin-bottom: 2rem;
+  padding-left: 2rem;
+  line-height: 1.875;
+}
+
+.story-content li {
+  margin-bottom: 0.75rem;
+}
+
+/* Horizontal rules - section dividers */
+.story-content hr {
+  border: none;
+  border-top: 2px solid #3B2C22;
+  opacity: 0.1;
+  margin: 3rem 0;
+}
+
+/* Inline code */
+.story-content code {
+  background-color: #3B2C22;
+  color: #FFF7E1;
+  padding: 0.125rem 0.375rem;
+  border-radius: 0.25rem;
+  font-size: 0.875em;
+}
+
+/* Code blocks */
+.story-content pre {
+  background-color: #3B2C22;
+  color: #FFF7E1;
+  padding: 1.25rem;
+  border-radius: 0.5rem;
+  overflow-x: auto;
+  margin-bottom: 2rem;
+  line-height: 1.5;
+}
+
+.story-content pre code {
+  background-color: transparent;
+  padding: 0;
+}
+
+/* Blockquotes */
+.story-content blockquote {
+  border-left: 4px solid #41CFFF;
+  padding-left: 1.5rem;
+  font-style: italic;
+  color: #3B2C22;
+  opacity: 0.8;
+  margin-bottom: 2rem;
+  margin-top: 2rem;
+  font-size: 1.125rem;
+}
+
+/* Footer section - distinct styling */
+.story-content > hr:last-of-type ~ p {
+  font-size: 1rem;
+  line-height: 1.75;
+}
+
+.story-content > hr:last-of-type ~ p strong {
+  display: inline;
+  font-weight: 600;
+  font-size: inherit;
+  margin: 0;
+}
+
+/* Mobile Responsive Styles */
+@media (max-width: 640px) {
+  .story-content > h1:first-child {
+    font-size: 1.75rem;
+  }
+
+  .story-content h2 {
+    font-size: 1.25rem;
+    margin-top: 2rem;
+  }
+
+  .story-content h3 {
+    font-size: 1.1rem;
+    margin-top: 1.5rem;
+  }
+
+  .story-content p {
+    font-size: 1rem;
+    text-align: left;
+    hyphens: none;
+    margin-bottom: 1.25rem;
+  }
+
+  .story-content p strong {
+    font-size: 1.1rem;
+    margin-top: 2rem;
+  }
+
+  .story-content ul, .story-content ol {
+    padding-left: 1.25rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .story-content li {
+    margin-bottom: 0.5rem;
+  }
+
+  .story-content blockquote {
+    padding-left: 1rem;
+    font-size: 1rem;
+    margin-bottom: 1.5rem;
+    margin-top: 1.5rem;
+  }
+
+  .story-content pre {
+    padding: 1rem;
+    font-size: 0.8rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .story-content hr {
+    margin: 2rem 0;
+  }
+}
+
+/* Show More Button */
+.work-show-more {
+  display: flex;
+  justify-content: center;
+  margin-top: 2rem;
+}
+
+.show-more-btn {
+  background-color: transparent;
+  color: #3B2C22;
+  border: 2px solid #3B2C22;
+  padding: 0.75rem 2rem;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.875rem;
+  font-weight: 500;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.show-more-btn:hover {
+  background-color: #3B2C22;
+  color: #FFF7E1;
+}
+
+/* keyboard focus ring is provided by the global button:focus-visible baseline
+   (brown on the cream /work page — the only place this button renders) */
+
+/* ========================================
+   Filter & Sort Controls
+   ======================================== */
+
+.work-section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.work-counter {
+  font-size: 0.875rem;
+  font-weight: 400;
+  color: #3B2C22;
+  opacity: 0.7; /* brown @ 70% on cream = 4.98:1 (AA); 0.5 was 2.86:1 */
+  margin-left: 0.75rem;
+}
+
+/* Filter Bar - contains chips and sort */
+.filter-bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+  padding: 1rem;
+  background-color: rgba(59, 44, 34, 0.03);
+  border-radius: 0.5rem;
+}
+
+/* Filter Chips */
+.filter-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.filter-chip {
+  padding: 0.375rem 0.875rem;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: #3B2C22;
+  background-color: transparent;
+  border: 1.5px solid rgba(59, 44, 34, 0.2);
+  border-radius: 9999px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.filter-chip:hover {
+  border-color: #3B2C22;
+  background-color: rgba(59, 44, 34, 0.05);
+}
+
+.filter-chip.active {
+  background-color: #3B2C22;
+  color: #FFF7E1;
+  border-color: #3B2C22;
+}
+
+/* Sort Buttons */
+.sort-buttons {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.sort-label {
+  font-size: 0.75rem;
+  color: #3B2C22;
+  opacity: 0.7; /* brown @ 70% on cream = 4.98:1 (AA); 0.5 was 2.86:1 */
+  margin-right: 0.5rem;
+}
+
+.sort-btn {
+  padding: 0.375rem 0.625rem;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: #3B2C22;
+  opacity: 0.7; /* brown @ 70% on cream = 4.98:1 (AA); 0.5 was 2.86:1. Inactive
+                   sort buttons stay visually dimmer than the active one, which
+                   goes full-opacity + link color + underline below. */
+  background-color: transparent;
+  border: none;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  border-radius: 0.25rem;
+}
+
+.sort-btn:hover {
+  opacity: 1;
+  background-color: rgba(59, 44, 34, 0.05);
+}
+
+.sort-btn.active {
+  opacity: 1;
+  color: var(--color-link);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+/* Hidden state for filtered cards */
+.work-card.filter-hidden {
+  display: none !important;
+}
+
+/* Hidden state for show-more pagination */
+.work-card.show-more-hidden {
+  display: none !important;
+}
+
+/* No Results Message */
+.no-results {
+  text-align: center;
+  padding: 3rem 1rem;
+  color: #3B2C22;
+  opacity: 0.7; /* brown @ 70% on cream = 4.98:1 (AA); 0.5 was 2.86:1 */
+}
+
+.no-results.hidden {
+  display: none;
+}
+
+/* Stars and Commits icons in cards */
+.work-card-stars::before {
+  content: "⭐ ";
+}
+
+.work-card-commits::before {
+  content: "⊙ ";
+}
+
+/* Mobile Responsive - Filter & Sort */
+@media (max-width: 640px) {
+  .filter-bar {
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 0.75rem;
+  }
+
+  .filter-chips {
+    width: 100%;
+  }
+
+  .filter-chip {
+    font-size: 0.7rem;
+    padding: 0.3rem 0.65rem;
+  }
+
+  .sort-buttons {
+    width: 100%;
+    justify-content: flex-start;
+    flex-wrap: wrap;
+    margin-top: 0.5rem;
+    padding-top: 0.75rem;
+    border-top: 1px solid rgba(59, 44, 34, 0.1);
+  }
+
+  .sort-btn {
+    font-size: 0.7rem;
+    padding: 0.3rem 0.5rem;
+  }
+
+  .work-counter {
+    display: block;
+    margin-left: 0;
+    margin-top: 0.25rem;
+  }
+}
+
+/* ========================================
+   Version Footer — Deployment Info
+   (port of Rails application.css lines 146–198; visual must match exactly)
+
+   Quirks reproduced verbatim from the Rails source — do NOT "fix":
+     - .version-label has a rule but no matching element in the markup
+     - .version-commits has a markup element but no CSS rule
+   ======================================== */
+
+.version-footer {
+  position: fixed;
+  bottom: 1rem;
+  right: 1rem;
+  z-index: 50;
+}
+
+.version-info {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background-color: rgba(59, 44, 34, 0.9); /* brown @ 90% */
+  color: var(--color-cream);
+  padding: 0.5rem 0.75rem;
+  border-radius: 0.5rem;
+  backdrop-filter: blur(4px); /* backdrop-blur-sm */
+  -webkit-backdrop-filter: blur(4px);
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1),
+    0 4px 6px -4px rgba(0, 0, 0, 0.1); /* shadow-lg */
+  font-size: 0.75rem;
+  font-family: var(--font-mono);
+}
+
+.version-label {
+  color: rgba(249, 200, 70, 0.8); /* yellow @ 80% */
+  font-weight: 500;
+}
+
+.version-link {
+  display: flex;
+  align-items: center;
+  gap: 0.375rem;
+  text-decoration: none;
+  color: rgba(255, 247, 225, 0.9); /* cream @ 90% */
+  transition: color 0.2s;
+}
+
+.version-link:hover {
+  color: var(--color-sky-blue);
+}
+
+/* These links sit on the brown .version-info pill, where the global brown ring
+   would be invisible — flip to cream (#FFF7E1 on brown ~12:1). The reduced
+   offset keeps the ring on the pill rather than bleeding onto the page behind. */
+.version-link:focus-visible {
+  outline-color: var(--color-cream);
+  outline-offset: 1px;
+}
+
+.version-icon {
+  flex-shrink: 0;
+  opacity: 0.75;
+}
+
+.version-branch {
+  color: var(--color-green);
+  font-weight: 500;
+}
+
+.version-sha {
+  color: rgba(255, 247, 225, 0.9); /* cream @ 90% */
+}
+
+.version-separator {
+  color: rgba(255, 247, 225, 0.4); /* cream @ 40% */
+}
+
+@media (max-width: 640px) {
+  .version-footer {
+    bottom: 0.5rem;
+    right: 0.5rem;
+  }
+
+  .version-info {
+    padding: 0.375rem 0.5rem;
+    font-size: 10px;
+  }
+
+  .version-label {
+    display: none;
+  }
+}
