@@ -1,79 +1,57 @@
-# Dependencies
-node_modules/
-.pnp
-.pnp.js
+# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
 
-# Testing
-coverage/
+# dependencies
+/node_modules
+/.pnp
+.pnp.*
+.yarn/*
+!.yarn/patches
+!.yarn/plugins
+!.yarn/releases
+!.yarn/versions
 
-# Production
-build/
-dist/
-.next/
-out/
+# testing
+/coverage
 
-# Environment variables
-.env
-.env.local
-.env.development.local
-.env.test.local
-.env.production.local
+# next.js
+/.next/
+/out/
 
-# Logs
+# production
+/build
+
+# misc
+.DS_Store
+*.pem
+
+# debug
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
-pnpm-debug.log*
-lerna-debug.log*
+.pnpm-debug.log*
 
-# Editor directories and files
+# env files (can opt-in for committing if needed)
+.env*
+
+# vercel
+.vercel
+
+# build-time version stamp (written by scripts/gen-version.mjs)
+/.version.json
+
+# typescript
+*.tsbuildinfo
+next-env.d.ts
+
+# editor / OS
 .vscode/*
 !.vscode/extensions.json
 .idea
-.DS_Store
-*.suo
-*.ntvs*
-*.njsproj
-*.sln
-*.sw?
-
-# OS
-.DS_Store
 Thumbs.db
-
-# Temporary files
-*.tmp
-*.temp
-
-# Cache
-.cache/
-.parcel-cache/
-.turbo/
-
-# Ignore key files for decrypting credentials and more.
-/config/*.key
-
-
-/app/assets/builds/*
-!/app/assets/builds/.keep
 
 # Playwright MCP screenshots
 .playwright-mcp/
 
-# Rails logs (ignore all log files)
-/log/*
-!/log/.keep
-
-# Rails temporary files and cache (ignore everything)
-/tmp/*
-!/tmp/.keep
-!/tmp/pids/.keep
-!/tmp/cache/.keep
-!/tmp/sockets/.keep
-!/tmp/storage/.keep
-REVISION
-
-# Brainstorming specs and implementation plans — working artifacts auto-generated
-# per planning session. Curated documentation lives in docs/*.md instead.
+# Brainstorming specs and implementation plans — local-only working artifacts
+# auto-generated per planning session. Curated documentation lives in docs/*.md.
 /docs/superpowers/
-/public/og-image.png
