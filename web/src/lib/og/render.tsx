@@ -12,7 +12,6 @@ import { numberWithDelimiter } from "@/lib/format";
 // match the previous composition exactly.
 // ---------------------------------------------------------------------------
 export const size = { width: 1200, height: 630 };
-export const alt = "RECTOR — Building for Eternity";
 
 // ---------------------------------------------------------------------------
 // Font + image loading via process.cwd() — consistent with this project's

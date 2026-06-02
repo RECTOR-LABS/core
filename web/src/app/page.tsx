@@ -2,6 +2,7 @@ import { cache } from "react";
 import Link from "next/link";
 import type { Metadata } from "next";
 
+import { pageMetadata } from "@/lib/seo";
 import { fetchRepos, latest, aggregateStats, recentlyActive, currentlyBuilding } from "@/lib/github/repos";
 import { currentStack } from "@/lib/github/tech-stack";
 import { fetchContributions, fetchAvailableYears } from "@/lib/github/contributions";
@@ -41,21 +42,9 @@ export async function generateMetadata(): Promise<Metadata> {
   const { winCount, totalEarnings } = getAchievements();
   const summary = `${winCount} wins, ~$${numberWithDelimiter(totalEarnings)} earned`;
   const description = `Full-stack builder. Hackathon hunter. ${summary}. Building for eternity.`;
-  const title = "RECTOR • Building for Eternity";
 
-  return {
-    title,
-    description,
-    alternates: { canonical: "/" },
-    openGraph: { type: "website", url: "/", siteName: "RECTOR", title, description },
-    twitter: {
-      card: "summary_large_image",
-      site: "@RZ1989sol",
-      creator: "@RZ1989sol",
-      title,
-      description,
-    },
-  };
+  // Homepage: no page-title segment → title is "RECTOR • Building for Eternity".
+  return pageMetadata({ description, path: "/", ogType: "website" });
 }
 
 // ---------------------------------------------------------------------------

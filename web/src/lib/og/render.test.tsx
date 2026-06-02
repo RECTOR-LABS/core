@@ -1,13 +1,15 @@
 // @vitest-environment node
 import { describe, expect, it } from "vitest";
-import { alt, renderOgImage, size } from "@/lib/og/render";
+import { renderOgImage, size } from "@/lib/og/render";
 
 // ---------------------------------------------------------------------------
 // OG image renderer — constants + response contract
 //
 // Full Satori/resvg rendering is NOT exercised here (too slow for unit tests,
 // and pointless — next/og handles rendering correctness). We verify:
-//   1. The exported constants match the required canvas dimensions / alt.
+//   1. The exported `size` constant matches the required canvas dimensions.
+//      (The OG alt text now lives in lib/seo.ts as the single source — see
+//      pageMetadata's openGraph.images[].alt — and is covered by seo.test.ts.)
 //   2. renderOgImage() resolves to a Response (ImageResponse) with status 200
 //      and the correct content-type. Both are set synchronously by
 //      ImageResponse's constructor, so body streaming is unnecessary.
@@ -18,11 +20,6 @@ import { alt, renderOgImage, size } from "@/lib/og/render";
 describe("og/render constants", () => {
   it("exports size as 1200×630", () => {
     expect(size).toEqual({ width: 1200, height: 630 });
-  });
-
-  it("exports a non-empty alt string", () => {
-    expect(typeof alt).toBe("string");
-    expect(alt.length).toBeGreaterThan(0);
   });
 });
 

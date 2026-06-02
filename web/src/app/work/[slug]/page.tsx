@@ -2,6 +2,7 @@ import { cache } from "react";
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import type { Metadata } from "next";
+import { pageMetadata } from "@/lib/seo";
 import { loadWorks } from "@/lib/content/works";
 import { Markdown } from "@/components/Markdown";
 
@@ -22,13 +23,12 @@ export async function generateMetadata(
   const { slug } = await params;
   const work = getWorks().find(slug);
   if (!work) return {};
-  return {
-    // Mirror the Rails layout: <title> appends "• RECTOR • Building for
-    // Eternity"; og:title uses just "<title> • RECTOR".
-    title: `${work.title} • RECTOR • Building for Eternity`,
+  return pageMetadata({
+    title: work.title,
     description: work.summary,
-    openGraph: { type: "article", title: `${work.title} • RECTOR`, description: work.summary },
-  };
+    path: `/work/${slug}`,
+    ogType: "article",
+  });
 }
 
 // Rails strftime("%B %Y") equivalent — MUST use timeZone: "UTC" because dates are

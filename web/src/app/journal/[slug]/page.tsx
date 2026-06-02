@@ -1,6 +1,7 @@
 import { cache } from "react";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
+import { pageMetadata } from "@/lib/seo";
 import { loadPosts } from "@/lib/content/posts";
 import { Markdown } from "@/components/Markdown";
 
@@ -21,13 +22,12 @@ export async function generateMetadata(
   const { slug } = await params;
   const post = getPosts().find(slug);
   if (!post) return {};
-  return {
-    // Mirror the Rails layout (see work/[slug]/page.tsx): <title> appends
-    // "• RECTOR • Building for Eternity"; og:title uses just "<title> • RECTOR".
-    title: `${post.title} • RECTOR • Building for Eternity`,
+  return pageMetadata({
+    title: post.title,
     description: post.summary,
-    openGraph: { type: "article", title: `${post.title} • RECTOR`, description: post.summary },
-  };
+    path: `/journal/${slug}`,
+    ogType: "article",
+  });
 }
 
 export default async function JournalPost(

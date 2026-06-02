@@ -2,6 +2,7 @@ import { cache } from "react";
 import Link from "next/link";
 import type { Metadata } from "next";
 
+import { pageMetadata } from "@/lib/seo";
 import { loadWorks, type Work } from "@/lib/content/works";
 import { fetchRepos, type Repo } from "@/lib/github/repos";
 import { loadAchievements } from "@/lib/content/achievements";
@@ -52,20 +53,13 @@ function winnerBadge(title: string): WinnerBadge {
 // Metadata
 // ---------------------------------------------------------------------------
 export async function generateMetadata(): Promise<Metadata> {
-  // Mirror the Rails layout for /work exactly: <title> is
-  // "<PageTitle> • RECTOR • Building for Eternity"; og:title drops the
-  // "• Building for Eternity" suffix. The index view sets no
-  // content_for(:meta_description), so it inherits the site-wide description
-  // (byte-identical to the homepage), NOT the on-page tagline.
+  // The index view sets no content_for(:meta_description), so it inherits the
+  // site-wide description (byte-identical to the homepage), NOT the on-page
+  // tagline. Title/og/image shape comes from the shared pageMetadata() helper.
   const { winCount, totalEarnings } = getAchievements();
   const description = `Full-stack builder. Hackathon hunter. ${winCount} wins, ~$${numberWithDelimiter(totalEarnings)} earned. Building for eternity.`;
 
-  return {
-    title: "Work • RECTOR • Building for Eternity",
-    description,
-    alternates: { canonical: "/work" },
-    openGraph: { type: "website", url: "/work", siteName: "RECTOR", title: "Work • RECTOR", description },
-  };
+  return pageMetadata({ title: "Work", description, path: "/work", ogType: "website" });
 }
 
 // ---------------------------------------------------------------------------

@@ -1,17 +1,18 @@
 import Link from "next/link";
+import { pageMetadata } from "@/lib/seo";
 import { loadPosts } from "@/lib/content/posts";
 
-// Mirror the Rails layout for /journal exactly (see work/page.tsx): <title> is
-// "<PageTitle> • RECTOR • Building for Eternity"; og:title drops the
-// "• Building for Eternity" suffix. Description ported 1:1 from the Rails
-// journal index meta (NOT a Phase-1 rewrite) to keep prod parity.
+// Description ported 1:1 from the Rails journal index meta (NOT a Phase-1
+// rewrite) to keep prod parity. Title/og/image shape comes from the shared
+// pageMetadata() helper.
 const description = "Notes and writings on what I'm building and learning.";
 
-export const metadata = {
-  title: "Journal • RECTOR • Building for Eternity",
+export const metadata = pageMetadata({
+  title: "Journal",
   description,
-  openGraph: { type: "website", title: "Journal • RECTOR", description },
-};
+  path: "/journal",
+  ogType: "website",
+});
 
 export default function JournalIndex() {
   const { published } = loadPosts();
