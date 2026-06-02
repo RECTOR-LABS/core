@@ -2,6 +2,7 @@ import localFont from "next/font/local";
 import "./globals.css";
 import { VersionFooter } from "@/components/VersionFooter";
 import { versionView } from "@/lib/version";
+import { SITE_URL } from "@/lib/site";
 
 // Self-hosted JetBrains Mono (deliberately NOT next/font/google — no build-time
 // Google fetch). Served as WOFF2 (~190KB total vs ~552KB uncompressed TTF) to
@@ -38,7 +39,7 @@ const jetbrains = localFont({
 });
 
 export const metadata = {
-  metadataBase: new URL("https://rectorspace.com"),
+  metadataBase: new URL(SITE_URL),
   title: "RECTOR",
   description: "Building for Eternity",
 };
