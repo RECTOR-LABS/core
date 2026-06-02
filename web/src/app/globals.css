@@ -243,6 +243,7 @@ textarea:focus-visible,
   }
 
   .achievement-bounty {
+    /* text-link on bg-sky-blue/20 = 4.51:1 (AA pass, the tightest badge margin). */
     @apply bg-sky-blue/20 text-link;
   }
 

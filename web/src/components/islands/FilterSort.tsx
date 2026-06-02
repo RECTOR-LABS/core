@@ -332,7 +332,7 @@ export function FilterSort({ works }: FilterSortProps) {
                   <span className="work-card-commits">{work.commits}</span>
                 )}
                 {work.sha && (
-                  <span className="work-card-sha font-mono text-[10px] text-brown/40">
+                  <span className="work-card-sha font-mono text-[10px] text-brown/70">
                     {work.sha}
                   </span>
                 )}

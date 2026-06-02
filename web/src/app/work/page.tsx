@@ -197,7 +197,7 @@ export default async function WorkIndexPage() {
                       <span className="work-card-commits">⊙ {commits}</span>
                     )}
                     {repo?.latestCommitSha && (
-                      <span className="work-card-sha font-mono text-[10px] text-brown/40">
+                      <span className="work-card-sha font-mono text-[10px] text-brown/70">
                         {repo.latestCommitSha}
                       </span>
                     )}
