@@ -5,11 +5,13 @@ import { loadAchievements } from "@/lib/content/achievements";
 import { numberWithDelimiter } from "@/lib/format";
 
 // ---------------------------------------------------------------------------
-// Route metadata — Next.js reads these to generate og:image / twitter:image
-// meta tags automatically for the / segment (inherited by child routes).
+// OG image composition — extracted here so it can be served at the prod-parity
+// path /og-image.png (via a Route Handler) instead of the /opengraph-image
+// file-convention path. Already-shared social cards (LinkedIn/Twitter/Telegram)
+// reference https://rectorspace.com/og-image.png, so the bytes served here must
+// match the previous composition exactly.
 // ---------------------------------------------------------------------------
 export const size = { width: 1200, height: 630 };
-export const contentType = "image/png";
 export const alt = "RECTOR — Building for Eternity";
 
 // ---------------------------------------------------------------------------
@@ -46,7 +48,7 @@ const profileBuffer = fs.readFileSync(
 // rendering engine); composition and visual weight are faithfully reproduced.
 // Satori requires display:flex on every multi-child element.
 // ---------------------------------------------------------------------------
-export default async function Image(): Promise<ImageResponse> {
+export async function renderOgImage(): Promise<ImageResponse> {
   const { winCount, totalEarnings } = loadAchievements();
   const stats = `Full-stack builder. Hackathon hunter. ${winCount} wins, ~$${numberWithDelimiter(totalEarnings)} earned.`;
 
