@@ -15,6 +15,18 @@
   --color-sky-blue: #41CFFF;
   --color-orange: #E58C2E;
   --color-green: #A8E063;
+
+  /* Link TEXT color for LIGHT/cream surfaces — a darkened cyan that meets
+     WCAG AA (≥4.5:1). The brand sky (#41CFFF) is only 1.69:1 on cream, far
+     below the 4.5:1 text minimum, so readable links on light backgrounds use
+     this instead. #0D7390 is 5.07:1 on cream #FFF7E1 (verified via the WCAG
+     relative-luminance formula) and keeps the brand's sky/cyan character
+     (hue ~193°, the same family as #41CFFF at 195°).
+     IMPORTANT: --color-sky / --color-sky-blue intentionally STAY #41CFFF —
+     they are correct (good contrast) on the dark /apply themes and as
+     decorative borders/background tints/rings on light surfaces, and they
+     drive the OG image. Only readable link text on cream switches to this. */
+  --color-link: #0D7390;
 }
 
 body {
@@ -78,7 +90,7 @@ textarea:focus-visible,
   h4 { @apply text-xl leading-normal; }
 
   a {
-    @apply text-sky-blue underline transition-colors duration-200;
+    @apply text-link underline transition-colors duration-200;
   }
 
   a:hover {
@@ -96,7 +108,7 @@ textarea:focus-visible,
 .prose-journal h2 { font-size: 1.6rem; font-weight: 700; margin: 2.25rem 0 .9rem; color: var(--color-brown); }
 .prose-journal h3 { font-size: 1.25rem; font-weight: 600; margin: 1.75rem 0 .6rem; color: var(--color-brown); }
 .prose-journal p { margin: 0 0 1.25rem; }
-.prose-journal a { color: var(--color-sky); text-decoration: underline; text-underline-offset: 2px; }
+.prose-journal a { color: var(--color-link); text-decoration: underline; text-underline-offset: 2px; }
 .prose-journal a:hover { color: var(--color-clay); }
 .prose-journal ul,
 .prose-journal ol { margin: 0 0 1.25rem 1.25rem; }
@@ -129,7 +141,7 @@ textarea:focus-visible,
 .journal-list-item { padding: 1.5rem 0; border-bottom: 1px solid rgba(59, 44, 34, .1); }
 .journal-list-link { text-decoration: none; }
 .journal-list-title { font-size: 1.4rem; font-weight: 700; color: var(--color-brown); margin: 0 0 .35rem; transition: color .15s; }
-.journal-list-link:hover .journal-list-title { color: var(--color-sky); }
+.journal-list-link:hover .journal-list-title { color: var(--color-link); }
 /* keyboard focus ring is provided by the global a:focus-visible baseline (identical outline) */
 .journal-list-meta { font-size: .85rem; color: rgba(59, 44, 34, .75); margin-bottom: .5rem; }
 .journal-list-summary { color: rgba(59, 44, 34, .8); line-height: 1.6; margin: 0 0 .5rem; }
@@ -180,7 +192,7 @@ textarea:focus-visible,
   }
 
   .quick-nav a {
-    @apply text-sky-blue;
+    @apply text-link;
   }
 
   /* Achievement Cards */
@@ -219,7 +231,7 @@ textarea:focus-visible,
   }
 
   .achievement-title a:hover {
-    @apply text-sky-blue underline;
+    @apply text-link underline;
   }
 
   .achievement-event {
@@ -567,7 +579,7 @@ textarea:focus-visible,
   }
 
   .activity-link:hover {
-    @apply text-sky-blue underline;
+    @apply text-link underline;
   }
 
   .activity-separator {
@@ -598,7 +610,7 @@ textarea:focus-visible,
   }
 
   .back-link {
-    @apply text-sky-blue no-underline transition-colors duration-200;
+    @apply text-link no-underline transition-colors duration-200;
   }
 
   .back-link:hover {
@@ -733,7 +745,7 @@ textarea:focus-visible,
   }
 
   .work-card:hover .work-card-title {
-    @apply text-sky-blue;
+    @apply text-link;
   }
 
   .work-card-event {
@@ -836,9 +848,10 @@ textarea:focus-visible,
   text-align: left;
 }
 
-/* Links */
+/* Links — resting color uses --color-link (AA on cream); the brand sky #41CFFF
+   would only be 1.69:1 here. Hover stays clay (#E58C2E). */
 .story-content a {
-  color: #41CFFF;
+  color: var(--color-link);
   text-decoration: underline;
   transition: color 0.2s;
 }
@@ -1098,7 +1111,7 @@ textarea:focus-visible,
 
 .sort-btn.active {
   opacity: 1;
-  color: #41CFFF;
+  color: var(--color-link);
   text-decoration: underline;
   text-underline-offset: 3px;
 }

@@ -49,7 +49,7 @@ export default async function WorkStory(
   return (
     <div className="max-w-3xl mx-auto px-4 sm:px-6 py-8 sm:py-12">
       <div className="mb-6 sm:mb-8">
-        <Link href="/work" className="text-[#41CFFF] hover:text-[#E58C2E] transition-colors">
+        <Link href="/work" className="text-link hover:text-[#E58C2E] transition-colors">
           ← Back to Work
         </Link>
       </div>
@@ -93,7 +93,7 @@ export default async function WorkStory(
                 href={work.githubUrl}
                 target="_blank"
                 rel="noopener"
-                className="text-[#41CFFF] hover:text-[#E58C2E] transition-colors"
+                className="text-link hover:text-[#E58C2E] transition-colors"
               >
                 GitHub →
               </a>
@@ -104,7 +104,7 @@ export default async function WorkStory(
                 href={work.liveUrl}
                 target="_blank"
                 rel="noopener"
-                className="text-[#41CFFF] hover:text-[#E58C2E] transition-colors"
+                className="text-link hover:text-[#E58C2E] transition-colors"
               >
                 Live Site →
               </a>
