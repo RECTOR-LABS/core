@@ -14,7 +14,10 @@ jobs:
         with:
           node-version: 22
           cache: npm
-      - run: npm ci
+      # npm install (not ci): the macOS-generated lockfile omits some linux-only
+      # optional deps (@emnapi wasm fallbacks), so strict `npm ci` fails on the
+      # runner; install reconciles them cross-platform (matching Vercel's build).
+      - run: npm install
       - run: npm run lint
       - run: npx tsc --noEmit
       - run: npm test
