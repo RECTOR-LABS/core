@@ -12,10 +12,12 @@ const JOURNAL_DIR = path.join(
   "../lib/content/__fixtures__/journal",
 );
 
-// Dynamically import so we can inject fixture dirs at module load time.
-// The sitemap function is a pure default export — we exercise it via the
-// loader functions it depends on, using the same fixture dirs as the unit
-// tests for works/posts.
+// The hermetic tests below rebuild the sitemap entries over fixture dirs,
+// because the real sitemap() reads content/ with no args and can't be pointed
+// at fixtures. A separate smoke test exercises the real sitemap()/robots()
+// default exports for their structural invariants.
+import sitemap from "./sitemap";
+import robots from "./robots";
 import { loadWorks } from "@/lib/content/works";
 import { loadPosts } from "@/lib/content/posts";
 import { SITE_URL } from "@/lib/site";
@@ -102,12 +104,12 @@ describe("sitemap", () => {
     expect(urls).not.toContain("https://rectorspace.com/journal/draft-post");
   });
 
-  it("total entry count = 1 home + 1 work index + #publishedWorks + 1 journal index + #publishedPosts", () => {
+  it("total entry count = static routes + #publishedWorks + #publishedPosts", () => {
     const { published: works } = loadWorks(WORK_DIR);
     const { published: posts } = loadPosts(JOURNAL_DIR);
     const entries = buildSitemapEntries();
-    // 1 home + 1 work index + 3 work slugs + 1 journal index + 1 post slug = 7
-    expect(entries).toHaveLength(2 + works.length + posts.length + 1);
+    const STATIC_ROUTES = 3; // home + /work index + /journal index
+    expect(entries).toHaveLength(STATIC_ROUTES + works.length + posts.length);
   });
 
   it("all URLs are absolute (start with https://rectorspace.com)", () => {
@@ -134,24 +136,45 @@ describe("sitemap", () => {
       );
     }
   });
+
+  it("the real sitemap() export yields absolute, /apply-free entries", () => {
+    // Exercises the actual default export over real content/ (not fixtures);
+    // asserts structural invariants only, so adding works/posts won't break it.
+    const entries = sitemap();
+    expect(entries.length).toBeGreaterThanOrEqual(3);
+    for (const e of entries) {
+      expect(e.url).toMatch(/^https:\/\/rectorspace\.com/);
+      expect(e.url).not.toContain("/apply");
+    }
+    const urls = entries.map((e) => e.url);
+    expect(urls).toContain("https://rectorspace.com/");
+    expect(urls).toContain("https://rectorspace.com/work");
+    expect(urls).toContain("https://rectorspace.com/journal");
+  });
 });
 
 describe("robots", () => {
-  it("SITE_URL is used for sitemap and host references", () => {
-    // Tested implicitly — SITE_URL must equal the prod origin
-    expect(SITE_URL).toBe("https://rectorspace.com");
+  // Exercise the real robots() default export — it's pure (no content dependency),
+  // so we assert its actual output rather than restating constants.
+  it("allows all crawlers with no disallow", () => {
+    const { rules } = robots();
+    const first = Array.isArray(rules) ? rules[0] : rules;
+    expect(first?.userAgent).toBe("*");
+    expect(first?.allow).toBe("/");
+    expect(first?.disallow).toBeUndefined();
   });
 
-  it("sitemap URL is the absolute /sitemap.xml at SITE_URL", () => {
-    const sitemapUrl = `${SITE_URL}/sitemap.xml`;
-    expect(sitemapUrl).toBe("https://rectorspace.com/sitemap.xml");
+  it("does NOT disallow /apply (noindex meta handles exclusion)", () => {
+    const { rules } = robots();
+    const first = Array.isArray(rules) ? rules[0] : rules;
+    const disallow = first?.disallow;
+    const list = Array.isArray(disallow) ? disallow : disallow ? [disallow] : [];
+    expect(list.some((d) => d.includes("/apply"))).toBe(false);
   });
 
-  it("allow rule is '/' — no blanket disallow", () => {
-    // The robots policy is: allow all crawlers, no disallow.
-    // /apply is excluded via noindex meta + absence from sitemap (not robots disallow).
-    const allow = "/";
-    expect(allow).toBe("/");
-    expect(allow).not.toContain("/apply");
+  it("references the absolute sitemap and host at SITE_URL", () => {
+    const r = robots();
+    expect(r.sitemap).toBe(`${SITE_URL}/sitemap.xml`);
+    expect(r.host).toBe(SITE_URL);
   });
 });

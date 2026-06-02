@@ -12,7 +12,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     {
       url: `${SITE_URL}/`,
       changeFrequency: "monthly",
-      priority: 1,
+      priority: 1.0,
     },
 
     // Work index

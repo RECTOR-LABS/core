@@ -13,9 +13,9 @@ import type { Metadata } from "next";
 // convention dropped.
 //
 // Paths are RELATIVE on purpose. The root layout sets
-// `metadataBase: new URL("https://rectorspace.com")`; Next.js resolves these
-// relative paths against it at render time to emit absolute URLs. Never
-// hardcode the domain here — that's metadataBase's job.
+// `metadataBase: new URL(SITE_URL)` (lib/site.ts → https://rectorspace.com);
+// Next.js resolves these relative paths against it at render time to emit
+// absolute URLs. Never hardcode the domain here — that's metadataBase's job.
 // ---------------------------------------------------------------------------
 
 const SITE_NAME = "RECTOR";
