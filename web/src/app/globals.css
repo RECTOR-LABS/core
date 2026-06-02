@@ -44,7 +44,7 @@
   /* Dark-clay TEXT color for the gold/winner badges on their bg-yellow/20 tint
      (#FEEEC2). The brand clay (#E58C2E) is only 2.24:1 on that tint, so the
      badge LABEL text uses this darkened clay instead. #8A4A12 is 5.94:1 on the
-     yellow/20 badge tint and 8.66:1 on cream — both verified. It stays in the
+     yellow/20 badge tint and 6.40:1 on cream — both verified. It stays in the
      clay/amber family (HSL hue ~28°, vs clay's ~31°), keeping the warm badge
      character rather than flattening to plain brown.
      IMPORTANT: --color-clay / --color-orange intentionally STAY #E58C2E — they
@@ -406,7 +406,9 @@ textarea:focus-visible,
   }
 
   .streak-current {
-    @apply font-bold text-orange;
+    /* clay-deep (6.40:1 on cream), not the brand clay #E58C2E (2.42:1) — this
+       renders the readable "N-day streak" phrase, so it needs AA contrast. */
+    @apply font-bold text-clay-deep;
   }
 
   .streak-separator {
