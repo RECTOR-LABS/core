@@ -59,7 +59,7 @@ export function ProjectCard({ repo, winnerBadge, now = new Date() }: Props) {
           </span>
         )}
         {repo.latestCommitSha !== null && (
-          <span className="project-stat font-mono text-[10px] text-[#3B2C22]/50">
+          <span className="project-stat font-mono text-[10px] text-[#3B2C22]/70">
             {repo.latestCommitSha}
           </span>
         )}

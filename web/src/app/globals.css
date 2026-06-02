@@ -27,6 +27,30 @@
      decorative borders/background tints/rings on light surfaces, and they
      drive the OG image. Only readable link text on cream switches to this. */
   --color-link: #0D7390;
+
+  /* Dark-green TEXT color for LIGHT/cream surfaces — a leaf-green-derived dark
+     olive-green that meets WCAG AA (≥4.5:1) as readable TEXT. The brand leaf
+     (#A8E063) is only 1.45:1 on cream, so green STAT numbers (prizes, the
+     contribution total, the live-badge label) use this instead.
+     #3C6A12 is 6.02:1 on cream #FFF7E1 and 5.57:1 on the green/20 live-badge
+     tint (#EEF2C8) — both verified via the WCAG relative-luminance formula.
+     It stays in the leaf family (HSL hue ~91°, vs leaf's ~87°), just darker
+     and more saturated, so the palette still reads green not grey.
+     IMPORTANT: --color-green / --color-leaf intentionally STAY #A8E063 — they
+     are correct as the contribution-graph cells, bg-green/* tints, green
+     borders, and the live-pulse dot (all decorative fills, not readable text). */
+  --color-green-deep: #3C6A12;
+
+  /* Dark-clay TEXT color for the gold/winner badges on their bg-yellow/20 tint
+     (#FEEEC2). The brand clay (#E58C2E) is only 2.24:1 on that tint, so the
+     badge LABEL text uses this darkened clay instead. #8A4A12 is 5.94:1 on the
+     yellow/20 badge tint and 8.66:1 on cream — both verified. It stays in the
+     clay/amber family (HSL hue ~28°, vs clay's ~31°), keeping the warm badge
+     character rather than flattening to plain brown.
+     IMPORTANT: --color-clay / --color-orange intentionally STAY #E58C2E — they
+     remain correct as the badge BACKGROUND tints' source colour and elsewhere
+     as decorative fills/borders; only the badge label text darkens. */
+  --color-clay-deep: #8A4A12;
 }
 
 body {
@@ -188,7 +212,7 @@ textarea:focus-visible,
 
   /* Quick Nav */
   .quick-nav {
-    @apply mt-6 text-center text-sm text-brown/60;
+    @apply mt-6 text-center text-sm text-brown/70;
   }
 
   .quick-nav a {
@@ -211,7 +235,7 @@ textarea:focus-visible,
   }
 
   .achievement-gold {
-    @apply bg-yellow/20 text-orange;
+    @apply bg-yellow/20 text-clay-deep;
   }
 
   .achievement-silver {
@@ -219,7 +243,7 @@ textarea:focus-visible,
   }
 
   .achievement-bounty {
-    @apply bg-sky-blue/20 text-sky-blue;
+    @apply bg-sky-blue/20 text-link;
   }
 
   .achievement-title {
@@ -235,11 +259,11 @@ textarea:focus-visible,
   }
 
   .achievement-event {
-    @apply text-sm text-brown/60 mt-0.5;
+    @apply text-sm text-brown/70 mt-0.5;
   }
 
   .achievement-prize {
-    @apply text-sm font-bold text-green whitespace-nowrap;
+    @apply text-sm font-bold text-green-deep whitespace-nowrap;
   }
 
   .achievement-desc {
@@ -324,7 +348,7 @@ textarea:focus-visible,
   }
 
   .contribution-legend {
-    @apply flex items-center gap-1 mt-3 text-xs text-brown/60;
+    @apply flex items-center gap-1 mt-3 text-xs text-brown/70;
   }
 
   .contribution-legend-box {
@@ -340,7 +364,7 @@ textarea:focus-visible,
   }
 
   .contribution-total-number {
-    @apply text-green text-lg;
+    @apply text-green-deep text-lg;
   }
 
   /* Contribution Container - wraps entire graph section */
@@ -355,7 +379,7 @@ textarea:focus-visible,
 
   .year-tab {
     @apply px-3 py-1.5 text-sm font-medium rounded-lg no-underline;
-    @apply text-brown/60 bg-brown/5 border border-transparent;
+    @apply text-brown/70 bg-brown/5 border border-transparent;
     @apply transition-all duration-200;
   }
 
@@ -390,11 +414,11 @@ textarea:focus-visible,
   }
 
   .streak-longest {
-    @apply text-brown/60;
+    @apply text-brown/70;
   }
 
   .streak-best {
-    @apply text-brown/60;
+    @apply text-brown/70;
   }
 
   /* Month Labels - positioned above contribution graph */
@@ -413,7 +437,7 @@ textarea:focus-visible,
   }
 
   .month-label {
-    @apply text-[10px] text-brown/50 font-medium;
+    @apply text-[10px] text-brown/70 font-medium;
     white-space: nowrap;
     min-width: calc(4.3 * (10px + 2px)); /* ~4.3 weeks per month */
   }
@@ -513,7 +537,7 @@ textarea:focus-visible,
   }
 
   .project-stats {
-    @apply flex items-center gap-3 text-xs text-brown/60 mt-2;
+    @apply flex items-center gap-3 text-xs text-brown/70 mt-2;
     @apply flex-wrap;
   }
 
@@ -523,7 +547,7 @@ textarea:focus-visible,
 
   .project-winner-badge {
     @apply inline-flex items-center gap-1 text-xs font-semibold px-2 py-0.5 rounded-full;
-    @apply bg-yellow/20 text-orange;
+    @apply bg-yellow/20 text-clay-deep;
   }
 
   @media (max-width: 640px) {
@@ -587,7 +611,7 @@ textarea:focus-visible,
   }
 
   .activity-time {
-    @apply text-brown/50;
+    @apply text-brown/70;
   }
 
   @media (max-width: 640px) {
@@ -645,7 +669,7 @@ textarea:focus-visible,
   }
 
   .work-stat-label {
-    @apply text-sm text-brown/60;
+    @apply text-sm text-brown/70;
   }
 
   .work-stat-divider {
@@ -718,11 +742,11 @@ textarea:focus-visible,
   }
 
   .badge-winner {
-    @apply bg-yellow/20 text-orange;
+    @apply bg-yellow/20 text-clay-deep;
   }
 
   .badge-live {
-    @apply bg-green/20 text-green font-semibold;
+    @apply bg-green/20 text-green-deep font-semibold;
     @apply flex items-center gap-1.5;
   }
 
@@ -736,7 +760,7 @@ textarea:focus-visible,
   }
 
   .work-card-prize {
-    @apply text-sm font-bold text-green;
+    @apply text-sm font-bold text-green-deep;
   }
 
   .work-card-title {
@@ -749,7 +773,7 @@ textarea:focus-visible,
   }
 
   .work-card-event {
-    @apply text-sm text-brown/50 mb-2;
+    @apply text-sm text-brown/70 mb-2;
   }
 
   .work-card-summary {
@@ -757,7 +781,7 @@ textarea:focus-visible,
   }
 
   .work-card-meta {
-    @apply flex items-center gap-3 text-xs text-brown/50;
+    @apply flex items-center gap-3 text-xs text-brown/70;
   }
 
   .work-card-tech {
@@ -1028,7 +1052,7 @@ textarea:focus-visible,
   font-size: 0.875rem;
   font-weight: 400;
   color: #3B2C22;
-  opacity: 0.5;
+  opacity: 0.7; /* brown @ 70% on cream = 4.98:1 (AA); 0.5 was 2.86:1 */
   margin-left: 0.75rem;
 }
 
@@ -1086,7 +1110,7 @@ textarea:focus-visible,
 .sort-label {
   font-size: 0.75rem;
   color: #3B2C22;
-  opacity: 0.5;
+  opacity: 0.7; /* brown @ 70% on cream = 4.98:1 (AA); 0.5 was 2.86:1 */
   margin-right: 0.5rem;
 }
 
@@ -1096,7 +1120,9 @@ textarea:focus-visible,
   font-size: 0.75rem;
   font-weight: 500;
   color: #3B2C22;
-  opacity: 0.5;
+  opacity: 0.7; /* brown @ 70% on cream = 4.98:1 (AA); 0.5 was 2.86:1. Inactive
+                   sort buttons stay visually dimmer than the active one, which
+                   goes full-opacity + link color + underline below. */
   background-color: transparent;
   border: none;
   cursor: pointer;
@@ -1131,7 +1157,7 @@ textarea:focus-visible,
   text-align: center;
   padding: 3rem 1rem;
   color: #3B2C22;
-  opacity: 0.5;
+  opacity: 0.7; /* brown @ 70% on cream = 4.98:1 (AA); 0.5 was 2.86:1 */
 }
 
 .no-results.hidden {

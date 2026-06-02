@@ -110,7 +110,7 @@ export default async function WorkIndexPage() {
   // Render
   // ---------------------------------------------------------------------------
   return (
-    <div className="container-work">
+    <main className="container-work">
       <div className="mb-6 sm:mb-8">
         <Link href="/" className="back-link">
           ← Home
@@ -214,9 +214,9 @@ export default async function WorkIndexPage() {
 
       {published.length === 0 && (
         <div className="text-center py-12">
-          <p className="text-[#3B2C22]/50">No work published yet. Check back soon!</p>
+          <p className="text-[#3B2C22]/70">No work published yet. Check back soon!</p>
         </div>
       )}
-    </div>
+    </main>
   );
 }

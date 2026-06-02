@@ -47,7 +47,7 @@ export default async function WorkStory(
   if (!work) notFound();
 
   return (
-    <div className="max-w-3xl mx-auto px-4 sm:px-6 py-8 sm:py-12">
+    <main className="max-w-3xl mx-auto px-4 sm:px-6 py-8 sm:py-12">
       <div className="mb-6 sm:mb-8">
         <Link href="/work" className="text-link hover:text-[#E58C2E] transition-colors">
           ← Back to Work
@@ -56,7 +56,7 @@ export default async function WorkStory(
       <article className="max-w-none">
         <header className="mb-6 sm:mb-8 pb-6 sm:pb-8 border-b-2 border-[#3B2C22]/10">
           <h1 className="text-2xl sm:text-4xl font-bold mb-4 text-[#3B2C22]">{work.title}</h1>
-          <div className="flex flex-wrap items-center gap-4 text-sm text-[#3B2C22]/60 mb-4">
+          <div className="flex flex-wrap items-center gap-4 text-sm text-[#3B2C22]/70 mb-4">
             <span className="px-3 py-1 bg-[#A8E063] text-[#3B2C22] font-medium rounded">
               {work.status}
             </span>
@@ -113,6 +113,6 @@ export default async function WorkStory(
         </header>
         <Markdown className="story-content text-[#3B2C22]">{work.body}</Markdown>
       </article>
-    </div>
+    </main>
   );
 }

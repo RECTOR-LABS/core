@@ -11,7 +11,7 @@ export function TechStackBar({ techStack }: Props) {
 
   return (
     <div className="mt-6 p-4 bg-[#3B2C22]/5 border-l-4 border-[#41CFFF] rounded">
-      <p className="text-sm font-medium text-[#3B2C22]/60 mb-1">
+      <p className="text-sm font-medium text-[#3B2C22]/70 mb-1">
         BUILDING ACROSS {techStack.totalRepos} REPOSITORIES
       </p>
       <p className="font-mono text-base font-semibold text-[#3B2C22] mb-0">
