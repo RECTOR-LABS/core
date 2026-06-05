@@ -4,7 +4,7 @@ slug: june-2026-hackathon-radar
 date: 2026-06-05
 summary: "A point-in-time, individually-verified snapshot of 22 June 2026 hackathons — AI agents, Solana, security — with deadlines, fit, and the errors the viral tier list got wrong."
 tags: [hackathons, ai-agents, solana, security]
-draft: true
+draft: false
 ---
 
 A viral "June 2026 Hackathon Tier List" made the rounds, so I did the boring part: opened all 22, read each page, and checked the dates and prizes myself. The table below is what survived that pass — sortable, filterable, and stamped **as of June 4, 2026** (deadlines move; treat this as a snapshot, not a live feed).
