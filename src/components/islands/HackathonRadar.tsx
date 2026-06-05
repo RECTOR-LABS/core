@@ -126,6 +126,7 @@ export function HackathonRadar({ hackathons, asOf, source }: HackathonRadarProps
         </label>
       </div>
 
+      <div className="radar-scroll">
       <table className="radar-table">
         <thead>
           <tr>
@@ -168,7 +169,7 @@ export function HackathonRadar({ hackathons, asOf, source }: HackathonRadarProps
                   </td>
                   <td><span className={"radar-fit fit-" + hk.fit}>{FIT_LABEL[hk.fit]}</span></td>
                   <td className="radar-prize">{hk.prize}</td>
-                  <td>{hk.deadlineWIB}</td>
+                  <td className="radar-deadline">{hk.deadlineWIB}</td>
                   <td><span className={"radar-loc " + loc.cls}>{loc.icon} {hk.location}</span></td>
                   <td className="radar-theme">{hk.theme}</td>
                 </tr>
@@ -198,6 +199,7 @@ export function HackathonRadar({ hackathons, asOf, source }: HackathonRadarProps
           })}
         </tbody>
       </table>
+      </div>
 
       {visible.length === 0 && <p className="radar-empty">No hackathons match your filters.</p>}
 
