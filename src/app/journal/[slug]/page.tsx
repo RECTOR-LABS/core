@@ -3,11 +3,23 @@ import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import { pageMetadata } from "@/lib/seo";
 import { loadPosts } from "@/lib/content/posts";
+import { loadHackathons } from "@/lib/content/hackathons";
 import { Markdown } from "@/components/Markdown";
+import { HackathonRadar } from "@/components/islands/HackathonRadar";
 
 // Memoised per render pass at build time — dedupes the three loadPosts() calls
 // without coupling the pure loader module to React.
 const getPosts = cache(() => loadPosts());
+const getHackathons = cache(() => loadHackathons());
+
+const RADAR_TOKEN = "<!--RADAR-->";
+
+/** Split a post body on the first RADAR token. Returns [whole, null] when absent. */
+export function splitOnRadar(body: string): [string, string | null] {
+  const i = body.indexOf(RADAR_TOKEN);
+  if (i === -1) return [body, null];
+  return [body.slice(0, i), body.slice(i + RADAR_TOKEN.length)];
+}
 
 // Any slug not returned by generateStaticParams (including drafts) 404s automatically.
 export const dynamicParams = false;
@@ -37,6 +49,7 @@ export default async function JournalPost(
   const post = getPosts().find(slug);
   if (!post) notFound();
   const iso = post.date.toISOString().slice(0, 10);
+  const [intro, outro] = splitOnRadar(post.body);
   return (
     <main className="mx-auto max-w-2xl px-6 py-16">
       <article>
@@ -44,7 +57,16 @@ export default async function JournalPost(
         <p className="text-sm opacity-70 mb-8">
           <time dateTime={iso}>{iso}</time> · {post.readingMinutes} min read
         </p>
-        <Markdown>{post.body}</Markdown>
+        <Markdown>{intro}</Markdown>
+        {outro !== null && (() => {
+          const { all, asOf, source } = getHackathons();
+          return (
+            <>
+              <HackathonRadar hackathons={all} asOf={asOf} source={source} />
+              <Markdown>{outro}</Markdown>
+            </>
+          );
+        })()}
       </article>
     </main>
   );

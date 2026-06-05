@@ -1,0 +1,20 @@
+asOf: "2026-06-04"
+source:
+  label: "x"
+  url: "https://example.com"
+hackathons:
+  - name: "Bad Entry"
+    prize: "$1"
+    prizeValue: 1
+    deadlineLabel: "x"
+    deadlineWIB: "x"
+    deadlineSort: null
+    fit: "not-a-number"
+    location: "Remote"
+    theme: "x"
+    status: "open"
+    link: null
+    platform: "x"
+    eligibility: "x"
+    about: "x"
+    correction: null

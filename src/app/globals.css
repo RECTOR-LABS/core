@@ -1305,3 +1305,44 @@ textarea:focus-visible,
     display: none;
   }
 }
+
+/* ---- Hackathon Radar (journal embed) ---- */
+.radar { margin: 2rem 0; font-size: 0.85rem; }
+.radar-stats { display: flex; gap: 0.75rem; flex-wrap: wrap; margin-bottom: 0.75rem; }
+.radar-stat { background: #fffdf6; border: 1px solid rgba(59,44,34,.14); border-radius: 10px; padding: 0.5rem 0.85rem; }
+.radar-stat b { display: block; font-size: 1.1rem; }
+.radar-stat span { font-size: 0.65rem; text-transform: uppercase; letter-spacing: .5px; opacity: .7; }
+.radar-controls { display: flex; gap: 0.6rem; flex-wrap: wrap; align-items: center; margin-bottom: 0.6rem; }
+.radar-controls input[type="text"], .radar-controls select { font: inherit; font-size: 0.8rem; padding: 0.4rem 0.6rem; border: 1px solid rgba(59,44,34,.18); border-radius: 7px; background: var(--color-cream, #FFF7E1); color: var(--color-brown, #3B2C22); }
+.radar-search { flex: 1; min-width: 180px; }
+.radar-checkbox { font-size: 0.75rem; opacity: .8; display: inline-flex; gap: 0.3rem; align-items: center; }
+.radar-table { width: 100%; border-collapse: collapse; }
+.radar-table th { text-align: left; border-bottom: 1px solid rgba(59,44,34,.18); padding: 0.4rem 0.5rem; }
+.radar-table th button { font: inherit; font-size: 0.62rem; text-transform: uppercase; letter-spacing: .5px; background: none; border: none; cursor: pointer; color: var(--color-brown, #3B2C22); opacity: .7; padding: 0; }
+.radar-table th button:hover { opacity: 1; }
+.radar-row { border-bottom: 1px solid rgba(59,44,34,.1); }
+.radar-row:hover { background: #fbf4e2; }
+.radar-row.dimmed { opacity: .55; }
+.radar-row td { padding: 0.5rem; }
+.radar-name { font-weight: 600; }
+.radar-toggle { font: inherit; color: inherit; background: none; border: none; padding: 0; margin: 0; cursor: pointer; text-align: left; }
+.radar-toggle:hover { color: var(--color-link, #0D7390); }
+.radar-arrow { font-size: 0.6rem; opacity: .5; }
+.radar-ext { margin-left: 0.4rem; color: var(--color-link, #0D7390); text-decoration: none; }
+.radar-prize { font-weight: 700; }
+.radar-fit, .radar-loc { display: inline-block; padding: 1px 7px; border-radius: 20px; font-size: 0.72rem; white-space: nowrap; }
+.loc-remote { background: rgba(60,106,18,.13); color: var(--color-green-deep, #3C6A12); }
+.loc-hybrid { background: rgba(249,200,70,.24); color: #8a6a10; }
+.loc-onsite { background: rgba(199,90,68,.16); color: #9a3d2b; }
+.radar-theme { font-size: 0.78rem; opacity: .8; }
+.radar-detail td { background: #fbf4e2; padding: 0.75rem 1rem; }
+.radar-detail p { margin: 0 0 0.5rem; }
+.radar-corr { color: #9a3d2b; }
+.radar-meta { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 0.3rem 1rem; font-size: 0.75rem; }
+.radar-openbtn { display: inline-block; margin-top: 0.6rem; background: var(--color-link, #0D7390); color: #fff; text-decoration: none; padding: 0.35rem 0.7rem; border-radius: 7px; font-size: 0.75rem; }
+.radar-empty { opacity: .7; padding: 1rem 0; }
+.radar-corrections { margin-top: 1rem; border: 1px solid rgba(59,44,34,.14); border-radius: 8px; padding: 0.5rem 0.85rem; background: #fffdf6; }
+.radar-corrections summary { cursor: pointer; font-weight: 600; }
+.radar-corrections ul { margin: 0.5rem 0 0; padding-left: 1.1rem; font-size: 0.8rem; }
+.radar-corrections li { margin-bottom: 0.35rem; }
+.radar-source { font-size: 0.72rem; opacity: .7; margin-top: 0.85rem; }
