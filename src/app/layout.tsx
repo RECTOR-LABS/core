@@ -1,4 +1,5 @@
 import localFont from "next/font/local";
+import { Analytics } from "@vercel/analytics/next";
 import "./globals.css";
 import { VersionFooter } from "@/components/VersionFooter";
 import { versionView } from "@/lib/version";
@@ -50,6 +51,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <body>
         {children}
         <VersionFooter {...versionView()} />
+        <Analytics />
       </body>
     </html>
   );
