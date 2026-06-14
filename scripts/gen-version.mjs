@@ -9,7 +9,9 @@
 // Data sources (per the locked decisions):
 //   - sha    : VERCEL_GIT_COMMIT_SHA, else `git rev-parse HEAD`
 //   - branch : VERCEL_GIT_COMMIT_REF, else `git rev-parse --abbrev-ref HEAD`
-//   - count  : `git rev-list --count HEAD`
+//   - count  : `git rev-list --count HEAD`, AFTER deepening a shallow checkout
+//              (Vercel clones with `--depth=10`, which would otherwise undercount
+//              — e.g. 21 instead of the true total when HEAD is a merge commit)
 //   - time   : current ISO timestamp (the build time)
 //
 // NULL-SAFE: any git failure (no repo / git missing / shallow checkout without
@@ -45,6 +47,20 @@ function clean(value) {
 const sha = clean(process.env.VERCEL_GIT_COMMIT_SHA) ?? git(["rev-parse", "HEAD"]);
 const branch =
   clean(process.env.VERCEL_GIT_COMMIT_REF) ?? git(["rev-parse", "--abbrev-ref", "HEAD"]);
+
+// Vercel checks out a SHALLOW clone (`git clone --depth=10`), so a plain
+// `git rev-list --count HEAD` would count only the ~10 most recent history
+// layers (21 here, since HEAD is a 2-parent merge commit) instead of the true
+// total. Deepen to full history first. RECTOR-LABS/core is PUBLIC, so this needs
+// no credentials. It is best-effort + null-safe: if the fetch fails (offline /
+// no usable remote) we fall back to counting whatever history is present — the
+// same behavior as before this guard — so the build never breaks. The
+// `--is-shallow-repository` guard means non-shallow checkouts (local builds)
+// skip the network call entirely, and `--unshallow` is never run on a complete
+// repo (which would error).
+if (git(["rev-parse", "--is-shallow-repository"]) === "true") {
+  git(["fetch", "--unshallow", "--quiet"]);
+}
 
 const countRaw = git(["rev-list", "--count", "HEAD"]);
 const parsedCount = countRaw === null ? NaN : Number.parseInt(countRaw, 10);
