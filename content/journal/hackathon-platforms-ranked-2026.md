@@ -7,6 +7,8 @@ tags: [hackathons, solana, web3, ai-agents]
 draft: false
 ---
 
+![Hackathon Platforms, Ranked — all 16 hackathon-hosting platforms scored out of 10 on popularity and quality, color-coded by Solana support](/images/hackathon-platforms-ranked.png)
+
 Search "best hackathon platforms" and you get the same dozen names with the same numbers stapled to them — "5 million developers here," "$80 million paid out there." Most of those numbers are marketing copy nobody re-checks. I spend my days doing the opposite with smart contracts: don't trust a value, validate its source. So I pointed the same habit at the platforms themselves.
 
 What follows is the full hackathon-hosting landscape — **16 platforms** — each scored on two axes and each load-bearing number traced back to a primary source. Two research passes, every meaningful claim run through adversarial verification. The stats that *didn't* survive are called out by name, because in this space the myths are as useful to know as the facts.
