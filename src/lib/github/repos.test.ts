@@ -1,11 +1,14 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import {
   fetchRepos,
+  discoverAccounts,
   latest,
   aggregateStats,
   recentlyActive,
   currentlyBuilding,
   DEFAULT_ACCOUNTS,
+  PRIMARY_ACCOUNT,
+  EXCLUDED_ACCOUNTS,
   type Repo,
 } from "./repos";
 
@@ -98,10 +101,185 @@ afterEach(() => {
 // DEFAULT_ACCOUNTS
 // ---------------------------------------------------------------------------
 
-describe("DEFAULT_ACCOUNTS", () => {
-  it("includes rz1989s and RECTOR-LABS", () => {
+describe("account constants", () => {
+  it("DEFAULT_ACCOUNTS (the discovery fallback) includes the flagship accounts", () => {
     expect(DEFAULT_ACCOUNTS).toContain("rz1989s");
     expect(DEFAULT_ACCOUNTS).toContain("RECTOR-LABS");
+    expect(DEFAULT_ACCOUNTS).toContain("sip-protocol");
+  });
+
+  it("PRIMARY_ACCOUNT is the personal login", () => {
+    expect(PRIMARY_ACCOUNT).toBe("rz1989s");
+  });
+
+  it("EXCLUDED_ACCOUNTS denies the NDA-bound org (compliance)", () => {
+    expect(EXCLUDED_ACCOUNTS).toContain("VOT-Labs");
+  });
+});
+
+// ---------------------------------------------------------------------------
+// discoverAccounts — dynamic org detection + compliance denylist
+// ---------------------------------------------------------------------------
+
+/** Build a minimal Response-like object for an orgs payload. */
+function orgsResponse(logins: string[]) {
+  return {
+    ok: true,
+    status: 200,
+    json: () => Promise.resolve(logins.map((login) => ({ login }))),
+    headers: new Headers(),
+  };
+}
+
+describe("discoverAccounts", () => {
+  it("returns PRIMARY_ACCOUNT first, then its public orgs", async () => {
+    const fetchMock = vi.fn().mockResolvedValueOnce(orgsResponse(["RECTOR-LABS", "sip-protocol", "getlumos"]));
+    vi.stubGlobal("fetch", fetchMock);
+
+    const accounts = await discoverAccounts();
+
+    expect(accounts[0]).toBe("rz1989s");
+    expect(accounts).toEqual(["rz1989s", "RECTOR-LABS", "sip-protocol", "getlumos"]);
+    // It hit the public-orgs endpoint of the primary account.
+    const [url] = fetchMock.mock.calls[0] as [string];
+    expect(url).toContain("/users/rz1989s/orgs");
+  });
+
+  it("excludes denylisted orgs case-insensitively", async () => {
+    const fetchMock = vi.fn().mockResolvedValueOnce(orgsResponse(["RECTOR-LABS", "VOT-Labs", "vot-labs", "VOT-LABS"]));
+    vi.stubGlobal("fetch", fetchMock);
+
+    const accounts = await discoverAccounts();
+
+    expect(accounts).toEqual(["rz1989s", "RECTOR-LABS"]);
+    expect(accounts.some((a) => a.toLowerCase() === "vot-labs")).toBe(false);
+  });
+
+  it("dedupes and ignores blank/missing logins", async () => {
+    const fetchMock = vi.fn().mockResolvedValueOnce({
+      ok: true,
+      status: 200,
+      json: () => Promise.resolve([{ login: "RECTOR-LABS" }, { login: "RECTOR-LABS" }, { login: "" }, {}, { login: "rz1989s" }]),
+      headers: new Headers(),
+    });
+    vi.stubGlobal("fetch", fetchMock);
+
+    const accounts = await discoverAccounts();
+
+    // rz1989s appears once (it is prepended; the org-list duplicate collapses), RECTOR-LABS once.
+    expect(accounts).toEqual(["rz1989s", "RECTOR-LABS"]);
+  });
+
+  it("falls back to DEFAULT_ACCOUNTS on a non-2xx orgs response", async () => {
+    const consoleSpy = vi.spyOn(console, "error").mockImplementation(() => {});
+    const fetchMock = vi.fn().mockResolvedValueOnce({
+      ok: false,
+      status: 403,
+      json: () => Promise.resolve({ message: "Forbidden" }),
+      headers: new Headers(),
+    });
+    vi.stubGlobal("fetch", fetchMock);
+
+    const accounts = await discoverAccounts();
+
+    expect(accounts).toEqual([...DEFAULT_ACCOUNTS]);
+    expect(consoleSpy).toHaveBeenCalled();
+    expect(consoleSpy.mock.calls[0][0] as string).toMatch(/403/);
+  });
+
+  it("falls back to DEFAULT_ACCOUNTS on a network error", async () => {
+    const consoleSpy = vi.spyOn(console, "error").mockImplementation(() => {});
+    const fetchMock = vi.fn().mockRejectedValueOnce(new TypeError("fetch failed"));
+    vi.stubGlobal("fetch", fetchMock);
+
+    const accounts = await discoverAccounts();
+
+    expect(accounts).toEqual([...DEFAULT_ACCOUNTS]);
+    expect(consoleSpy).toHaveBeenCalled();
+  });
+
+  it("falls back to DEFAULT_ACCOUNTS on a malformed (non-array) payload", async () => {
+    const consoleSpy = vi.spyOn(console, "error").mockImplementation(() => {});
+    const fetchMock = vi.fn().mockResolvedValueOnce({
+      ok: true,
+      status: 200,
+      json: () => Promise.resolve({ message: "not an array" }),
+      headers: new Headers(),
+    });
+    vi.stubGlobal("fetch", fetchMock);
+
+    const accounts = await discoverAccounts();
+
+    expect(accounts).toEqual([...DEFAULT_ACCOUNTS]);
+    expect(consoleSpy).toHaveBeenCalled();
+  });
+});
+
+// ---------------------------------------------------------------------------
+// fetchRepos — auto-discovery when no explicit accounts are passed
+// ---------------------------------------------------------------------------
+
+describe("fetchRepos — auto-discovery", () => {
+  it("with no args, discovers orgs then fetches repos for each discovered account", async () => {
+    const fetchMock = vi.fn((url: string) => {
+      if (url.includes("/users/rz1989s/orgs")) {
+        return Promise.resolve(orgsResponse(["sip-protocol"]));
+      }
+      // Any repos-list endpoint → empty page (no commit-info calls needed).
+      return Promise.resolve({
+        ok: true,
+        status: 200,
+        json: () => Promise.resolve([]),
+        headers: new Headers(),
+      });
+    });
+    vi.stubGlobal("fetch", fetchMock);
+
+    const repos = await fetchRepos();
+
+    expect(repos).toEqual([]);
+    const urls = (fetchMock.mock.calls as [string][]).map(([u]) => u);
+    expect(urls.some((u) => u.includes("/users/rz1989s/orgs"))).toBe(true);
+    expect(urls.some((u) => u.includes("/users/rz1989s/repos"))).toBe(true);
+    expect(urls.some((u) => u.includes("/users/sip-protocol/repos"))).toBe(true);
+  });
+});
+
+// ---------------------------------------------------------------------------
+// fetchRepos — .github profile-repo exclusion
+// ---------------------------------------------------------------------------
+
+describe("fetchRepos — excludes .github profile repos", () => {
+  it("drops the .github repo and never fetches commit info for it", async () => {
+    const dotGithub = makeGithubRepo({ name: ".github", full_name: "sip-protocol/.github" });
+    const realRepo = makeGithubRepo({ name: "sip-protocol", full_name: "sip-protocol/sip-protocol" });
+
+    const fetchMock = vi.fn();
+    // Repos page contains BOTH the profile repo and a real project.
+    fetchMock.mockResolvedValueOnce({
+      ok: true,
+      status: 200,
+      json: () => Promise.resolve([dotGithub, realRepo]),
+      headers: new Headers(),
+    });
+    // Commit info — only the real repo should ask for it.
+    fetchMock.mockResolvedValueOnce({
+      ok: true,
+      status: 200,
+      json: () => Promise.resolve([{ sha: "abcdef1234" }]),
+      headers: new Headers(),
+    });
+
+    vi.stubGlobal("fetch", fetchMock);
+
+    const repos = await fetchRepos(["sip-protocol"]);
+
+    expect(repos).toHaveLength(1);
+    expect(repos[0].name).toBe("sip-protocol");
+
+    const urls = (fetchMock.mock.calls as [string][]).map(([u]) => u);
+    expect(urls.some((u) => u.includes("/repos/sip-protocol/.github/commits"))).toBe(false);
+    expect(urls.some((u) => u.includes("/repos/sip-protocol/sip-protocol/commits"))).toBe(true);
   });
 });
 
