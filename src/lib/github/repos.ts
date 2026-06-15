@@ -51,8 +51,31 @@ export interface Repo {
 // Constants
 // ---------------------------------------------------------------------------
 
-/** Default accounts to fetch — port of GithubApiService::PERSONAL_ACCOUNT + RECTOR-LABS org */
-export const DEFAULT_ACCOUNTS = ["rz1989s", "RECTOR-LABS"] as const;
+/**
+ * The site owner's personal GitHub login. Always shown first, and the account
+ * whose public org memberships are auto-discovered (see {@link discoverAccounts}).
+ */
+export const PRIMARY_ACCOUNT = "rz1989s";
+
+/**
+ * Compliance denylist for account auto-discovery (matched case-insensitively).
+ *
+ * {@link discoverAccounts} pulls EVERY public org the PRIMARY_ACCOUNT belongs to,
+ * so this is the inverse of the old hardcoded allowlist: new orgs surface
+ * automatically, but any org listed here can never leak onto the public site.
+ *
+ * `VOT-Labs` — the Intric / Arbital ecosystem, bound by a 3-year NDA. Excluded
+ * unconditionally as defense-in-depth: its membership is private today, but if
+ * that ever flips to public it still must never appear here.
+ */
+export const EXCLUDED_ACCOUNTS = ["VOT-Labs"] as const;
+
+/**
+ * Static fallback account list, used ONLY when org auto-discovery fails (orgs
+ * endpoint non-2xx / network error / malformed payload). Keeps the homepage
+ * populated with the flagship accounts in a degraded state.
+ */
+export const DEFAULT_ACCOUNTS = ["rz1989s", "RECTOR-LABS", "sip-protocol"] as const;
 
 const API_BASE = "https://api.github.com";
 
@@ -143,6 +166,63 @@ async function fetchCommitInfo(
 }
 
 // ---------------------------------------------------------------------------
+// Account discovery
+// ---------------------------------------------------------------------------
+
+/**
+ * Discover the accounts to showcase: the PRIMARY_ACCOUNT plus every PUBLIC org
+ * it belongs to (`GET /users/{login}/orgs`), minus the EXCLUDED_ACCOUNTS
+ * compliance denylist. This replaces the old hardcoded allowlist so newly
+ * created/joined orgs (e.g. sip-protocol) appear automatically.
+ *
+ * Graceful degradation: any failure (non-2xx, network error, malformed payload)
+ * is logged with actionable context and falls back to DEFAULT_ACCOUNTS — it
+ * never throws, so the homepage always renders.
+ *
+ * Note: the public-orgs endpoint returns only PUBLIC memberships, which is also
+ * why a private-membership org (like the denylisted one) does not appear here in
+ * the first place; the denylist is the explicit, membership-independent guard.
+ */
+export async function discoverAccounts(): Promise<string[]> {
+  const headers = buildHeaders();
+  const url = `${API_BASE}/users/${PRIMARY_ACCOUNT}/orgs?per_page=100`;
+
+  try {
+    const res = await githubFetch(url, headers);
+
+    if (!res.ok) {
+      console.error(
+        `GitHub API error discovering orgs for "${PRIMARY_ACCOUNT}": HTTP ${res.status} — ${url}. Falling back to DEFAULT_ACCOUNTS.`,
+      );
+      return [...DEFAULT_ACCOUNTS];
+    }
+
+    const orgs = (await res.json()) as Array<{ login?: string }>;
+    if (!Array.isArray(orgs)) {
+      console.error(
+        `GitHub API returned a non-array orgs payload for "${PRIMARY_ACCOUNT}" — falling back to DEFAULT_ACCOUNTS.`,
+      );
+      return [...DEFAULT_ACCOUNTS];
+    }
+
+    const excluded = new Set(EXCLUDED_ACCOUNTS.map((a) => a.toLowerCase()));
+    const orgLogins = orgs
+      .map((o) => o.login)
+      .filter((login): login is string => typeof login === "string" && login.length > 0)
+      .filter((login) => !excluded.has(login.toLowerCase()));
+
+    // PRIMARY_ACCOUNT first, then discovered orgs; dedupe defensively (a Set also
+    // collapses any accidental duplicate org logins from the API).
+    return Array.from(new Set([PRIMARY_ACCOUNT, ...orgLogins]));
+  } catch (err) {
+    console.error(
+      `GitHub API exception discovering orgs for "${PRIMARY_ACCOUNT}": ${String(err)} — falling back to DEFAULT_ACCOUNTS.`,
+    );
+    return [...DEFAULT_ACCOUNTS];
+  }
+}
+
+// ---------------------------------------------------------------------------
 // Main fetcher
 // ---------------------------------------------------------------------------
 
@@ -164,15 +244,19 @@ async function fetchCommitInfo(
  * account is logged via console.error with actionable context and skipped;
  * other accounts continue unaffected.
  *
- * @param accounts - GitHub user/org login names to fetch (default: DEFAULT_ACCOUNTS)
+ * @param accounts - Explicit GitHub user/org logins to fetch. Omit to
+ *   auto-discover via {@link discoverAccounts} (PRIMARY_ACCOUNT + its public
+ *   orgs, minus EXCLUDED_ACCOUNTS). An explicit `[]` fetches nothing.
  */
-export async function fetchRepos(
-  accounts: string[] = [...DEFAULT_ACCOUNTS],
-): Promise<Repo[]> {
+export async function fetchRepos(accounts?: string[]): Promise<Repo[]> {
+  // No explicit list → auto-discover. An explicit array (including []) is
+  // honored verbatim, which keeps unit tests deterministic and lets callers
+  // scope the fetch to specific accounts.
+  const resolvedAccounts = accounts ?? (await discoverAccounts());
   const headers = buildHeaders();
   const allRepos: Repo[] = [];
 
-  for (const account of accounts) {
+  for (const account of resolvedAccounts) {
     try {
       const accountRepos = await fetchAccountRepos(account, headers);
       allRepos.push(...accountRepos);
@@ -254,9 +338,16 @@ async function fetchAccountRepos(
       topics?: string[];
     }>;
 
+    // Drop org/user PROFILE repos (".github") before doing anything else: they
+    // hold community-health files / the profile README, not a project, so they
+    // would render as empty cards and inflate the repo + tech-stack counts once
+    // orgs are auto-included. Skipping them here also avoids a wasted commit-info
+    // request per profile repo.
+    const projectRepos = raw.filter((r) => r.name !== ".github");
+
     // Resolve commit info for each repo on this page (faithful to Rails parse_repos)
     const pageRepos = await Promise.all(
-      raw.map(async (r) => {
+      projectRepos.map(async (r) => {
         const commitInfo = await fetchCommitInfo(r.full_name, headers);
         return {
           fullName: r.full_name,
