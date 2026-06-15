@@ -9,9 +9,11 @@
 // Data sources (per the locked decisions):
 //   - sha    : VERCEL_GIT_COMMIT_SHA, else `git rev-parse HEAD`
 //   - branch : VERCEL_GIT_COMMIT_REF, else `git rev-parse --abbrev-ref HEAD`
-//   - count  : `git rev-list --count HEAD`, AFTER deepening a shallow checkout
-//              (Vercel clones with `--depth=10`, which would otherwise undercount
-//              — e.g. 21 instead of the true total when HEAD is a merge commit)
+//   - count  : `git rev-list --count HEAD` on a FULL clone (local builds). On
+//              Vercel's shallow `--depth=10` clone that undercounts (~20 vs the
+//              real total), and `git fetch --unshallow` is unreliable in Vercel's
+//              build sandbox (no fetchable remote), so the true total is read
+//              from the GitHub commits API instead (Link header rel="last").
 //   - time   : current ISO timestamp (the build time)
 //
 // NULL-SAFE: any git failure (no repo / git missing / shallow checkout without
@@ -44,27 +46,82 @@ function clean(value) {
   return trimmed.length > 0 ? trimmed : null;
 }
 
+/**
+ * Resolve the TRUE commit count for `ref` from the GitHub REST API.
+ *
+ * `GET /repos/{owner}/{repo}/commits?sha={ref}&per_page=1` returns a single
+ * commit, but its `Link` header's rel="last" page number equals the total
+ * number of commits reachable from `ref`. This is the reliable way to count on
+ * Vercel, whose shallow checkout has no full local history and no fetchable
+ * remote to deepen from.
+ *
+ * The repo slug comes from Vercel's VERCEL_GIT_REPO_OWNER / VERCEL_GIT_REPO_SLUG
+ * (falling back to the known RECTOR-LABS/core). Authorization is added when
+ * GITHUB_TOKEN is present; the public repo also resolves unauthenticated (one
+ * request per build, well within the 60/hr anonymous limit).
+ *
+ * Returns the parsed count, or null on ANY failure — the caller then keeps the
+ * git-derived count, so the build never breaks.
+ */
+async function fetchCommitCountFromApi(ref) {
+  const owner = clean(process.env.VERCEL_GIT_REPO_OWNER);
+  const slug = clean(process.env.VERCEL_GIT_REPO_SLUG);
+  const repo = owner && slug ? `${owner}/${slug}` : "RECTOR-LABS/core";
+  const url = `https://api.github.com/repos/${repo}/commits?sha=${encodeURIComponent(ref)}&per_page=1`;
+
+  const headers = {
+    Accept: "application/vnd.github+json",
+    "User-Agent": "RECTOR-LABS-CORE",
+  };
+  if (clean(process.env.GITHUB_TOKEN)) {
+    headers.Authorization = `Bearer ${process.env.GITHUB_TOKEN}`;
+  }
+
+  try {
+    const res = await fetch(url, { headers });
+    if (!res.ok) {
+      console.warn(
+        `gen-version: GitHub commits API HTTP ${res.status} for ${repo}@${ref.slice(0, 7)} — keeping git count.`,
+      );
+      return null;
+    }
+    // The total lives in the rel="last" page number (per_page=1 ⇒ pages = commits).
+    const link = res.headers.get("link");
+    const match = link ? link.match(/page=(\d+)>;\s*rel="last"/) : null;
+    if (match) return Number.parseInt(match[1], 10);
+    // No rel="last" ⇒ history fits in one page (≤1 commit, or the header was
+    // withheld); fall back to the returned array length.
+    const commits = await res.json();
+    return Array.isArray(commits) ? commits.length : null;
+  } catch (error) {
+    console.warn(
+      `gen-version: GitHub commits API error for ${repo} — keeping git count: ${error.message}`,
+    );
+    return null;
+  }
+}
+
 const sha = clean(process.env.VERCEL_GIT_COMMIT_SHA) ?? git(["rev-parse", "HEAD"]);
 const branch =
   clean(process.env.VERCEL_GIT_COMMIT_REF) ?? git(["rev-parse", "--abbrev-ref", "HEAD"]);
 
-// Vercel checks out a SHALLOW clone (`git clone --depth=10`), so a plain
-// `git rev-list --count HEAD` would count only the ~10 most recent history
-// layers (21 here, since HEAD is a 2-parent merge commit) instead of the true
-// total. Deepen to full history first. RECTOR-LABS/core is PUBLIC, so this needs
-// no credentials. It is best-effort + null-safe: if the fetch fails (offline /
-// no usable remote) we fall back to counting whatever history is present — the
-// same behavior as before this guard — so the build never breaks. The
-// `--is-shallow-repository` guard means non-shallow checkouts (local builds)
-// skip the network call entirely, and `--unshallow` is never run on a complete
-// repo (which would error).
-if (git(["rev-parse", "--is-shallow-repository"]) === "true") {
-  git(["fetch", "--unshallow", "--quiet"]);
-}
-
+// Base count from local git history. On a FULL clone (local builds) this is the
+// true total and no network call is made.
 const countRaw = git(["rev-list", "--count", "HEAD"]);
 const parsedCount = countRaw === null ? NaN : Number.parseInt(countRaw, 10);
-const commitCount = Number.isFinite(parsedCount) ? parsedCount : null;
+let commitCount = Number.isFinite(parsedCount) ? parsedCount : null;
+
+// On Vercel the checkout is a SHALLOW clone (`git clone --depth=10`), so the git
+// count above is an UNDERCOUNT (~20). Resolve the real total from the GitHub API
+// (the deployed SHA, else the branch). Null-safe: any failure keeps the git
+// count, so the build never breaks.
+if (git(["rev-parse", "--is-shallow-repository"]) === "true") {
+  const ref = sha ?? branch;
+  if (ref) {
+    const apiCount = await fetchCommitCountFromApi(ref);
+    if (apiCount !== null) commitCount = apiCount;
+  }
+}
 
 const version = {
   sha,
