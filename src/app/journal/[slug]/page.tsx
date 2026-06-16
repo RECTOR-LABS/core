@@ -1,3 +1,4 @@
+import path from "node:path";
 import { cache } from "react";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
@@ -10,15 +11,19 @@ import { HackathonRadar } from "@/components/islands/HackathonRadar";
 // Memoised per render pass at build time — dedupes the three loadPosts() calls
 // without coupling the pure loader module to React.
 const getPosts = cache(() => loadPosts());
-const getHackathons = cache(() => loadHackathons());
+const getHackathons = cache((file: string) =>
+  loadHackathons(path.join(process.cwd(), "data", file)),
+);
+const radarFile = (key: string | null) => (key ? `${key}.yml` : "hackathons.yml");
 
-const RADAR_TOKEN = "<!--RADAR-->";
+const RADAR_RE = /<!--RADAR(?::([a-z0-9-]+))?-->/;
 
-/** Split a post body on the first RADAR token. Returns [whole, null] when absent. */
-export function splitOnRadar(body: string): [string, string | null] {
-  const i = body.indexOf(RADAR_TOKEN);
-  if (i === -1) return [body, null];
-  return [body.slice(0, i), body.slice(i + RADAR_TOKEN.length)];
+/** Split a post body on the first RADAR marker (bare `<!--RADAR-->` or keyed `<!--RADAR:key-->`).
+ *  Returns [intro, outro, key]; [body, null, null] when absent; key is null for the bare form. */
+export function splitOnRadar(body: string): [string, string | null, string | null] {
+  const m = RADAR_RE.exec(body);
+  if (!m) return [body, null, null];
+  return [body.slice(0, m.index), body.slice(m.index + m[0].length), m[1] ?? null];
 }
 
 // Any slug not returned by generateStaticParams (including drafts) 404s automatically.
@@ -49,7 +54,7 @@ export default async function JournalPost(
   const post = getPosts().find(slug);
   if (!post) notFound();
   const iso = post.date.toISOString().slice(0, 10);
-  const [intro, outro] = splitOnRadar(post.body);
+  const [intro, outro, radarKey] = splitOnRadar(post.body);
   return (
     <main className="mx-auto max-w-2xl px-6 py-16">
       <article>
@@ -59,10 +64,17 @@ export default async function JournalPost(
         </p>
         <Markdown>{intro}</Markdown>
         {outro !== null && (() => {
-          const { all, asOf, source } = getHackathons();
+          const { all, asOf, source, labels } = getHackathons(radarFile(radarKey));
           return (
             <>
-              <HackathonRadar hackathons={all} asOf={asOf} source={source} />
+              <HackathonRadar
+                hackathons={all}
+                asOf={asOf}
+                source={source}
+                correctionLabel={labels.correctionLabel}
+                correctionsHeading={labels.correctionsHeading}
+                correctionsStatLabel={labels.correctionsStatLabel}
+              />
               <Markdown>{outro}</Markdown>
             </>
           );
