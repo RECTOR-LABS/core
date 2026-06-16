@@ -24,6 +24,9 @@ interface HackathonRadarProps {
   hackathons: Hackathon[];
   asOf: string;
   source: { label: string; url: string };
+  correctionLabel?: string;
+  correctionsHeading?: string;
+  correctionsStatLabel?: string;
 }
 
 type SortKey = "deadline" | "prize" | "fit" | "name";
@@ -49,7 +52,14 @@ function sortVal(hk: Hackathon, key: SortKey): number | string {
   }
 }
 
-export function HackathonRadar({ hackathons, asOf, source }: HackathonRadarProps) {
+export function HackathonRadar({
+  hackathons,
+  asOf,
+  source,
+  correctionLabel = "Correction",
+  correctionsHeading = "What the viral list got wrong",
+  correctionsStatLabel = "corrections",
+}: HackathonRadarProps) {
   const [search, setSearch] = useState("");
   const [fit, setFit] = useState("");
   const [location, setLocation] = useState("");
@@ -95,7 +105,7 @@ export function HackathonRadar({ hackathons, asOf, source }: HackathonRadarProps
       <div className="radar-stats">
         <div className="radar-stat"><b>{visible.length}</b><span>shown</span></div>
         <div className="radar-stat"><b>${Math.round(totalPrize / 1000).toLocaleString()}K</b><span>prize pool</span></div>
-        <div className="radar-stat"><b>{corrections.length}</b><span>corrections</span></div>
+        <div className="radar-stat"><b>{corrections.length}</b><span>{correctionsStatLabel}</span></div>
       </div>
 
       <div className="radar-controls">
@@ -178,7 +188,7 @@ export function HackathonRadar({ hackathons, asOf, source }: HackathonRadarProps
                     <td colSpan={6}>
                       <p>{hk.about}</p>
                       {hk.correction && (
-                        <p className="radar-corr"><b>Correction:</b> {hk.correction}</p>
+                        <p className="radar-corr"><b>{correctionLabel}:</b> {hk.correction}</p>
                       )}
                       <div className="radar-meta">
                         <span><b>Deadline:</b> {hk.deadlineLabel} · {hk.deadlineWIB} WIB</span>
@@ -205,7 +215,7 @@ export function HackathonRadar({ hackathons, asOf, source }: HackathonRadarProps
 
       {corrections.length > 0 && (
         <details className="radar-corrections">
-          <summary>What the viral list got wrong ({corrections.length})</summary>
+          <summary>{correctionsHeading} ({corrections.length})</summary>
           <ul>
             {corrections.map((hk) => (
               <li key={hk.name}><b>{hk.name}:</b> {hk.correction}</li>

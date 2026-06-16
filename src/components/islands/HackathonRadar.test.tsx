@@ -97,3 +97,46 @@ describe("HackathonRadar island", () => {
     expect(screen.getByText(/no hackathons match/i)).toBeInTheDocument();
   });
 });
+
+describe("HackathonRadar label customization", () => {
+  const labeledRows: Hackathon[] = [
+    h({ name: "Open Flagged", status: "open", correction: "token prize — discount it" }),
+  ];
+
+  it("defaults to edition-1 corrections copy when no label props are passed", () => {
+    render(<HackathonRadar hackathons={labeledRows} asOf="2026-06-16" source={source} />);
+    expect(document.querySelector(".radar-corrections summary")!.textContent).toContain(
+      "What the viral list got wrong",
+    );
+    expect(screen.getByText("corrections")).toBeInTheDocument(); // stat label
+  });
+
+  it("overrides the corrections heading and stat label when props are passed", () => {
+    render(
+      <HackathonRadar
+        hackathons={labeledRows}
+        asOf="2026-06-16"
+        source={source}
+        correctionsHeading="What to double-check before you build"
+        correctionsStatLabel="caveats"
+      />,
+    );
+    expect(document.querySelector(".radar-corrections summary")!.textContent).toContain(
+      "What to double-check before you build",
+    );
+    expect(screen.getByText("caveats")).toBeInTheDocument();
+  });
+
+  it("overrides the inline correction label in an expanded row", () => {
+    render(
+      <HackathonRadar
+        hackathons={labeledRows}
+        asOf="2026-06-16"
+        source={source}
+        correctionLabel="Caveat"
+      />,
+    );
+    fireEvent.click(within(bodyRows()[0]).getByText(/Open Flagged/));
+    expect(screen.getByText("Caveat:")).toBeInTheDocument();
+  });
+});
