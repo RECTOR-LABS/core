@@ -4,6 +4,7 @@ import { loadHackathons } from "./hackathons";
 
 const REAL = path.join(process.cwd(), "data", "hackathons.yml");
 const MALFORMED = path.join(__dirname, "__fixtures__/hackathons-malformed.yml");
+const LABELED = path.join(__dirname, "__fixtures__/hackathons-labeled.yml");
 
 describe("loadHackathons", () => {
   it("loads and validates the real hackathons.yml without throwing", () => {
@@ -40,5 +41,23 @@ describe("loadHackathons", () => {
 
   it("throws loudly on a malformed entry instead of silently coercing", () => {
     expect(() => loadHackathons(MALFORMED)).toThrow(/Invalid hackathon at index 0/);
+  });
+
+  it("defaults labels to the edition-1 strings when the block is absent", () => {
+    const { labels } = loadHackathons(REAL);
+    expect(labels).toEqual({
+      correctionLabel: "Correction",
+      correctionsHeading: "What the viral list got wrong",
+      correctionsStatLabel: "corrections",
+    });
+  });
+
+  it("uses the file's labels when present", () => {
+    const { labels } = loadHackathons(LABELED);
+    expect(labels).toEqual({
+      correctionLabel: "Caveat",
+      correctionsHeading: "What to double-check before you build",
+      correctionsStatLabel: "caveats",
+    });
   });
 });
