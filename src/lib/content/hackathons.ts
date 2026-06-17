@@ -3,6 +3,26 @@ import path from "node:path";
 import yaml from "js-yaml";
 import { z } from "zod";
 
+export interface RadarLabels {
+  correctionLabel: string;
+  correctionsHeading: string;
+  correctionsStatLabel: string;
+}
+
+const DEFAULT_LABELS: RadarLabels = {
+  correctionLabel: "Correction",
+  correctionsHeading: "What the viral list got wrong",
+  correctionsStatLabel: "corrections",
+};
+
+const LabelsSchema = z
+  .object({
+    correctionLabel: z.string(),
+    correctionsHeading: z.string(),
+    correctionsStatLabel: z.string(),
+  })
+  .partial();
+
 const HackathonSchema = z.object({
   name: z.string(),
   prize: z.string(),
@@ -24,6 +44,7 @@ const HackathonSchema = z.object({
 const FileSchema = z.object({
   asOf: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, "asOf must be YYYY-MM-DD"),
   source: z.object({ label: z.string(), url: z.string().url() }),
+  labels: LabelsSchema.optional(),
   hackathons: z.array(z.unknown()),
 });
 
@@ -32,6 +53,8 @@ export type Hackathon = z.infer<typeof HackathonSchema>;
 export interface HackathonsResult {
   asOf: string;
   source: { label: string; url: string };
+  /** Presentation copy for the corrections/caveats UI (per-dataset; defaulted). */
+  labels: RadarLabels;
   /** All entries in file order. */
   all: Hackathon[];
   /** Status open or upcoming (closed/dead/ineligible excluded). */
@@ -67,5 +90,7 @@ export function loadHackathons(filePath: string = DEFAULT_PATH): HackathonsResul
 
   const corrections = all.filter((h) => h.correction !== null);
 
-  return { asOf: file.asOf, source: file.source, all, enterable, sortedByDeadline, corrections };
+  const labels: RadarLabels = { ...DEFAULT_LABELS, ...(file.labels ?? {}) };
+
+  return { asOf: file.asOf, source: file.source, labels, all, enterable, sortedByDeadline, corrections };
 }

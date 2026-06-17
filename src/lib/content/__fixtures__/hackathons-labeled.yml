@@ -1,0 +1,24 @@
+asOf: "2026-06-16"
+source:
+  label: "Test sweep"
+  url: "https://example.com/sweep"
+labels:
+  correctionLabel: "Caveat"
+  correctionsHeading: "What to double-check before you build"
+  correctionsStatLabel: "caveats"
+hackathons:
+  - name: "Test Agent Hack"
+    prize: "$10,000"
+    prizeValue: 10000
+    deadlineLabel: "Jul 1"
+    deadlineWIB: "Jul 1, 2:00pm"
+    deadlineSort: "2026-07-01T07:00:00Z"
+    fit: 3
+    location: "Remote"
+    theme: "AI agents"
+    status: "open"
+    link: "https://example.com/hack"
+    platform: "Devpost"
+    eligibility: "Global"
+    about: "A test entry."
+    correction: "Confirm on the live page."
