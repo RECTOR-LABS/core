@@ -22,7 +22,6 @@ import { timeAgoInWords, type VersionView, type VersionHidden } from "@/lib/vers
 //      cacheComponents is off and there are no rewrites/proxy, usePathname()
 //      returns the prerendered path during SSG — so /apply/* static HTML is
 //      emitted WITHOUT the footer, while /, /work, /journal emit it WITH it.
-//      (Same shared-body adaptation used by the Phase-5 ThemeSwitcher.)
 //   2. "deployed X ago" tooltip. Computed AFTER mount (useEffect → useState)
 //      so the server render and the first client render agree (no hydration
 //      mismatch); when buildTime is null the suffix is omitted.

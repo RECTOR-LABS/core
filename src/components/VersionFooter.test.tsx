@@ -73,8 +73,8 @@ describe("VersionFooter", () => {
       expect(container.firstChild).toBeNull();
     });
 
-    it("renders nothing on a nested /apply route (arbital/modern)", () => {
-      mockPathname = "/apply/arbital/modern";
+    it("renders nothing on a deeply nested /apply route", () => {
+      mockPathname = "/apply/some/nested/path";
       const { container } = render(<VersionFooter {...shownView()} />);
       expect(container.firstChild).toBeNull();
     });
