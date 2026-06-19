@@ -29,17 +29,17 @@
   description: Autonomous 4-layer signal fusion engine detecting Solana narratives daily. Z-score anomaly detection, LLM clustering, and build idea generation from onchain, developer, social, and market signals.
 
 - slug: adrena-trading-arena
-  title: Adrena Trading Arena
+  title: Adrena AI Agent Arena
   type: bounty
   place: 2nd
   prize_amount: 1500
   prize_extras: null
-  event: Adrena x Autonom Trading Competition
+  event: Adrena x Autonom Competition
   event_detail: Superteam Earn
   date: "2026-04"
-  github_url: https://github.com/RECTOR-LABS/adrena-trading-arena
-  repo_name: adrena-trading-arena
-  description: On-chain trading competition platform for Adrena Protocol. 4-layer monorepo with Anchor program, TypeScript SDK, Rust orchestrator, and Next.js frontend.
+  github_url: https://github.com/RECTOR-LABS/adrena-agent-arena
+  repo_name: adrena-agent-arena
+  description: Autonomous on-chain AI agent competition platform for Adrena Protocol. 4-layer monorepo with Anchor program, TypeScript SDK, Rust orchestrator, and Next.js frontend.
 
 - slug: sip-protocol-graveyard-torque
   title: SIP Protocol

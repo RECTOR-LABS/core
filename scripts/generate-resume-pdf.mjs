@@ -127,7 +127,7 @@ function buildPdfStats(achievements) {
   return {
     wins:         String(winCount),
     earnings:     `$${totalEarnings.toLocaleString("en-US")}+`,
-    vulns:        "125",                                          // hardcoded in ERB
+    vulns:        "13",                                           // Superteam audit: 13 findings (corrected from stale "125" gaming-audit claim)
     grantsAmount: `$${grantsTotal.toLocaleString("en-US")}`,
   };
 }

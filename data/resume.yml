@@ -17,27 +17,28 @@ personal:
 
 stats:
   - label: Vulnerabilities Found
-    value: "125"
-    number: 125
+    value: "13"
+    number: 13
   - label: Repositories
     value: "64+"
     number: 64
 
 summary:
   pdf: >-
-    Full-stack Solana engineer with 10 wins across hackathons, bounties, and
-    grants totaling $34.5K+ in the Solana ecosystem. Awarded $10K Solana
-    Foundation grant and $6K audit subsidy for SIP Protocol. Currently
-    building multi-chain automated trading infrastructure in Rust (Axum,
-    Tokio, TimescaleDB) across Solana, Starknet, and ZKSync.
-    Security-focused: conducted Solana gaming protocol audit documenting
-    125 vulnerabilities. Built LUMOS, a type-safe schema language bridging
-    Rust and TypeScript for Solana with full IDE ecosystem.
+    Full-stack Solana engineer with 11 wins across hackathons, bounties, and
+    grants totaling $36K+ in the Solana ecosystem, including a $10K Solana
+    Foundation grant and $6K audit subsidy for SIP Protocol. Placed 1st of
+    116 in a Solana security audit competition — reviewed 14 open-source
+    protocols and reported 13 findings, the top one a framework-level Anchor
+    CPI vulnerability (CVSS 7.5), fixed upstream. Builds production AI agents
+    and the MCP tooling they run on, in Rust and TypeScript. Also built
+    LUMOS, a type-safe schema language bridging Rust and TypeScript for Solana.
   web: >-
-    Full-stack Solana engineer. 10 wins, $34.5K+ earned, $16K in grants.
-    Building production trading infrastructure in Rust across
-    Solana/Starknet/ZKSync. Security-focused: 125 vulnerabilities
-    documented in Solana gaming protocol audit.
+    Full-stack Solana engineer. 11 wins, $36K+ earned, $16K in grants.
+    Placed 1st of 116 in a Solana security audit — 13 findings across 14
+    protocols, the top a framework-level Anchor CPI vulnerability (CVSS 7.5)
+    fixed upstream. Builds production AI agents and MCP tooling in Rust and
+    TypeScript.
 
 skills:
   - category: Languages
@@ -55,15 +56,15 @@ skills:
 
 experience:
   - title: Full Stack Developer & Agentic Engineer
-    company: Intric LLC (arbital.xyz)
+    company: Confidential DeFi Startup
     date_start: "2026-02"
-    date_end: present
+    date_end: "2026-06"
     location: "Remote — Jakarta, Indonesia"
     bullets:
-      - text: "Building Arbital, a multi-tenant automated trading bot platform for decentralized exchanges, written in Rust (Axum, Tokio async runtime)"
+      - text: "Built backend services in Rust (Axum, Tokio async runtime) for a multi-tenant DeFi platform"
         pdf: true
         web: true
-      - text: "Designed AES-256-GCM encrypted credential storage with random nonces for secure exchange API key management"
+      - text: "Designed AES-256-GCM encrypted credential storage with random nonces for secure API key management"
         pdf: true
         web: true
       - text: "Built EIP-712 wallet-based authentication with challenge-response flow, JWT sessions, and stratified rate limiting (5 tiers)"
@@ -72,7 +73,7 @@ experience:
       - text: "Implemented multi-chain cryptographic signing: Ed25519 (Solana), Stark key (Starknet), EIP-712 (ZKSync)"
         pdf: true
         web: true
-      - text: "Designed distributed bot execution with Redis-based locking (120s TTL, 60s heartbeat), state snapshots, and graceful shutdown"
+      - text: "Designed distributed job execution with Redis-based locking (120s TTL, 60s heartbeat), state snapshots, and graceful shutdown"
         pdf: false
         web: true
       - text: "Built event-driven persistence pipeline: Redis Streams to TimescaleDB via dedicated DB writer service"
@@ -81,7 +82,7 @@ experience:
       - text: "Managed secret infrastructure with SOPS + age encryption for staging/production environments"
         pdf: false
         web: true
-      - text: "Implemented proxy clustering for exchange rate limit compliance across concurrent bot instances"
+      - text: "Implemented proxy clustering for upstream rate-limit compliance across concurrent worker instances"
         pdf: false
         web: true
 
@@ -143,10 +144,10 @@ projects:
     description: Type-safe schema language bridging Rust and TypeScript for Solana. Full IDE ecosystem.
     tags: [Rust, TypeScript, LSP, Tree-sitter]
     featured: true
-  - name: Adrena Trading Arena
+  - name: Adrena AI Agent Arena
     org: RECTOR-LABS
-    github_url: https://github.com/RECTOR-LABS/adrena-trading-arena
-    description: On-chain trading competition platform for Adrena Protocol with Anchor program, SDK, Rust orchestrator, and Next.js frontend.
+    github_url: https://github.com/RECTOR-LABS/adrena-agent-arena
+    description: Autonomous on-chain AI agent competition platform for Adrena Protocol with Anchor program, SDK, Rust orchestrator, and Next.js frontend.
     tags: [Solana, Anchor, Rust, TypeScript, Next.js]
     featured: true
   - name: OpenBudget.ID

@@ -62,11 +62,11 @@ describe("buildStats", () => {
     const result = buildStats({ totalEarnings, winCount, achievements: all }, stats);
 
     // Mirrors prod (curl https://rectorspace.com/apply/superteam):
-    //   $36,050+ / 11 / 125 / 64+ / 2
+    //   $36,050+ / 11 / 13 / 64+ / 2
     expect(result).toEqual([
       { label: "Ecosystem Earnings", value: `$${totalEarnings.toLocaleString("en-US")}+`, number: totalEarnings },
       { label: "Wins", value: String(winCount), number: winCount },
-      { label: "Vulnerabilities Found", value: "125", number: 125 },
+      { label: "Vulnerabilities Found", value: "13", number: 13 },
       { label: "Repositories", value: "64+", number: 64 },
       { label: "Grants Received", value: String(grants), number: grants },
     ]);
@@ -74,7 +74,7 @@ describe("buildStats", () => {
 
   it("places earnings first and grants last, with YAML stats in between in order", () => {
     const yamlStats = [
-      { label: "Vulnerabilities Found", value: "125", number: 125 },
+      { label: "Vulnerabilities Found", value: "13", number: 13 },
       { label: "Repositories", value: "64+", number: 64 },
     ];
     const achievements = [
@@ -92,7 +92,7 @@ describe("buildStats", () => {
     expect(result).toEqual([
       { label: "Ecosystem Earnings", value: "$23,000+", number: 23000 },
       { label: "Wins", value: "4", number: 4 },
-      { label: "Vulnerabilities Found", value: "125", number: 125 },
+      { label: "Vulnerabilities Found", value: "13", number: 13 },
       { label: "Repositories", value: "64+", number: 64 },
       { label: "Grants Received", value: "2", number: 2 },
     ]);
@@ -172,7 +172,7 @@ describe("sortAwardsByPrize", () => {
   it("is a stable sort for equal prize amounts (preserves YAML order)", () => {
     // Ruby's sort_by is stable; ties keep their original relative order.
     const a = makeAchievement({ prizeAmount: 1500, slug: "a", title: "Solana Security Audit" });
-    const b = makeAchievement({ prizeAmount: 1500, slug: "b", title: "Adrena Trading Arena" });
+    const b = makeAchievement({ prizeAmount: 1500, slug: "b", title: "Adrena AI Agent Arena" });
     const c = makeAchievement({ prizeAmount: 1500, slug: "c", title: "OpenBudget.ID" });
     const sorted = sortAwardsByPrize([a, b, c]);
     expect(sorted.map((x) => x.slug)).toEqual(["a", "b", "c"]);
@@ -236,7 +236,7 @@ describe("featuredProjects", () => {
       "Web3 Deal Discovery",
       "pNode Pulse",
       "LUMOS",
-      "Adrena Trading Arena",
+      "Adrena AI Agent Arena",
     ]);
     expect(featured.every((p) => p.featured === true)).toBe(true);
   });
