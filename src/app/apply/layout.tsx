@@ -15,13 +15,14 @@ export const metadata: Metadata = {
 };
 
 // Font strategy: raw <link> tags (hoisted to <head> in React 19 / Next 16).
-// This keeps apply.css verbatim — the CSS references the literal family names
-// 'JetBrains Mono' and 'VT323', which must be resolvable by the browser.
+// The Superteam CV CSS references the literal family name 'JetBrains Mono',
+// which must be resolvable by the browser.
 //
 // JetBrains Mono is already self-hosted via the root layout (next/font/local),
 // but only weights 400 and 700 are bundled locally. The Google Fonts link adds
-// weights 500 and 600 (used by apply CSS) and serves as a fallback path.
-// VT323 has no local file — it must come from Google Fonts.
+// weights 500 and 600 (used by the .superteam-page CSS).
+//
+// (The retro "arbital" theme's VT323 font was removed with that CV surface.)
 //
 // Approach confirmed by docs (01-app/getting-started/11-css.md):
 //   "In React 19, <link rel="stylesheet" href="..." /> can also be used."
@@ -41,7 +42,7 @@ export default function ApplyLayout({
       />
       <link
         rel="stylesheet"
-        href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=VT323&display=swap"
+        href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&display=swap"
       />
       {children}
     </>
