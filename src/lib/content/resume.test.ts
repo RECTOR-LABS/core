@@ -61,8 +61,8 @@ describe("loadResume", () => {
         expect(typeof bullet.text).toBe("string");
       }
     }
-    // First entry is the Intric role
-    expect(experience[0].company).toBe("Intric LLC (arbital.xyz)");
+    // First entry is the (NDA-anonymized) most-recent role
+    expect(experience[0].company).toBe("Confidential DeFi Startup");
   });
 
   it("projects is a non-empty array with the expected fields", () => {
