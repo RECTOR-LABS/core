@@ -61,8 +61,8 @@ describe("loadResume", () => {
         expect(typeof bullet.text).toBe("string");
       }
     }
-    // First entry is the (NDA-anonymized) most-recent role
-    expect(experience[0].company).toBe("Confidential DeFi Startup");
+    // First entry is the most-recent role (Arbital.xyz — NDA lifted, now public)
+    expect(experience[0].company).toBe("Arbital.xyz");
   });
 
   it("projects is a non-empty array with the expected fields", () => {

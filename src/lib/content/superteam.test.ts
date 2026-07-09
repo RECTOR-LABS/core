@@ -213,8 +213,8 @@ describe("webBullets", () => {
       expect(shown.length).toBe(exp.bullets.length);
       expect(shown.every((b) => b.web === true)).toBe(true);
     }
-    // Sanity: the first entry (Intric) has all 8 of its bullets on the web.
-    expect(webBullets(experience[0].bullets)).toHaveLength(8);
+    // Sanity: the first entry (Arbital) has all 10 of its bullets on the web.
+    expect(webBullets(experience[0].bullets)).toHaveLength(10);
   });
 
   it("returns an empty array when no bullet is web", () => {
