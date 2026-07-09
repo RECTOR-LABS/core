@@ -1,0 +1,161 @@
+/* ============================================================================
+   /apply/head-of-engineering — scoped "showoff" theme (shadcn/ui, dark premium)
+   ----------------------------------------------------------------------------
+   This CSS is imported ONLY by the head-of-engineering route, so its rules are
+   code-split to that route. The @theme inline block REGISTERS the shadcn color
+   utilities (bg-card, text-foreground, bg-primary, …) globally, but every value
+   resolves to a --hoe-* CSS variable that is defined ONLY under .hoe-page — so
+   the cream/brown brand tokens in src/app/globals.css are completely untouched.
+   Outside .hoe-page the shadcn utilities resolve to nothing (undefined vars),
+   which is fine because they are only ever used inside this page wrapper.
+   ========================================================================== */
+
+@import "tw-animate-css";
+
+@theme inline {
+  --color-background: var(--hoe-background);
+  --color-foreground: var(--hoe-foreground);
+  --color-card: var(--hoe-card);
+  --color-card-foreground: var(--hoe-card-foreground);
+  --color-popover: var(--hoe-popover);
+  --color-popover-foreground: var(--hoe-popover-foreground);
+  --color-primary: var(--hoe-primary);
+  --color-primary-foreground: var(--hoe-primary-foreground);
+  --color-secondary: var(--hoe-secondary);
+  --color-secondary-foreground: var(--hoe-secondary-foreground);
+  --color-muted: var(--hoe-muted);
+  --color-muted-foreground: var(--hoe-muted-foreground);
+  --color-accent: var(--hoe-accent);
+  --color-accent-foreground: var(--hoe-accent-foreground);
+  --color-destructive: var(--hoe-destructive);
+  --color-border: var(--hoe-border);
+  --color-input: var(--hoe-input);
+  --color-ring: var(--hoe-ring);
+
+  --radius-sm: calc(var(--hoe-radius) - 4px);
+  --radius-md: calc(var(--hoe-radius) - 2px);
+  --radius-lg: var(--hoe-radius);
+  --radius-xl: calc(var(--hoe-radius) + 4px);
+
+  /* Accordion expand/collapse (shadcn). Heights come from Radix at runtime. */
+  --animate-accordion-down: accordion-down 0.2s ease-out;
+  --animate-accordion-up: accordion-up 0.2s ease-out;
+
+  @keyframes accordion-down {
+    from {
+      height: 0;
+    }
+    to {
+      height: var(--radix-accordion-content-height);
+    }
+  }
+  @keyframes accordion-up {
+    from {
+      height: var(--radix-accordion-content-height);
+    }
+    to {
+      height: 0;
+    }
+  }
+}
+
+/* ── Dark premium palette, scoped to the page wrapper ───────────────────────
+   oklch for perceptually-even lightness. Primary = brand sky-cyan family. */
+.hoe-page {
+  --hoe-radius: 0.75rem;
+
+  --hoe-background: oklch(0.16 0.012 260);
+  --hoe-foreground: oklch(0.97 0.005 260);
+  --hoe-card: oklch(0.205 0.014 260);
+  --hoe-card-foreground: oklch(0.97 0.005 260);
+  --hoe-popover: oklch(0.205 0.014 260);
+  --hoe-popover-foreground: oklch(0.97 0.005 260);
+  --hoe-primary: oklch(0.78 0.15 195);
+  --hoe-primary-foreground: oklch(0.16 0.012 260);
+  --hoe-secondary: oklch(0.27 0.014 260);
+  --hoe-secondary-foreground: oklch(0.97 0.005 260);
+  --hoe-muted: oklch(0.27 0.014 260);
+  --hoe-muted-foreground: oklch(0.72 0.012 260);
+  --hoe-accent: oklch(0.3 0.016 260);
+  --hoe-accent-foreground: oklch(0.97 0.005 260);
+  --hoe-destructive: oklch(0.62 0.2 25);
+  --hoe-border: oklch(1 0 0 / 10%);
+  --hoe-input: oklch(1 0 0 / 12%);
+  --hoe-ring: oklch(0.78 0.15 195);
+
+  color-scheme: dark;
+
+  min-height: 100vh;
+  background:
+    radial-gradient(60rem 60rem at 82% -12%, oklch(0.78 0.15 195 / 0.12), transparent 60%),
+    radial-gradient(48rem 48rem at -8% 6%, oklch(0.72 0.13 285 / 0.1), transparent 55%),
+    var(--hoe-background);
+  color: var(--hoe-foreground);
+  font-family: var(--font-jetbrains, ui-monospace, SFMono-Regular, Menlo, monospace);
+}
+
+/* Subtle top "grid" texture for the hero, pure decoration. */
+.hoe-grid-bg {
+  background-image:
+    linear-gradient(to right, oklch(1 0 0 / 0.04) 1px, transparent 1px),
+    linear-gradient(to bottom, oklch(1 0 0 / 0.04) 1px, transparent 1px);
+  background-size: 44px 44px;
+  -webkit-mask-image: radial-gradient(ellipse 70% 60% at 50% 0%, #000 40%, transparent 75%);
+  mask-image: radial-gradient(ellipse 70% 60% at 50% 0%, #000 40%, transparent 75%);
+}
+
+/* Gradient text helper (hero name + accent headings). */
+.hoe-text-gradient {
+  background: linear-gradient(
+    100deg,
+    oklch(0.95 0.02 195) 0%,
+    oklch(0.82 0.15 195) 45%,
+    oklch(0.78 0.16 260) 100%
+  );
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+/* Card hover lift used across feature cards. */
+.hoe-card-hover {
+  transition: transform 220ms ease, border-color 220ms ease, box-shadow 220ms ease;
+}
+.hoe-card-hover:hover {
+  transform: translateY(-3px);
+  border-color: oklch(0.78 0.15 195 / 0.45);
+  box-shadow: 0 12px 40px oklch(0.78 0.15 195 / 0.12);
+}
+
+/* Respect reduced motion. */
+@media (prefers-reduced-motion: reduce) {
+  .hoe-card-hover {
+    transition: none;
+  }
+  .hoe-card-hover:hover {
+    transform: none;
+  }
+}
+
+/* ── Print / PDF: strip the dark chrome, force a clean light doc ──────────── */
+@media print {
+  .hoe-page {
+    --hoe-background: #fff;
+    --hoe-foreground: #111;
+    --hoe-card: #fff;
+    --hoe-card-foreground: #111;
+    --hoe-border: oklch(0 0 0 / 14%);
+    --hoe-muted-foreground: #444;
+    --hoe-primary: #0b6e8a;
+    --hoe-primary-foreground: #fff;
+    background: #fff;
+    color: #111;
+  }
+  .hoe-grid-bg,
+  .hoe-no-print {
+    display: none !important;
+  }
+  .hoe-card-hover {
+    break-inside: avoid;
+  }
+}

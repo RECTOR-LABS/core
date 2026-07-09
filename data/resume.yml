@@ -55,12 +55,20 @@ skills:
     items: [Solana (Anchor/SPL), Starknet, ZKSync, NEAR Protocol, Zcash]
 
 experience:
-  - title: Full Stack Developer & Agentic Engineer
-    company: Confidential DeFi Startup
+  - title: Tech Lead, Agentic Terminal
+    company: Arbital.xyz
     date_start: "2026-02"
     date_end: "2026-06"
     location: "Remote — Jakarta, Indonesia"
     bullets:
+      # ⚠️ RECTOR: confirm/edit specifics before this ships (team size led,
+      # what the Agentic Terminal actually does, scale/throughput, exact stack).
+      - text: "Promoted from Full Stack Developer to Tech Lead; led the Agentic Terminal product line end-to-end"
+        pdf: true
+        web: true
+      - text: "Architected and built the Arbital Agentic Terminal from scratch in Rust + TypeScript"
+        pdf: true
+        web: true
       - text: "Built backend services in Rust (Axum, Tokio async runtime) for a multi-tenant DeFi platform"
         pdf: true
         web: true
