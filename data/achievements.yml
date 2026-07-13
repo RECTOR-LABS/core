@@ -2,6 +2,32 @@
 # Order: newest first (display order on homepage)
 # Adding a new achievement: just add an entry here - totals auto-calculate
 ---
+- slug: conatus-grand-champion
+  title: Conatus
+  type: hackathon
+  place: 1st
+  prize_amount: 9000
+  prize_extras: null
+  event: Mantle Turing Test Hackathon 2026
+  event_detail: Grand Champion
+  date: "2026-07"
+  github_url: https://github.com/RECTOR-LABS/conatus
+  repo_name: conatus
+  description: Grand Champion out of all submissions. Autonomous on-chain AI smart-contract audit agent for Mantle — writes every audit verdict on-chain as an ERC-8004 identity-bound, reputation-accruing record. Deployed on Mantle mainnet.
+
+- slug: conatus-devtool-track
+  title: Conatus
+  type: hackathon
+  place: winner
+  prize_amount: 8500
+  prize_extras: null
+  event: Mantle Turing Test Hackathon 2026
+  event_detail: Best in Track — Dev Tool
+  date: "2026-07"
+  github_url: https://github.com/RECTOR-LABS/conatus
+  repo_name: conatus
+  description: Best in Track (Dev Tool). The same on-chain AI audit agent — ERC-8004 agent identity, risk score and findings hash anchored to Mantle in the same audit run.
+
 - slug: solana-cpi-safety-skill
   title: Solana CPI Safety Skill
   type: bounty

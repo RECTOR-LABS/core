@@ -62,7 +62,7 @@ describe("buildStats", () => {
     const result = buildStats({ totalEarnings, winCount, achievements: all }, stats);
 
     // Mirrors prod (curl https://rectorspace.com/apply/superteam):
-    //   $36,450+ / 12 / 13 / 64+ / 2
+    //   $53,950+ / 14 / 13 / 64+ / 2
     expect(result).toEqual([
       { label: "Ecosystem Earnings", value: `$${totalEarnings.toLocaleString("en-US")}+`, number: totalEarnings },
       { label: "Wins", value: String(winCount), number: winCount },
@@ -148,14 +148,16 @@ describe("sortAwardsByPrize", () => {
     const sorted = sortAwardsByPrize(all);
 
     const amounts = sorted.map((a) => a.prizeAmount);
-    // Prod order: 10000, 6500, 6000, 5000, 2000, 1500, 1500, 1500, 1000, 750, 400, 300
-    expect(amounts).toEqual([10000, 6500, 6000, 5000, 2000, 1500, 1500, 1500, 1000, 750, 400, 300]);
+    // Prod order: 10000, 9000, 8500, 6500, 6000, 5000, 2000, 1500, 1500, 1500, 1000, 750, 400, 300
+    expect(amounts).toEqual([10000, 9000, 8500, 6500, 6000, 5000, 2000, 1500, 1500, 1500, 1000, 750, 400, 300]);
 
     // Spot-check the leaders match the rendered prod cards.
     expect(sorted[0].title).toBe("SIP Protocol");
     expect(sorted[0].prizeAmount).toBe(10000);
-    expect(sorted[3].title).toBe("Web3 Deal Discovery");
-    expect(sorted[3].prizeAmount).toBe(5000);
+    expect(sorted[1].title).toBe("Conatus");
+    expect(sorted[1].prizeAmount).toBe(9000);
+    expect(sorted[5].title).toBe("Web3 Deal Discovery");
+    expect(sorted[5].prizeAmount).toBe(5000);
   });
 
   it("does not mutate the input array", () => {
