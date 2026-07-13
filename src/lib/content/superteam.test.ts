@@ -62,7 +62,7 @@ describe("buildStats", () => {
     const result = buildStats({ totalEarnings, winCount, achievements: all }, stats);
 
     // Mirrors prod (curl https://rectorspace.com/apply/superteam):
-    //   $36,050+ / 11 / 13 / 64+ / 2
+    //   $36,450+ / 12 / 13 / 64+ / 2
     expect(result).toEqual([
       { label: "Ecosystem Earnings", value: `$${totalEarnings.toLocaleString("en-US")}+`, number: totalEarnings },
       { label: "Wins", value: String(winCount), number: winCount },
@@ -148,8 +148,8 @@ describe("sortAwardsByPrize", () => {
     const sorted = sortAwardsByPrize(all);
 
     const amounts = sorted.map((a) => a.prizeAmount);
-    // Prod order: 10000, 6500, 6000, 5000, 2000, 1500, 1500, 1500, 1000, 750, 300
-    expect(amounts).toEqual([10000, 6500, 6000, 5000, 2000, 1500, 1500, 1500, 1000, 750, 300]);
+    // Prod order: 10000, 6500, 6000, 5000, 2000, 1500, 1500, 1500, 1000, 750, 400, 300
+    expect(amounts).toEqual([10000, 6500, 6000, 5000, 2000, 1500, 1500, 1500, 1000, 750, 400, 300]);
 
     // Spot-check the leaders match the rendered prod cards.
     expect(sorted[0].title).toBe("SIP Protocol");

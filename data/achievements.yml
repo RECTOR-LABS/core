@@ -2,6 +2,19 @@
 # Order: newest first (display order on homepage)
 # Adding a new achievement: just add an entry here - totals auto-calculate
 ---
+- slug: solana-cpi-safety-skill
+  title: Solana CPI Safety Skill
+  type: bounty
+  place: 1st
+  prize_amount: 400
+  prize_extras: null
+  event: Ship useful agent skills we can add to Solana AI Kit
+  event_detail: Superteam Brasil
+  date: "2026-07"
+  github_url: https://github.com/RECTOR-LABS/solana-cpi-safety-skill
+  repo_name: solana-cpi-safety-skill
+  description: 1st place out of 329 submissions. Solana CPI safety skill for Claude Code and the Solana AI Kit — detects and prevents four cross-program invocation vulnerability classes, with first-class coverage of CPI return-data spoofing. Anchored on a real upstream-fixed Anchor CPI finding (CVSS 7.5).
+
 - slug: solana-security-audit
   title: Solana Security Audit
   type: bounty

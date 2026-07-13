@@ -25,7 +25,7 @@ stats:
 
 summary:
   pdf: >-
-    Full-stack Solana engineer with 11 wins across hackathons, bounties, and
+    Full-stack Solana engineer with 12 wins across hackathons, bounties, and
     grants totaling $36K+ in the Solana ecosystem, including a $10K Solana
     Foundation grant and $6K audit subsidy for SIP Protocol. Placed 1st of
     116 in a Solana security audit competition — reviewed 14 open-source
@@ -34,7 +34,7 @@ summary:
     and the MCP tooling they run on, in Rust and TypeScript. Also built
     LUMOS, a type-safe schema language bridging Rust and TypeScript for Solana.
   web: >-
-    Full-stack Solana engineer. 11 wins, $36K+ earned, $16K in grants.
+    Full-stack Solana engineer. 12 wins, $36K+ earned, $16K in grants.
     Placed 1st of 116 in a Solana security audit — 13 findings across 14
     protocols, the top a framework-level Anchor CPI vulnerability (CVSS 7.5)
     fixed upstream. Builds production AI agents and MCP tooling in Rust and

@@ -2,8 +2,8 @@ import path from "node:path";
 import { describe, it, expect } from "vitest";
 import { loadAchievements } from "./achievements";
 
-// Hand-computed from web/data/achievements.yml (11 entries):
-//   1500 + 2000 + 1500 + 750 + 6000 + 10000 + 1000 + 5000 + 6500 + 1500 + 300 = 36050
+// Hand-computed from data/achievements.yml (12 entries):
+//   400 + 1500 + 2000 + 1500 + 750 + 6000 + 10000 + 1000 + 5000 + 6500 + 1500 + 300 = 36450
 // yearRange: dates span 2024-12 → 2026-04, so min=2024 max=2026 → "2024-2026"
 
 const REAL_YAML = path.join(process.cwd(), "data", "achievements.yml");
@@ -14,15 +14,15 @@ describe("loadAchievements", () => {
     expect(() => loadAchievements(REAL_YAML)).not.toThrow();
   });
 
-  it("all.length equals winCount (11)", () => {
+  it("all.length equals winCount (12)", () => {
     const { all, winCount } = loadAchievements(REAL_YAML);
-    expect(winCount).toBe(11);
+    expect(winCount).toBe(12);
     expect(all.length).toBe(winCount);
   });
 
-  it("totalEarnings equals the hand-summed prize total (36050)", () => {
+  it("totalEarnings equals the hand-summed prize total (36450)", () => {
     const { totalEarnings } = loadAchievements(REAL_YAML);
-    expect(totalEarnings).toBe(36_050);
+    expect(totalEarnings).toBe(36_450);
   });
 
   it("yearRange matches the YYYY-YYYY format spanning 2024-2026", () => {
@@ -33,9 +33,9 @@ describe("loadAchievements", () => {
     expect(yearRange).toMatch(/^\d{4}(-\d{4})?$/);
   });
 
-  it("preserves file order (newest first — solana-security-audit is first)", () => {
+  it("preserves file order (newest first — solana-cpi-safety-skill is first)", () => {
     const { all } = loadAchievements(REAL_YAML);
-    expect(all[0].slug).toBe("solana-security-audit");
+    expect(all[0].slug).toBe("solana-cpi-safety-skill");
     expect(all[all.length - 1].slug).toBe("saros-sdk-docs");
   });
 
