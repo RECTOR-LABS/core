@@ -52,6 +52,9 @@ Thumbs.db
 # Playwright MCP screenshots
 .playwright-mcp/
 
+# Claude Code worktrees (agent scratch — regenerated per session)
+/.claude/worktrees/
+
 # Brainstorming specs and implementation plans — local-only working artifacts
 # auto-generated per planning session. Curated documentation lives in docs/*.md.
 /docs/superpowers/
