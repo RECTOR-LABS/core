@@ -30,7 +30,7 @@ On top of the score, every finding had to clear hard gates: the repo had to be a
 
 | Repo | Upstream | Stars |
 |------|----------|-------|
-| Anchor | coral-xyz | 4,949 |
+| Anchor | otter-sec | 4,949 |
 | Wormhole | wormhole-foundation | 1,875 |
 | Agave | anza-xyz | 1,669 |
 | Pinocchio | anza-xyz | 849 |
@@ -64,7 +64,7 @@ Thirteen real findings across seven repos, after the false positives were cleare
 
 | Repo | Finding | Note |
 |------|---------|------|
-| **Anchor** | CPI `Return<T>` discards program ID | framework-level — submitted |
+| **Anchor** | CPI `Return<T>` discards program ID | framework-level — merged upstream (#4411) |
 | Phoenix | Ask-side fee underflow | verified |
 | Phoenix | Quote-lot validation overflow | verified |
 | Phoenix | Multi-order balance underflow | edge case |
@@ -109,7 +109,7 @@ The kicker: Anchor already knew the correct pattern. The same repository validat
 })
 ```
 
-The right pattern existed in the codebase — it just hadn't been applied to the generic `Return<T>` codegen. The fix stores the expected `program_id` on `Return<T>` and checks it in `get()` (with a `get_unchecked()` escape hatch for intentional cross-program reads). Submitted upstream as Issue #4232 / PR #4231, 13/13 tests passing.
+The right pattern existed in the codebase — it just hadn't been applied to the generic `Return<T>` codegen. The fix stores the expected `program_id` on `Return<T>` and checks it in `get()` (with a `get_unchecked()` escape hatch for intentional cross-program reads). Submitted upstream as Issue #4232 / PR #4231 (13/13 tests passing). OtterSec merged it into Anchor's `master` as PR #4411 — based on my PR with small tweaks, closing the issue (*"Thanks for the PR @rz1989s!"*). The validating codegen now ships in Anchor itself.
 
 (I'll do a full technical deep-dive on this one — PoC programs and all — in a later post.)
 
