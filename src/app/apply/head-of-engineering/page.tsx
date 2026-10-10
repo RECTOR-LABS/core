@@ -69,8 +69,8 @@ export function generateMetadata(): Metadata {
 const METRICS = [
   { value: "1st", number: 1, sub: "of 116 · Solana security audit" },
   { value: "13", number: 13, sub: "vulnerabilities reported" },
-  { value: "14", number: 14, sub: "wins · hackathons & bounties" },
-  { value: "$53K+", number: 53, sub: "ecosystem earnings" },
+  { value: "15", number: 15, sub: "wins · hackathons & bounties" },
+  { value: "$54K+", number: 54, sub: "ecosystem earnings" },
   { value: "5+", number: 5, sub: "languages shipped to production" },
   { value: "64+", number: 64, sub: "public repositories" },
 ] as const;
@@ -90,7 +90,7 @@ const PRINCIPLES = [
   {
     icon: Zap,
     title: "Ship under pressure",
-    body: "14 competition wins translate hackathon velocity into production discipline — fast without cutting the edges that matter.",
+    body: "15 competition wins translate hackathon velocity into production discipline — fast without cutting the edges that matter.",
   },
   {
     icon: BookOpen,

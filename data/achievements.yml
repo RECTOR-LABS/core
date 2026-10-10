@@ -2,6 +2,19 @@
 # Order: newest first (display order on homepage)
 # Adding a new achievement: just add an entry here - totals auto-calculate
 ---
+- slug: ens-audit-competition
+  title: ENS
+  type: bounty
+  place: 35th
+  prize_amount: 400
+  prize_extras: null
+  event: Audit Competition
+  event_detail: Immunefi
+  date: "2026-09"
+  github_url: https://immunefi.com/audit-competition/audit-competition-ens/leaderboard/
+  repo_name: ens-audit-competition
+  description: Ranked #35 of 186 whitehats auditing Ethereum Name Service's new Manager and Explorer apps (137,845 LoC, $70K pool). 3 valid findings — 1 Critical, 1 Medium, 1 Low — plus 3 duplicate credits.
+
 - slug: conatus-grand-champion
   title: Conatus
   type: hackathon
