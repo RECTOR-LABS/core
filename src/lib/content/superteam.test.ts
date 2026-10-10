@@ -62,11 +62,11 @@ describe("buildStats", () => {
     const result = buildStats({ totalEarnings, winCount, achievements: all }, stats);
 
     // Mirrors prod (curl https://rectorspace.com/apply/superteam):
-    //   $54,350+ / 15 / 13 / 64+ / 2
+    //   $54,350+ / 15 / 16 / 64+ / 2
     expect(result).toEqual([
       { label: "Ecosystem Earnings", value: `$${totalEarnings.toLocaleString("en-US")}+`, number: totalEarnings },
       { label: "Wins", value: String(winCount), number: winCount },
-      { label: "Vulnerabilities Found", value: "13", number: 13 },
+      { label: "Vulnerabilities Found", value: "16", number: 16 },
       { label: "Repositories", value: "64+", number: 64 },
       { label: "Grants Received", value: String(grants), number: grants },
     ]);

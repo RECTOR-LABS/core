@@ -17,8 +17,8 @@ personal:
 
 stats:
   - label: Vulnerabilities Found
-    value: "13"
-    number: 13
+    value: "16"
+    number: 16
   - label: Repositories
     value: "64+"
     number: 64

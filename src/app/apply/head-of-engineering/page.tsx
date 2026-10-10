@@ -68,7 +68,7 @@ export function generateMetadata(): Metadata {
 // ── Curated hero metrics (presentation-only; not the YAML stats) ────────────
 const METRICS = [
   { value: "1st", number: 1, sub: "of 116 · Solana security audit" },
-  { value: "13", number: 13, sub: "vulnerabilities reported" },
+  { value: "16", number: 16, sub: "vulnerabilities reported" },
   { value: "15", number: 15, sub: "wins · hackathons & bounties" },
   { value: "$54K+", number: 54, sub: "ecosystem earnings" },
   { value: "5+", number: 5, sub: "languages shipped to production" },
